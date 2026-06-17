@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-noto-sans-kr), var(--font-roboto), serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-noto-sans-kr), var(--font-roboto), serif;
+}
+
+@keyframes cloudDrift {
+  from { transform: translateX(-50vw); }
+  to   { transform: translateX(110vw); }
+}
+
+/* iOS Safari 입력창 자동 줌 방지 — font-size < 16px 이면 탭 시 확대됨 */
+@supports (-webkit-touch-callout: none) {
+  input, select, textarea {
+    font-size: 16px;
+  }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 1;    }
+  50%       { opacity: 0.45; }
+}
+
+@keyframes oracleBreathe {
+  0%, 100% { opacity: 0.3; }
+  50%       { opacity: 1;   }
+}
+
+.oracle-breathe {
+  animation: oracleBreathe 6s ease-in-out infinite;
+}
