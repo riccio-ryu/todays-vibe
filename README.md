@@ -34,9 +34,10 @@
 
 ### 🔐 **소셜 로그인**
 
-- Google / GitHub OAuth 로그인
+- Google / GitHub / 카카오 / 네이버 OAuth 로그인
 - Firebase Custom Token 기반 세션 관리
 - 생년월일 저장으로 자동 입력 지원
+- 이메일 비밀번호 찾기 (Firebase 재설정 메일)
 
 ### 🎨 **현대적인 UI/UX**
 
@@ -108,6 +109,10 @@ GOOGLE_CLIENT_ID=...
 GOOGLE_CLIENT_SECRET=...
 GITHUB_CLIENT_ID=...
 GITHUB_CLIENT_SECRET=...
+KAKAO_CLIENT_ID=...
+KAKAO_CLIENT_SECRET=...
+NAVER_CLIENT_ID=...
+NAVER_CLIENT_SECRET=...
 
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 SESSION_SECRET=your-session-secret
@@ -179,6 +184,12 @@ todays-vibe/
 | `/rune`                   | 룬 문자           |  ✅  |
 | `/mypage`                 | 마이페이지        |  ✅  |
 | `/admin`                  | 어드민 대시보드   |  ✅  |
+| `/admin/users`            | 회원 관리         |  ✅  |
+| `/admin/readings`         | 운세 결과 관리    |  ✅  |
+| `/admin/menus`            | 운세 메뉴 관리    |  ✅  |
+| `/admin/stats`            | 통계              |  ✅  |
+| `/admin/ai-usage`         | AI 사용량 관리    |  ✅  |
+| `/admin/batch`            | 배치 운세 관리    |  ✅  |
 
 ---
 
@@ -224,7 +235,8 @@ todays-vibe/
 
 ### **Phase 4 — 인증 & 소셜** ✅
 
-- [x] Firebase Auth (Google / GitHub 로그인)
+- [x] Firebase Auth (Google / GitHub / 카카오 / 네이버 로그인)
+- [x] 이메일 비밀번호 찾기
 - [x] 결과 저장 / 마이페이지
 
 ### **Phase 5 — 관상/AI 이미지** 🔮

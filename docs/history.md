@@ -2,6 +2,15 @@
 
 ---
 
+## 2026-06-17
+
+- 산가지 씬 실험 — Three.js 3D(`SangajiScene3D.tsx`), 이미지 CSS 방식(`SangajiImageScene.tsx`), Canvas 이미지 방식(`SangajiStickScene.tsx`) 세 가지 구현 시도
+- `SangajiStickScene.tsx` 신규 생성 — `sangaji-stick.png` 실제 이미지 50개를 Canvas API로 개별 렌더링, 흰 배경 픽셀 제거(brightness+saturation 임계값), 막대별 독립 흔들기 애니메이션(5단계 setTimeout pulse), 캔버스 클릭 기반 단일 막대 선택 구현
+- 산가지 이미지 추가 (`public/sangaji.jpeg`, `public/sangaji-stick.png`, `public/sangaji-sticks.png`)
+- `/sangaji` 라우트 원상복구 — 기존 CSS 기반 산가지 페이지 유지, 캔버스 실험 버전은 `/sangaji-new`로 분리 (`src/app/(user)/sangaji-new/page.tsx`)
+
+---
+
 ## 2026-06-14
 
 - 전체 코드 리팩토링 — 타로 5개 페이지 공통 UI 컴포넌트 추출 (`src/components/tarot/`)
