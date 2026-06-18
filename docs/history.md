@@ -2,6 +2,17 @@
 
 ---
 
+## 2026-06-18
+
+- PWA 도입 — `public/manifest.json`, `public/sw.js`, `public/icons/` (192·512px) 추가, 오프라인 캐시 전략(API/Firebase 제외, 페이지·정적 파일 캐시-우선) 적용
+- `src/app/layout.tsx` PWA 설정 추가 — `manifest`, `appleWebApp`(iOS Safari 홈 화면 추가 지원), `icons.apple`, `viewport.themeColor`, `mobile-web-app-capable` 메타 반영
+- `src/components/common/IOSInstallBanner.tsx` 신규 생성 — iOS Safari 전용 하단 설치 안내 배너, 조건부 표시(iOS 기기 + non-standalone + 세션 미해제), 닫기 시 `sessionStorage` 기록
+- `src/components/common/PWAInstallButton.tsx` 신규 생성 — 헤더용 다운로드 버튼, Android(`beforeinstallprompt` 이벤트 캡처)·iOS(팝오버 가이드) 분기 처리, standalone 모드 시 자동 숨김
+- `src/components/Header.tsx` 수정 — 로그인·비로그인 상태 모두에 `PWAInstallButton` 배치
+- `docs/pwa-guide.md` 작성 — PWA 도입 배경, 구현 파일 8개 상세 설명(manifest·sw.js·icons·PWARegister·layout·IOSInstallBanner·PWAInstallButton·Header), 동작 흐름도, 장단점, 테스트 방법 포함
+
+---
+
 ## 2026-06-17
 
 - 산가지 씬 실험 — Three.js 3D(`SangajiScene3D.tsx`), 이미지 CSS 방식(`SangajiImageScene.tsx`), Canvas 이미지 방식(`SangajiStickScene.tsx`) 세 가지 구현 시도

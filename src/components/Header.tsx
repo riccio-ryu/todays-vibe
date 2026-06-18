@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 import { signOut } from "@/lib/firebase/auth";
 import { User, Settings } from "lucide-react";
+import PWAInstallButton from "@/components/common/PWAInstallButton";
 
 export default function Header() {
   const { user, loading, isAdmin } = useAuth();
@@ -48,7 +49,8 @@ export default function Header() {
         {loading ? (
           <div className="w-8 h-8 rounded-full bg-white/10 animate-pulse" />
         ) : user ? (
-          <div ref={menuRef} className="relative">
+          <div ref={menuRef} className="relative flex items-center gap-2">
+            <PWAInstallButton />
             {/* 아바타 버튼 */}
             <button
               onClick={() => setOpen((v) => !v)}
@@ -111,6 +113,7 @@ export default function Header() {
           </div>
         ) : (
           <>
+            <PWAInstallButton />
             <Link
               href="/login"
               className="px-4 py-1.5 text-sm text-white/80 border border-white/20 rounded-lg hover:bg-white/10 transition-colors"
