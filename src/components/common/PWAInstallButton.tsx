@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Download } from "lucide-react";
 
 interface BeforeInstallPromptEvent extends Event {
@@ -8,14 +8,21 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
+interface PopoverStyle {
+  top: number;
+  left: number;
+  tailLeft: number;
+}
+
 export default function PWAInstallButton() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isIOS, setIsIOS] = useState(false);
   const [showIOSGuide, setShowIOSGuide] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const [popoverStyle, setPopoverStyle] = useState<PopoverStyle | null>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    // 이미 설치(standalone)로 실행 중이면 숨김
     if (window.matchMedia("(display-mode: standalone)").matches) {
       setHidden(true);
       return;
@@ -32,13 +39,20 @@ export default function PWAInstallButton() {
     return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
-  // standalone이면 숨김
   if (hidden) return null;
-  // Android이면서 프롬프트 없으면 숨김 (iOS는 항상 표시)
   if (!isIOS && !deferredPrompt) return null;
 
   const handleClick = async () => {
     if (isIOS) {
+      if (!showIOSGuide && btnRef.current) {
+        const rect = btnRef.current.getBoundingClientRect();
+        const POPOVER_W = 224; // w-56
+        const MARGIN = 12;
+        const rawLeft = rect.left + rect.width / 2 - POPOVER_W / 2;
+        const left = Math.max(MARGIN, Math.min(window.innerWidth - POPOVER_W - MARGIN, rawLeft));
+        const tailLeft = rect.left + rect.width / 2 - left;
+        setPopoverStyle({ top: rect.bottom + 8, left, tailLeft });
+      }
       setShowIOSGuide((v) => !v);
       return;
     }
@@ -52,34 +66,35 @@ export default function PWAInstallButton() {
 
   return (
     <div className="relative flex items-center">
-      {/* iOS 가이드 팝오버 */}
-      {showIOSGuide && (
+      {showIOSGuide && popoverStyle && (
         <>
-          {/* 배경 오버레이 (탭으로 닫기) */}
+          <div className="fixed inset-0 z-40" onClick={() => setShowIOSGuide(false)} />
           <div
-            className="fixed inset-0 z-40"
-            onClick={() => setShowIOSGuide(false)}
-          />
-          <div className="absolute right-0 top-10 z-50 w-56 rounded-xl bg-gray-900 border border-purple-500/40 shadow-xl p-3">
+            className="fixed z-50 w-56 rounded-xl bg-gray-900 border border-purple-500/40 shadow-xl p-3"
+            style={{ top: popoverStyle.top, left: popoverStyle.left }}
+          >
+            {/* 말풍선 꼬리 */}
+            <div
+              className="absolute -top-2 w-3 h-3 -translate-x-1/2 bg-gray-900 border-l border-t border-purple-500/40 rotate-45"
+              style={{ left: popoverStyle.tailLeft }}
+            />
             <p className="text-white text-xs font-semibold mb-2">홈 화면에 추가하는 방법</p>
             <ol className="text-gray-300 text-xs space-y-1.5 leading-relaxed">
               <li>① 하단 공유 버튼 <span className="bg-gray-700 px-1 rounded text-white">□↑</span> 탭</li>
               <li>② <span className="text-purple-300 font-medium">"홈 화면에 추가"</span> 선택</li>
               <li>③ 오른쪽 위 <span className="text-purple-300 font-medium">"추가"</span> 탭</li>
             </ol>
-            {/* 말풍선 꼬리 */}
-            <div className="absolute -top-2 right-3 w-3 h-3 bg-gray-900 border-l border-t border-purple-500/40 rotate-45" />
           </div>
         </>
       )}
 
       {/* 아이콘 버튼 */}
       <button
+        ref={btnRef}
         onClick={handleClick}
         className="relative group"
         aria-label="앱 설치"
       >
-        {/* 다운로드 아이콘 */}
         <div className="w-7 h-7 flex items-center justify-center rounded-full bg-purple-600/20 border border-purple-400/30 group-hover:bg-purple-600/40 transition-colors">
           <Download className="w-3.5 h-3.5 text-purple-300" />
         </div>
