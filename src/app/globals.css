@@ -40,6 +40,24 @@ body {
   background-clip: text;
 }
 
+/* 카드 — 인셋 림라이트 글로우 (drop shadow 없음) */
+.card-glow {
+  background: #060317;
+  box-shadow: rgba(255,255,255,0.04) 0px 0px 24px 0px inset;
+}
+
+.card-glow:hover {
+  box-shadow:
+    rgba(255,255,255,0.04) 0px 0px 24px 0px inset,
+    rgba(147,130,255,0.10) 0px 0px 32px 0px;
+}
+
+/* 카드 내부 미니 위젯 */
+.card-mini {
+  background: rgba(255,255,255,0.04);
+  box-shadow: rgba(255,255,255,0.02) 0px 0px 12px 0px inset;
+}
+
 @keyframes cloudDrift {
   from { transform: translateX(-50vw); }
   to   { transform: translateX(110vw); }

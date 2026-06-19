@@ -15,13 +15,8 @@ export default function PopularSection({ items }: { items: MenuItem[] }) {
           <Link
             key={item.id}
             href={item.path}
-            className="group relative flex flex-col rounded-2xl border border-white/8 overflow-hidden hover:-translate-y-0.5 transition-all duration-200 hover:border-[#9382ff]/20 hover:shadow-xl hover:shadow-[#9382ff]/10"
+            className="group relative flex flex-col rounded-2xl overflow-hidden card-glow hover:-translate-y-0.5 transition-all duration-200"
           >
-            {/* 그라데이션 배경 */}
-            <div
-              className={`absolute inset-0 bg-gradient-to-br ${item.color ?? "from-purple-600 to-indigo-600"} opacity-20 group-hover:opacity-30 transition-opacity duration-200`}
-            />
-
             <div className="relative flex flex-col flex-1 p-4">
               <span className="text-3xl mb-2">{item.icon}</span>
               <h3 className="text-[#f4f0ff] font-medium text-sm mb-1 leading-tight">

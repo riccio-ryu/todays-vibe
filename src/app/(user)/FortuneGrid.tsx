@@ -80,13 +80,13 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
         <div className="flex items-center gap-0.5">
           <button
             onClick={expandAll}
-            className="px-2.5 py-1.5 rounded-l-full text-xs text-[#a8a6b7]/70 border border-white/10 bg-white/5 hover:bg-white/10 hover:text-[#f4f0ff] transition-colors"
+            className="px-2.5 py-1.5 rounded-l-full text-xs text-[#a8a6b7]/70 border border-white/10 bg-white/4 hover:bg-white/8 hover:text-[#f4f0ff] transition-colors"
           >
             모두펼치기
           </button>
           <button
             onClick={collapseAll}
-            className="px-2.5 py-1.5 rounded-r-full text-xs text-[#a8a6b7]/70 border border-white/10 border-l-0 bg-white/5 hover:bg-white/10 hover:text-[#f4f0ff] transition-colors"
+            className="px-2.5 py-1.5 rounded-r-full text-xs text-[#a8a6b7]/70 border border-white/10 border-l-0 bg-white/4 hover:bg-white/8 hover:text-[#f4f0ff] transition-colors"
           >
             모두접기
           </button>
@@ -98,7 +98,7 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap ${
             showComingSoon
               ? "bg-[#9382ff]/10 border-[#9382ff]/25 text-[#9382ff] hover:bg-[#9382ff]/20"
-              : "bg-white/5 border-white/10 text-[#a8a6b7]/60 hover:bg-white/8 hover:text-[#a8a6b7]"
+              : "bg-white/4 border-white/10 text-[#a8a6b7]/60 hover:bg-white/8 hover:text-[#a8a6b7]"
           }`}
         >
           {showComingSoon ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
@@ -118,11 +118,11 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
           const readyCount = categoryFortunes.filter((f) => f.ready).length;
 
           return (
-            <section key={category.id} className="rounded-2xl border border-white/8 overflow-hidden">
+            <section key={category.id} className="rounded-2xl overflow-hidden card-glow transition-shadow duration-300">
               {/* 카테고리 헤더 */}
               <button
                 onClick={() => toggleCategory(category.id)}
-                className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/4 transition-colors text-left"
+                className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-[#9382ff]/4 transition-colors text-left"
               >
                 <span className="text-xl">{category.icon}</span>
                 <span className="flex-1 text-[#f4f0ff]/85 text-sm font-medium">
@@ -159,11 +159,11 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
 
                           const card = (
                             <div
-                              className={`group relative flex flex-col h-full rounded-xl border p-4 transition-all duration-200
+                              className={`group relative flex flex-col h-full rounded-xl p-4 transition-all duration-200
                                 ${
                                   isReady
-                                    ? "bg-white/6 border-white/8 cursor-pointer hover:-translate-y-0.5 hover:bg-white/10 hover:border-[#9382ff]/20 hover:shadow-lg hover:shadow-[#9382ff]/10"
-                                    : "bg-white/3 border-white/4 cursor-not-allowed opacity-40 grayscale"
+                                    ? "card-mini cursor-pointer hover:-translate-y-0.5 hover:bg-[#9382ff]/6 hover:shadow-[rgba(147,130,255,0.12)_0px_0px_20px_0px]"
+                                    : "bg-white/2 border border-white/4 cursor-not-allowed opacity-40 grayscale"
                                 }`}
                             >
                               {/* Premium 뱃지 */}
