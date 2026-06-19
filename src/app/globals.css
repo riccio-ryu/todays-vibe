@@ -49,22 +49,24 @@ body {
     rgba(147,130,255,0.07) 0px 0px 48px 0px;
 }
 
-/* 카드 — 인셋 림라이트 글로우 (drop shadow 없음) */
+/* 카드 — 인셋 림라이트 글로우 + 배경 반투명 */
 .card-glow {
-  background: #060317;
-  box-shadow: rgba(255,255,255,0.04) 0px 0px 24px 0px inset;
+  background: rgba(6, 3, 23, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: rgba(255,255,255,0.05) 0px 0px 24px 0px inset;
 }
 
 .card-glow:hover {
   box-shadow:
-    rgba(255,255,255,0.04) 0px 0px 24px 0px inset,
+    rgba(255,255,255,0.05) 0px 0px 24px 0px inset,
     rgba(147,130,255,0.10) 0px 0px 32px 0px;
 }
 
 /* 카드 내부 미니 위젯 */
 .card-mini {
-  background: rgba(255,255,255,0.04);
-  box-shadow: rgba(255,255,255,0.02) 0px 0px 12px 0px inset;
+  background: rgba(255,255,255,0.05);
+  box-shadow: rgba(255,255,255,0.03) 0px 0px 12px 0px inset;
 }
 
 @keyframes cloudDrift {

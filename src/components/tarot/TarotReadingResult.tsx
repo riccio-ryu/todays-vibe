@@ -3,6 +3,7 @@
 import { RefObject } from "react";
 import { motion } from "framer-motion";
 import AILoadingIndicator from "@/components/common/AILoadingIndicator";
+import AdSlot from "@/components/common/AdSlot";
 
 type Props = {
   interpretRef: RefObject<HTMLDivElement | null>;
@@ -30,6 +31,12 @@ export default function TarotReadingResult({ interpretRef, interpretation, isLoa
           </p>
         )}
       </div>
+
+      {/* 광고 — 해석 완료 후 노출 */}
+      {!isLoading && interpretation && (
+        <AdSlot slot="5693296487" className="rounded-xl" />
+      )}
+
       {!isLoading && (
         <button
           onClick={onReset}

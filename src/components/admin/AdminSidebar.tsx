@@ -11,6 +11,7 @@ import {
   BookOpen,
   BarChart2,
   Bot,
+  FileCode2,
   ChevronLeft,
   ChevronRight,
   ArrowLeft,
@@ -26,6 +27,7 @@ const NAV = [
   { href: "/admin/readings",  label: "운세 기록",   icon: BookOpen },
   { href: "/admin/stats",     label: "사용 통계",   icon: BarChart2 },
   { href: "/admin/ai-usage",  label: "AI 사용량",   icon: Bot },
+  { href: "/admin/prompts",   label: "AI 프롬프트", icon: FileCode2 },
 ];
 
 export default function AdminSidebar() {
