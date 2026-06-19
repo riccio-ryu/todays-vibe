@@ -2,6 +2,29 @@
 
 ---
 
+## 2026-06-19
+
+- Google AdSense 정책 위반 수정 — `src/app/layout.tsx`에서 AdSense `<Script>` 제거, `src/app/(user)/layout.tsx`로 이동하여 운세 콘텐츠 페이지에서만 광고 실행 (로그인·관리자·인증 페이지 광고 제거)
+- `src/components/home/AboutSection.tsx` 신규 생성 — 오늘운 서비스 소개(별자리·타로·사주·꿈해몽·주역·기타 6종 상세 설명), 자주 묻는 질문 4개 포함
+- 홈 페이지(`src/app/(user)/page.tsx`) 하단에 `AboutSection` 추가 — 구글 "가치가 별로 없는 콘텐츠" 위반 대응
+- 별자리 목록 페이지(`src/app/(user)/zodiac/page.tsx`) 하단에 점성술 역사·4원소(불/흙/바람/물) 설명 섹션 추가
+- 별자리 상세 페이지(`src/app/(user)/zodiac/[sign]/page.tsx`) 하단에 강점·약점·주요 특성·행운의 색·궁합 별자리 정적 데이터 섹션 추가
+- 타로 원카드 페이지(`src/app/(user)/tarot-daily/page.tsx`) 하단에 타로 역사·메이저/마이너 아르카나 설명 섹션 추가
+- `PWAInstallButton.tsx` iOS 가이드 팝오버 위치 버그 수정 — `absolute right-0` → `fixed` + `getBoundingClientRect()` 계산으로 변경, 뷰포트 좌우 12px 여백 클램핑으로 화면 잘림 해결, 꼬리 위치 버튼 중심 기준 동적 계산
+
+---
+
+## 2026-06-18
+
+- PWA 도입 — `public/manifest.json`, `public/sw.js`, `public/icons/` (192×512px) 추가, 오프라인 캐시 전략 적용 (API/Firebase 제외, 정적 파일·페이지 캐시)
+- `src/app/layout.tsx` PWA 설정 추가 — `manifest`, `appleWebApp`(iOS 홈 화면 지원), `icons.apple`, `viewport.themeColor` 메타 반영
+- `src/components/common/IOSInstallBanner.tsx` 신규 생성 — iOS Safari 전용 하단 설치 안내 배너, 조건부 표시 (iOS + non-standalone + 세션 미해제), 닫기 시 `sessionStorage` 기록
+- `src/components/common/PWAInstallButton.tsx` 신규 생성 — 헤더용 다운로드 버튼, Android(`beforeinstallprompt`)·iOS(팝오버 가이드) 분기, standalone 모드 자동 숨김
+- `src/components/Header.tsx` 수정 — 로그인·비로그인 상태 모두에 `PWAInstallButton` 배치
+- `docs/pwa-guide.md` 작성 — PWA 도입 배경, 구현 파일 8개 상세 설명, 동작 흐름도, 장단점, 테스트 방법 포함
+
+---
+
 ## 2026-06-17
 
 - 산가지 씬 실험 — Three.js 3D(`SangajiScene3D.tsx`), 이미지 CSS 방식(`SangajiImageScene.tsx`), Canvas 이미지 방식(`SangajiStickScene.tsx`) 세 가지 구현 시도

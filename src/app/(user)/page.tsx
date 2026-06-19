@@ -7,6 +7,7 @@ import QuickMenu from "@/components/home/QuickMenu";
 import HeroCard from "@/components/home/HeroCard";
 import PopularSection from "@/components/home/PopularSection";
 import OracleHeader from "@/components/home/OracleHeader";
+import AboutSection from "@/components/home/AboutSection";
 
 async function getMenuItems(): Promise<MenuItem[]> {
   try {
@@ -102,6 +103,9 @@ export default async function Home() {
 
       {/* Category sections */}
       <FortuneGrid categories={categories} fortunes={fortunes} />
+
+      {/* 서비스 소개 · FAQ */}
+      <AboutSection />
     </div>
   );
 }
