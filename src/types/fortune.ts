@@ -30,7 +30,8 @@ export type FortuneType =
   | "life-fortune"
   | "moving-fortune"
   | "iching"
-  | "sangaji";
+  | "sangaji"
+  | "yuk-hyo";
 
 // ─── Input Types (fortune별 입력 스키마) ──────────────────────────────────────
 
@@ -147,6 +148,24 @@ export interface SangajiInput {
   question?: string;
 }
 
+export interface YukHyoInput {
+  hexagramNo: number;
+  hexagramName: string;
+  hexagramNameZh: string;
+  upperTrigram: string;
+  lowerTrigram: string;
+  keyword: string;
+  changingLines: number[];        // 변효 위치 (1=하단, 6=상단)
+  lineValues: number[];           // 각 효의 값 (6/7/8/9)
+  changedHexagramNo?: number;     // 지괘 번호 (변효 있을 때)
+  changedHexagramName?: string;
+  changedHexagramNameZh?: string;
+  changedUpperTrigram?: string;
+  changedLowerTrigram?: string;
+  changedKeyword?: string;
+  question?: string;
+}
+
 export type FortuneInput =
   | DreamInput
   | SajuInput
@@ -163,7 +182,8 @@ export type FortuneInput =
   | LifeFortuneInput
   | MovingFortuneInput
   | IChingInput
-  | SangajiInput;
+  | SangajiInput
+  | YukHyoInput;
 
 // ─── API Request / Response ───────────────────────────────────────────────────
 

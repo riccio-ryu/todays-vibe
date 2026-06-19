@@ -15,6 +15,7 @@ import {
   MovingFortuneInput,
   IChingInput,
   SangajiInput,
+  YukHyoInput,
   FortuneInput,
 } from "@/types/fortune";
 
@@ -52,6 +53,8 @@ export function buildPrompt(type: FortuneType, input: FortuneInput): string {
       return buildIChingPrompt(input as IChingInput);
     case "sangaji":
       return buildSangajiPrompt(input as SangajiInput);
+    case "yuk-hyo":
+      return buildYukHyoPrompt(input as YukHyoInput);
     case "love-fortune":
       return buildGeneralFortunePrompt("love", input as GeneralFortuneInput);
     case "wealth-fortune":
@@ -788,4 +791,63 @@ function buildSangajiPrompt(input: SangajiInput): string {
 이 괘가 전하는 따뜻한 응원의 말로 마무리해 주세요.
 
 한국 전통 점술의 지혜를 담되 현대적이고 실용적인 언어로 한국어로 작성해 주세요.`;
+}
+
+// ─── 육효점 ──────────────────────────────────────────────────────────────────
+
+function buildYukHyoPrompt(input: YukHyoInput): string {
+  const questionLine = input.question ? `\n점을 친 질문: ${input.question}` : "";
+  const hasChanging = input.changingLines.length > 0;
+
+  const lineNames = ["초효(初爻)", "이효(二爻)", "삼효(三爻)", "사효(四爻)", "오효(五爻)", "상효(上爻)"];
+  const changingDesc = hasChanging
+    ? input.changingLines.map(pos => {
+        const val = input.lineValues[pos - 1];
+        const type = val === 9 ? "노양(老陽)→음으로 변함" : "노음(老陰)→양으로 변함";
+        return `  - ${lineNames[pos - 1]}: ${type}`;
+      }).join("\n")
+    : "  없음 (본괘만 해석)";
+
+  const changedSection = hasChanging && input.changedHexagramNo
+    ? `
+**지괘(之卦): 제${input.changedHexagramNo}괘 ${input.changedHexagramNameZh} ${input.changedHexagramName}괘**
+- 상괘: ${input.changedUpperTrigram} / 하괘: ${input.changedLowerTrigram}
+- 키워드: ${input.changedKeyword}`
+    : "";
+
+  return `당신은 육효점(六爻占) 전문 역술인입니다. 주역 64괘 체계에 변효(變爻)를 더해 본괘와 지괘로 현재와 미래를 함께 읽는 육효점법으로 해석합니다.
+
+동전 6번 던져 다음 괘가 나왔습니다.
+
+**본괘(本卦): 제${input.hexagramNo}괘 ${input.hexagramNameZh} ${input.hexagramName}괘**
+- 상괘: ${input.upperTrigram} / 하괘: ${input.lowerTrigram}
+- 키워드: ${input.keyword}
+
+**변효(變爻) 위치:**
+${changingDesc}
+${changedSection}${questionLine}
+
+아래 형식으로 풀이해 주세요:
+
+## ☯️ 본괘 해석 — ${input.hexagramNameZh} ${input.hexagramName}괘
+이 괘의 상징과 핵심 에너지를 소개하고, 현재 상황에 적용되는 의미를 설명해 주세요.
+${input.question ? `"${input.question}"라는 질문에 이 괘가 전하는 답을 구체적으로 해석해 주세요.` : ""}
+
+${hasChanging ? `## 🔄 변효(變爻) 분석
+변효가 있는 효 위치(${input.changingLines.map(p => lineNames[p - 1]).join(", ")})에서 무슨 변화가 일어나고 있는지, 그 변화가 의미하는 바를 설명해 주세요.
+
+## 🌊 지괘 해석 — ${input.changedHexagramNameZh} ${input.changedHexagramName}괘
+변효가 완전히 변하면 이 괘가 됩니다. 본괘에서 지괘로의 흐름이 암시하는 **앞으로의 전개**와 **결론**을 해석해 주세요.` : `## 📖 괘의 가르침
+변효가 없어 본괘의 에너지가 안정적으로 지속됩니다. 이 괘가 전하는 깊은 가르침과 지금 상황의 흐름을 해석해 주세요.`}
+
+## 💡 효위별 핵심 메시지
+초효(하단)부터 상효(상단)까지 6효의 흐름 중 가장 중요한 메시지 2~3가지를 짚어 주세요.
+
+## 🎯 실천 조언
+지금 취해야 할 행동, 피해야 할 것, 마음가짐 3가지를 알려주세요.
+
+## ✨ 종합 메시지
+${hasChanging ? `본괘(${input.hexagramName})에서 지괘(${input.changedHexagramName ?? ""})로 향하는 흐름을 바탕으로 최종 메시지를 전해 주세요.` : `이 괘가 전하는 지혜와 희망의 말씀으로 마무리해 주세요.`}
+
+동양 역학의 깊이를 담되 현대인이 이해할 수 있는 언어로 한국어로 작성해 주세요.`;
 }
