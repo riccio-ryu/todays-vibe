@@ -2,6 +2,26 @@
 
 ---
 
+## 2026-06-19
+
+- 육효점 추가 (`src/app/(user)/yuk-hyo/page.tsx`) — 본괘·지괘(변효 시스템) 6효 동전 던지기 UI, 효별 색상 표시, 변효 위치 강조, 심층 풀이 연동
+- UI 전면 개편 Phase A/B/C — `TimeBackground.tsx`(시간대별 배경 그라데이션), `OracleHeader.tsx`(오라클 메시지 로테이션), `QuickMenu.tsx`(빠른 메뉴), `HeroCard.tsx` 모바일 개선 등 홈 UI 다수 파일 정비
+- 관리자 AI 프롬프트 편집기 구현 (`src/app/admin/prompts/`) — 20가지 운세 프롬프트 템플릿을 Firestore `ai_prompts/{type}`에 저장·수정·초기화, `{{변수}}` 플레이스홀더 지원, 5분 인메모리 캐시, 변수 칩 클릭으로 편집기에 삽입
+  - `src/lib/claude/promptTemplates.ts` 신규 생성 — 20종 운세의 `defaultTemplate`, `labelKo`, `vars` 메타데이터 정의
+  - `src/lib/claude/promptStore.ts` 신규 생성 — Firestore 읽기/쓰기/초기화/일괄 시드 + `buildPromptFromDB()` (DB 템플릿 우선, fallback 하드코딩)
+  - `src/app/api/fortune/route.ts` 수정 — `buildPrompt()` → `buildPromptFromDB()` 교체
+  - `src/app/admin/prompts/PromptsEditor.tsx` 신규 생성 — 아코디언 편집기 UI, 저장/초기화/전체 시드 버튼
+- AI 브랜딩 문구 사용자 노출 제거 — 18개 파일에서 "AI" 뱃지·버튼·레이블을 `✦` 심볼 및 "풀이"/"심층 풀이"/"풍수 분석" 등 중립 용어로 교체 (`AILoadingIndicator`, `PageHeader`, `TarotActionButtons`, `FortuneGrid`, `HeroCard`, `PopularSection` 등)
+- 메인 운세 카드 사용 횟수 표시 (`src/app/(user)/FortuneGrid.tsx`) — 로그인 사용자에게 카드마다 `N/N회 사용하기` 표시, 한도 소진 시 카드 dim + `오늘완료` 뱃지
+  - `src/app/api/user/fortune-status-bulk/route.ts` 신규 생성 — 활성 운세 전체 menuId를 한 번에 Firestore 조회해 `{used, limit, exhausted}` 맵 반환 (개별 N회 API 호출 대신 1회 bulk)
+- `card-glow` / `card-mini` 테두리 추가 (`src/app/globals.css`) — `border: 1px solid rgba(255,255,255,0.08)` 추가로 다크 배경과 카드 경계 구분 개선
+- 파비콘 수정 (`src/app/layout.tsx`) — `metadata.icons`에 `icon` (SVG + PNG) 및 `shortcut` 명시적 등록, 브라우저 탭 파비콘 미표시 문제 해결
+- 푸터 GitHub 링크 추가 (`src/components/Footer.tsx`) — 이용약관·개인정보·문의하기 링크 행에 GitHub 저장소 링크 추가
+- README 버전별 적용 내역 테이블 추가 (`README.md`) — v0.1(2026-05-02) ~ v0.9(2026-06-19) 9버전 이력, 라이브 링크 강조
+- TODO.md 생성 및 `/todo` 스킬 추가 — 프로젝트 작업 백로그 파일(`TODO.md`) 신규 생성, Claude가 항목 추가·완료처리·수정을 수행하는 `/todo` 슬래시 커맨드 스킬 등록 (`.claude/commands/todo.md`)
+
+---
+
 ## 2026-06-18
 
 - PWA 도입 — `public/manifest.json`, `public/sw.js`, `public/icons/` (192·512px) 추가, 오프라인 캐시 전략(API/Firebase 제외, 페이지·정적 파일 캐시-우선) 적용
