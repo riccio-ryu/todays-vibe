@@ -66,8 +66,8 @@ const PLAN_NAME: Record<PlanType, string> = {
   free: "무료 회원", premium: "프리미엄 회원", admin: "관리자",
 };
 const PLAN_LIMIT: Record<PlanType, string> = {
-  free: "AI 기능 1일 1회 이용 가능",
-  premium: "AI 기능 1일 3~5회 이용 가능",
+  free: "운세 풀이 1일 1회 이용 가능",
+  premium: "운세 풀이 1일 3~5회 이용 가능",
   admin: "모든 기능 무제한 이용 가능",
 };
 
@@ -488,7 +488,7 @@ function MyPageInner() {
 
         {/* ── AI 사용 현황 ─────────────────────────────────────── */}
         <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
-          <p className="text-white/40 text-xs mb-3">오늘 AI 사용 현황</p>
+          <p className="text-white/40 text-xs mb-3">오늘 이용 현황</p>
           {usageLoading ? (
             <div className="grid grid-cols-3 gap-3">
               {[1, 2, 3].map((i) => (
@@ -683,7 +683,7 @@ function MyPageInner() {
             </div>
           ) : readings.length === 0 ? (
             <p className="text-white/25 text-xs text-center py-4">
-              아직 AI 운세를 이용한 기록이 없어요
+              아직 이용한 운세 기록이 없어요
             </p>
           ) : (
             <>

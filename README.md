@@ -10,6 +10,8 @@
 [![Firebase](https://img.shields.io/badge/Firebase-Auth%20%2B%20Firestore-orange?style=flat-square&logo=firebase)](https://firebase.google.com/)
 [![Framer Motion](https://img.shields.io/badge/Framer%20Motion-12-pink?style=flat-square)](https://www.framer.com/motion/)
 
+**[→ todays-vibe.com 바로가기](https://todays-vibe.com)**
+
 🌐 **라이브**: [todays-vibe.com](https://todays-vibe.com) · [todays-vibe.vercel.app](https://todays-vibe.vercel.app)
 
 ---
@@ -298,6 +300,22 @@ todays-vibe/
 ## 👤 개발자
 
 **riccio-ryu** · [@riccio-ryu](https://github.com/riccio-ryu)
+
+---
+
+## 📝 버전별 적용 내역
+
+| 버전 | 날짜 | 주요 적용 내역 |
+| ---- | ---- | ------------- |
+| v0.9 | 2026-06-19 | 카드 테두리 구분선, 관리자 AI 프롬프트 편집기 (Firestore 저장), AI 문구 브랜딩 제거, 육효점 추가 |
+| v0.8 | 2026-06-16 ~ 17 | 산가지 3D 캔버스 씬 분리 (`/sangaji-new`), PWA 다운로드 버튼, 모바일 UI 전면 개편 |
+| v0.7 | 2026-06-15 | 어드민 배치 관리 개편 (기간 지정 생성/CRUD), 어드민 사이드바 반응형, 리팩토링 (~1000줄 중복 제거) |
+| v0.6 | 2026-06-12 | 카카오·네이버 로그인 완성, 비밀번호 찾기, 모바일 최적화 (iOS 줌 방지, 스크롤 점프 수정) |
+| v0.5 | 2026-06-11 | 홈 Hero 카드 (개인화 운세 점수), Quick Menu, 인기 섹션, 달 위상 위젯, 어드민 AI 사용량 관리 |
+| v0.4 | 2026-06-10 | 산가지·주역·이사/방위·평생운세·토정비결 추가, Google AdSense 연동, 도메인 연결 |
+| v0.3 | 2026-05-26 | AI 운세 스트리밍 연동 (Gemini API), 별자리 배치 시스템, 어드민 인증 |
+| v0.2 | 2026-05-24 | Firebase 인증 시스템 (Google / GitHub / 카카오 / 네이버 / 이메일) |
+| v0.1 | 2026-05-02 | 프로젝트 초기 세팅 (Next.js 16, TypeScript, Tailwind CSS v4, Firebase) |
 
 ---
 

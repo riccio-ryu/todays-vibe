@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { ChevronDown, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import LoginRequiredModal from "@/components/common/LoginRequiredModal";
 import type { MenuItem } from "@/types/menu";
+import type { BulkFortuneStatus } from "@/app/api/user/fortune-status-bulk/route";
 
 const STORAGE_KEY = "todays-vibe:accordion";
 
@@ -26,6 +27,7 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
   const [modalPath, setModalPath] = useState<string | null>(null);
   const [showComingSoon, setShowComingSoon] = useState(false);
   const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
+  const [statusMap, setStatusMap] = useState<Record<string, BulkFortuneStatus>>({});
 
   useEffect(() => {
     try {
@@ -35,6 +37,22 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
       // ignore
     }
   }, []);
+
+  const fetchBulkStatus = useCallback(() => {
+    if (!user) return;
+    const readyIds = fortunes.filter((f) => f.ready).map((f) => f.id);
+    if (readyIds.length === 0) return;
+    fetch("/api/user/fortune-status-bulk", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ menuIds: readyIds }),
+    })
+      .then((r) => r.json())
+      .then((d) => setStatusMap(d))
+      .catch(() => {});
+  }, [user, fortunes]);
+
+  useEffect(() => { fetchBulkStatus(); }, [fetchBulkStatus]);
 
   function toggleCategory(id: string) {
     setOpenCategories((prev) => {
@@ -157,17 +175,31 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
                           const isReady = fortune.ready === true;
                           const needsAuth = fortune.accessLevel !== "public";
 
+                          const status = statusMap[fortune.id];
+                          const isExhausted = !!status?.exhausted;
+                          const hasLimit = status && status.limit !== null && status.limit !== -1;
+                          const used = status?.used ?? 0;
+                          const limit = status?.limit ?? null;
+
                           const card = (
                             <div
                               className={`group relative flex flex-col h-full rounded-xl p-4 transition-all duration-200
                                 ${
                                   isReady
-                                    ? "card-mini cursor-pointer hover:-translate-y-0.5 hover:bg-[#9382ff]/6 hover:shadow-[rgba(147,130,255,0.12)_0px_0px_20px_0px]"
+                                    ? isExhausted
+                                      ? "card-mini cursor-pointer opacity-50"
+                                      : "card-mini cursor-pointer hover:-translate-y-0.5 hover:bg-[#9382ff]/6 hover:shadow-[rgba(147,130,255,0.12)_0px_0px_20px_0px]"
                                     : "bg-white/2 border border-white/4 cursor-not-allowed opacity-40 grayscale"
                                 }`}
                             >
+                              {/* 오늘 완료 뱃지 */}
+                              {isExhausted && (
+                                <span className="absolute top-2 right-2 text-[10px] font-medium text-[#a8a6b7]/70 bg-white/8 px-1.5 py-0.5 rounded-full">
+                                  오늘완료
+                                </span>
+                              )}
                               {/* Premium 뱃지 */}
-                              {fortune.accessLevel === "premium" && isReady && (
+                              {fortune.accessLevel === "premium" && isReady && !isExhausted && (
                                 <span className="absolute top-2 right-2 text-[10px] font-bold px-1.5 py-0.5 rounded-full"
                                   style={{
                                     background: "linear-gradient(to right, #92400e, #d97706)",
@@ -189,16 +221,23 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
                               <p className="text-[#a8a6b7] text-xs leading-snug line-clamp-2 flex-1">
                                 {fortune.description}
                               </p>
-                              {/* 하단 행: AI 뱃지 + 시작하기 */}
+                              {/* 하단 행: AI 뱃지 + 사용하기 */}
                               <div className="flex items-center justify-between mt-2.5">
                                 {fortune.isAI && isReady ? (
                                   <span className="text-[10px] font-medium text-[#9382ff] bg-[#9382ff]/10 px-1.5 py-0.5 rounded-full">
-                                    AI
+                                    ✦
                                   </span>
                                 ) : <span />}
                                 {isReady && (
-                                  <span className="flex items-center gap-0.5 text-[#a8a6b7]/50 text-[10px] group-hover:text-[#9382ff] transition-colors">
-                                    시작하기 <ArrowRight className="w-3 h-3" />
+                                  <span className={`flex items-center gap-0.5 text-[10px] transition-colors ${
+                                    isExhausted
+                                      ? "text-[#a8a6b7]/40"
+                                      : "text-[#a8a6b7]/50 group-hover:text-[#9382ff]"
+                                  }`}>
+                                    {hasLimit
+                                      ? `${used}/${limit}회 사용하기`
+                                      : "사용하기"}
+                                    {!isExhausted && <ArrowRight className="w-3 h-3" />}
                                   </span>
                                 )}
                               </div>

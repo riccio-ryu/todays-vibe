@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useRef } from "react";
 import { Check, RotateCcw, Save, ChevronDown, ChevronUp, Database } from "lucide-react";
 import { savePromptAction, resetPromptAction, seedAllPromptsAction } from "./actions";
 import type { VarDoc } from "@/lib/claude/promptTemplates";
@@ -25,6 +25,18 @@ export default function PromptsEditor({ prompts, varDocs }: Props) {
   const [saved, setSaved] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [seedDone, setSeedDone] = useState(false);
+  const itemRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  function handleToggle(type: string) {
+    const opening = expanded !== type;
+    setExpanded(opening ? type : null);
+    if (opening) {
+      // 다음 프레임에 스크롤 — 열린 항목 상단을 뷰포트 상단에 고정
+      requestAnimationFrame(() => {
+        itemRefs.current[type]?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+  }
 
   function getDraft(type: string, original: string) {
     return drafts[type] ?? original;
@@ -102,6 +114,7 @@ export default function PromptsEditor({ prompts, varDocs }: Props) {
           return (
             <div
               key={entry.type}
+              ref={el => { itemRefs.current[entry.type] = el; }}
               className={`rounded-xl border overflow-hidden transition-all duration-150 ${
                 entry.isCustom
                   ? "bg-[#9382ff]/5 border-[#9382ff]/20"
@@ -110,7 +123,7 @@ export default function PromptsEditor({ prompts, varDocs }: Props) {
             >
               {/* 헤더 행 */}
               <button
-                onClick={() => setExpanded(isOpen ? null : entry.type)}
+                onClick={() => handleToggle(entry.type)}
                 className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-white/[0.03] transition-colors text-left"
               >
                 <div className="flex items-center gap-3">

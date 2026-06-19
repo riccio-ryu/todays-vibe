@@ -282,7 +282,7 @@ export default function HeroCard({ today }: { today: string }) {
           <div className="flex justify-center mb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full card-mini">
               {data.isAI && (
-                <span className="text-[10px] font-medium text-[#9382ff] bg-[#9382ff]/10 px-1.5 py-0.5 rounded-full">AI</span>
+                <span className="text-[10px] font-medium text-[#9382ff] bg-[#9382ff]/10 px-1.5 py-0.5 rounded-full">✦</span>
               )}
               <span className="text-sm font-bold text-[#9382ff]">{data.score}점</span>
             </div>

@@ -367,8 +367,8 @@ export default function IChingPage() {
               }`}
             >
               {fortuneStatus?.exhausted
-                ? "오늘 AI 심층해석을 이미 이용했어요"
-                : `${hexagram.nameKo}괘 AI 심층해석 보기`}
+                ? "오늘 심층 풀이를 이미 이용했어요"
+                : `${hexagram.nameKo}괘 심층 풀이 보기`}
             </button>
 
             <button
@@ -506,7 +506,7 @@ export default function IChingPage() {
                   type="button" onClick={() => setShowModal(false)}
                   className="w-full py-3 rounded-xl text-sm font-semibold bg-amber-700/40 border border-amber-600/30 text-amber-200 hover:bg-amber-700/60 transition-all"
                 >
-                  돌아가서 AI 해석 보기
+                  돌아가서 풀이 보기
                 </button>
               )}
 

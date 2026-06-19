@@ -177,7 +177,7 @@ export default function SajuPage() {
         interpRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
       }
     } catch (err) {
-      setError("AI 해석 중 오류가 발생했습니다.");
+      setError("풀이 중 오류가 발생했습니다.");
       console.error(err);
     } finally {
       setLoading(false);
@@ -398,7 +398,7 @@ export default function SajuPage() {
           </div>
           <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-white/60 text-xs font-semibold uppercase tracking-widest">AI 사주 해석</h2>
+              <h2 className="text-white/60 text-xs font-semibold uppercase tracking-widest">사주 풀이</h2>
               {fortuneStatus.todayReading.createdAt && (
                 <span className="text-white/30 text-xs">
                   {new Date(fortuneStatus.todayReading.createdAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })} 열람
@@ -437,7 +437,7 @@ export default function SajuPage() {
 
           {/* AI 해석 */}
           <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
-            <h2 className="text-white/60 text-xs font-semibold uppercase tracking-widest mb-4">AI 사주 해석</h2>
+            <h2 className="text-white/60 text-xs font-semibold uppercase tracking-widest mb-4">사주 풀이</h2>
             {loading && !interpretation && (
               <AILoadingIndicator type="saju" />
             )}

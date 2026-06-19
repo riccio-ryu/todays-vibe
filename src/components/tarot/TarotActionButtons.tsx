@@ -19,7 +19,7 @@ export default function TarotActionButtons({ onInterpret, onReset }: Props) {
         onClick={onInterpret}
         className="flex-1 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-sm transition-colors shadow-lg shadow-purple-900/40"
       >
-        ✨ AI 해석 받기
+        ✨ 해석 받기
       </button>
       <button
         onClick={onReset}
