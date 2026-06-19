@@ -41,6 +41,8 @@ export default function Footer() {
               <button onClick={() => setModal("privacy")} className="hover:text-[#f4f0ff] transition-colors">개인정보처리방침</button>
               <span className="text-[#a8a6b7]/25">·</span>
               <a href="mailto:ters9292@gmail.com" className="hover:text-[#f4f0ff] transition-colors">문의하기</a>
+              <span className="text-[#a8a6b7]/25">·</span>
+              <a href="https://github.com/riccio-ryu/todays-vibe" target="_blank" rel="noopener noreferrer" className="hover:text-[#f4f0ff] transition-colors">GitHub</a>
             </div>
 
             <p className="text-center text-[#a8a6b7]/30 text-[11px]">© 2026 오늘운 · All rights reserved.</p>

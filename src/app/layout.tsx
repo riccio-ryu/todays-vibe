@@ -37,6 +37,11 @@ export const metadata: Metadata = {
     startupImage: "/icons/icon-512x512.png",
   },
   icons: {
+    icon: [
+      { url: "/brand/favicon.svg", type: "image/svg+xml" },
+      { url: "/brand/favicon.png", sizes: "512x512", type: "image/png" },
+    ],
+    shortcut: "/brand/favicon.png",
     apple: [
       { url: "/icons/icon-192x192.png", sizes: "192x192" },
       { url: "/icons/icon-512x512.png", sizes: "512x512" },
