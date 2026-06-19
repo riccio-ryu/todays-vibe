@@ -12,7 +12,7 @@ export default function PageHeader({
   title,
   backHref = "/",
   backLabel = "홈",
-  badge = "AI",
+  badge = "✦",
 }: PageHeaderProps) {
   return (
     <div className="flex items-center gap-3 mb-8">

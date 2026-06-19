@@ -167,7 +167,7 @@ export default function LifeFortunePage() {
     <div className="max-w-xl mx-auto px-4 py-10">
       <div className="text-center mb-8">
         <h1 className="text-white font-bold text-2xl">평생운세</h1>
-        <p className="text-white/50 text-sm mt-2">타고난 운명과 인생의 흐름을 AI로 풀어드립니다</p>
+        <p className="text-white/50 text-sm mt-2">타고난 운명과 인생의 흐름을 풀어드립니다</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">

@@ -59,7 +59,7 @@ export default function DreamForm() {
         <div className="text-6xl mb-3">💭</div>
         <h1 className="text-3xl font-bold text-white mb-2">꿈해몽</h1>
         <p className="text-purple-300 text-sm">
-          꾼 꿈을 자세히 적어주세요. AI가 전통 해몽과 심리학적 관점으로 풀이해
+          꾼 꿈을 자세히 적어주세요. 전통 해몽과 심리학적 관점으로 풀이해
           드립니다.
         </p>
       </div>

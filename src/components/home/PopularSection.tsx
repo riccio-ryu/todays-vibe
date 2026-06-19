@@ -30,7 +30,7 @@ export default function PopularSection({ items }: { items: MenuItem[] }) {
                 <div className="flex gap-1">
                   {item.isAI && (
                     <span className="text-[10px] font-medium text-[#9382ff] bg-[#9382ff]/10 px-1.5 py-0.5 rounded-full">
-                      AI
+                      ✦
                     </span>
                   )}
                 </div>

@@ -193,7 +193,7 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
                               <div className="flex items-center justify-between mt-2.5">
                                 {fortune.isAI && isReady ? (
                                   <span className="text-[10px] font-medium text-[#9382ff] bg-[#9382ff]/10 px-1.5 py-0.5 rounded-full">
-                                    AI
+                                    ✦
                                   </span>
                                 ) : <span />}
                                 {isReady && (

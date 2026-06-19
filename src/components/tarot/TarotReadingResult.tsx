@@ -20,7 +20,7 @@ export default function TarotReadingResult({ interpretRef, interpretation, isLoa
       className="w-full space-y-4"
     >
       <div className="rounded-xl bg-white/5 border border-white/10 p-5 min-h-[120px]">
-        <p className="text-white/40 text-xs mb-3">AI 카드 해석</p>
+        <p className="text-white/40 text-xs mb-3">카드 해석</p>
         {isLoading && !interpretation && (
           <AILoadingIndicator type="tarot" />
         )}

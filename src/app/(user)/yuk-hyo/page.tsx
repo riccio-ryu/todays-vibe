@@ -434,8 +434,8 @@ export default function YukHyoPage() {
                   : "bg-gradient-to-r from-amber-700 to-yellow-700 text-white hover:opacity-90"
               }`}>
               {fortuneStatus?.exhausted
-                ? "오늘 AI 풀이를 이미 이용했어요"
-                : `${hexagram.nameKo}괘${changedHexagram ? ` → ${changedHexagram.nameKo}괘` : ""} AI 풀이 받기`}
+                ? "오늘 풀이를 이미 이용했어요"
+                : `${hexagram.nameKo}괘${changedHexagram ? ` → ${changedHexagram.nameKo}괘` : ""} 풀이 받기`}
             </button>
 
             <button type="button" onClick={() => { setLineValues([]); setCoins([]); setSpinning(false); }}
@@ -555,7 +555,7 @@ export default function YukHyoPage() {
               ) : (
                 <button type="button" onClick={() => setShowModal(false)}
                   className="w-full py-3 rounded-xl text-sm font-semibold bg-amber-700/40 border border-amber-600/30 text-amber-200 hover:bg-amber-700/60 transition-all">
-                  돌아가서 AI 풀이 보기
+                  돌아가서 풀이 보기
                 </button>
               )}
               {lineValues.length > 0 && !done && (
