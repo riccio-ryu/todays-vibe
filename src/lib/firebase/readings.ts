@@ -26,7 +26,8 @@ export type ReadingType =
   | "life-fortune"
   | "moving-fortune"
   | "iching"
-  | "sangaji";
+  | "sangaji"
+  | "yuk-hyo";
 
 export async function saveAiReading(
   userId: string,
