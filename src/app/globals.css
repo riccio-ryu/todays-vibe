@@ -3,6 +3,14 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Reflect Notes — Starlit Violet Cosmos */
+  --color-void:         #030014;
+  --color-surface:      #060317;
+  --color-elevated:     #10093a;
+  --color-text-primary: #f4f0ff;
+  --color-text-ash:     #a8a6b7;
+  --color-accent:       #9382ff;
 }
 
 @theme inline {
@@ -22,6 +30,14 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-noto-sans-kr), var(--font-roboto), serif;
+}
+
+/* 코스믹 그라데이션 텍스트 — Reflect Notes 시그니처 */
+.cosmic-text {
+  background: linear-gradient(90.01deg, #e59cff 0.01%, #ba9cff 50.01%, #9cb2ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 @keyframes cloudDrift {

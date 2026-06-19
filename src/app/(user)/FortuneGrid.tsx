@@ -27,7 +27,6 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
   const [showComingSoon, setShowComingSoon] = useState(false);
   const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
 
-  // localStorage에서 열린 카테고리 복원
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -78,17 +77,16 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
 
       {/* 툴바 */}
       <div className="flex items-center justify-between mb-4 gap-2">
-        {/* 모두 펼치기 / 접기 */}
         <div className="flex items-center gap-0.5">
           <button
             onClick={expandAll}
-            className="px-2.5 py-1.5 rounded-l-full text-xs text-white/50 border border-white/12 bg-white/6 hover:bg-white/12 hover:text-white/70 transition-colors"
+            className="px-2.5 py-1.5 rounded-l-full text-xs text-[#a8a6b7]/70 border border-white/10 bg-white/5 hover:bg-white/10 hover:text-[#f4f0ff] transition-colors"
           >
             모두펼치기
           </button>
           <button
             onClick={collapseAll}
-            className="px-2.5 py-1.5 rounded-r-full text-xs text-white/50 border border-white/12 border-l-0 bg-white/6 hover:bg-white/12 hover:text-white/70 transition-colors"
+            className="px-2.5 py-1.5 rounded-r-full text-xs text-[#a8a6b7]/70 border border-white/10 border-l-0 bg-white/5 hover:bg-white/10 hover:text-[#f4f0ff] transition-colors"
           >
             모두접기
           </button>
@@ -99,8 +97,8 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
           onClick={() => setShowComingSoon((v) => !v)}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap ${
             showComingSoon
-              ? "bg-white/10 border-white/15 text-white/50 hover:bg-white/15 hover:text-white/70"
-              : "bg-white/6 border-white/12 text-white/35 hover:bg-white/10 hover:text-white/55"
+              ? "bg-[#9382ff]/10 border-[#9382ff]/25 text-[#9382ff] hover:bg-[#9382ff]/20"
+              : "bg-white/5 border-white/10 text-[#a8a6b7]/60 hover:bg-white/8 hover:text-[#a8a6b7]"
           }`}
         >
           {showComingSoon ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
@@ -121,22 +119,22 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
 
           return (
             <section key={category.id} className="rounded-2xl border border-white/8 overflow-hidden">
-              {/* 카테고리 헤더 — 클릭으로 토글 */}
+              {/* 카테고리 헤더 */}
               <button
                 onClick={() => toggleCategory(category.id)}
-                className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors text-left"
+                className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/4 transition-colors text-left"
               >
                 <span className="text-xl">{category.icon}</span>
-                <span className="flex-1 text-white/80 text-sm font-semibold">
+                <span className="flex-1 text-[#f4f0ff]/85 text-sm font-medium">
                   {category.name}
                 </span>
-                <span className="text-white/25 text-xs mr-2">
+                <span className="text-[#a8a6b7]/50 text-xs mr-2">
                   {readyCount}종
                 </span>
                 <motion.span
                   animate={{ rotate: isOpen ? 180 : 0 }}
                   transition={{ duration: 0.25, ease: "easeInOut" }}
-                  className="text-white/30 text-xs leading-none"
+                  className="text-[#a8a6b7]/40 text-xs leading-none"
                 >
                   <ChevronDown className="w-4 h-4" />
                 </motion.span>
@@ -164,8 +162,8 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
                               className={`group relative flex flex-col h-full rounded-xl border p-4 transition-all duration-200
                                 ${
                                   isReady
-                                    ? "bg-white/8 border-white/8 cursor-pointer hover:-translate-y-0.5 hover:bg-white/14 hover:border-white/18 hover:shadow-lg hover:shadow-purple-900/30"
-                                    : "bg-white/4 border-white/4 cursor-not-allowed opacity-40 grayscale"
+                                    ? "bg-white/6 border-white/8 cursor-pointer hover:-translate-y-0.5 hover:bg-white/10 hover:border-[#9382ff]/20 hover:shadow-lg hover:shadow-[#9382ff]/10"
+                                    : "bg-white/3 border-white/4 cursor-not-allowed opacity-40 grayscale"
                                 }`}
                             >
                               {/* Premium 뱃지 */}
@@ -180,26 +178,26 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
                                 </span>
                               )}
                               {!isReady && (
-                                <span className="absolute top-2 right-2 text-[10px] font-medium text-white/40 bg-white/8 px-1.5 py-0.5 rounded-full">
+                                <span className="absolute top-2 right-2 text-[10px] font-medium text-[#a8a6b7]/60 bg-white/6 px-1.5 py-0.5 rounded-full">
                                   준비중
                                 </span>
                               )}
                               <div className="text-3xl mb-2">{fortune.icon}</div>
-                              <h3 className="text-white font-semibold text-sm mb-1 leading-tight">
+                              <h3 className="text-[#f4f0ff] font-medium text-sm mb-1 leading-tight">
                                 {fortune.nameKo}
                               </h3>
-                              <p className="text-white/50 text-xs leading-snug line-clamp-2 flex-1">
+                              <p className="text-[#a8a6b7] text-xs leading-snug line-clamp-2 flex-1">
                                 {fortune.description}
                               </p>
                               {/* 하단 행: AI 뱃지 + 시작하기 */}
                               <div className="flex items-center justify-between mt-2.5">
                                 {fortune.isAI && isReady ? (
-                                  <span className="text-[10px] font-medium text-purple-300 bg-purple-900/50 px-1.5 py-0.5 rounded-full">
+                                  <span className="text-[10px] font-medium text-[#9382ff] bg-[#9382ff]/10 px-1.5 py-0.5 rounded-full">
                                     AI
                                   </span>
                                 ) : <span />}
                                 {isReady && (
-                                  <span className="text-white/30 text-[10px] group-hover:text-white/60 transition-colors">
+                                  <span className="flex items-center gap-0.5 text-[#a8a6b7]/50 text-[10px] group-hover:text-[#9382ff] transition-colors">
                                     시작하기 <ArrowRight className="w-3 h-3" />
                                   </span>
                                 )}
