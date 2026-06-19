@@ -11,11 +11,11 @@ export default function Footer() {
 
   return (
     <>
-      <footer className="mt-auto border-t border-white/10">
+      <footer className="mt-auto border-t border-white/8">
         {/* 접힌 상태 */}
         <button
           onClick={() => setOpen((v) => !v)}
-          className="w-full flex items-center justify-center gap-2 py-3 text-white/30 hover:text-white/50 text-xs transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-3 text-[#a8a6b7]/40 hover:text-[#a8a6b7] text-xs transition-colors"
         >
           <span>© 2026 오늘운</span>
           <span className={`transition-transform duration-300 ${open ? "rotate-180" : ""}`}>∨</span>
@@ -26,24 +26,24 @@ export default function Footer() {
           <div className="px-6 pb-8 space-y-6 max-w-xl mx-auto">
 
             {/* 면책조항 */}
-            <div className="rounded-xl bg-white/5 border border-white/10 px-4 py-3">
-              <p className="text-white/40 text-[11px] leading-relaxed">
-                본 서비스의 AI 운세 해석은 <span className="text-white/60">재미와 참고 목적</span>으로 제공됩니다.
+            <div className="rounded-xl bg-white/4 border border-white/8 px-4 py-3">
+              <p className="text-[#a8a6b7]/60 text-[11px] leading-relaxed">
+                본 서비스의 AI 운세 해석은 <span className="text-[#f4f0ff]/70">재미와 참고 목적</span>으로 제공됩니다.
                 실제 의사결정, 투자, 건강, 법률 등 중요한 사안에 활용하지 마세요.
                 운세 결과는 개인의 상황에 따라 다를 수 있습니다.
               </p>
             </div>
 
             {/* 링크 */}
-            <div className="flex justify-center gap-6 text-xs text-white/40">
-              <button onClick={() => setModal("terms")} className="hover:text-white/70 transition-colors">이용약관</button>
-              <span className="text-white/20">·</span>
-              <button onClick={() => setModal("privacy")} className="hover:text-white/70 transition-colors">개인정보처리방침</button>
-              <span className="text-white/20">·</span>
-              <a href="mailto:ters9292@gmail.com" className="hover:text-white/70 transition-colors">문의하기</a>
+            <div className="flex justify-center gap-6 text-xs text-[#a8a6b7]/50">
+              <button onClick={() => setModal("terms")} className="hover:text-[#f4f0ff] transition-colors">이용약관</button>
+              <span className="text-[#a8a6b7]/25">·</span>
+              <button onClick={() => setModal("privacy")} className="hover:text-[#f4f0ff] transition-colors">개인정보처리방침</button>
+              <span className="text-[#a8a6b7]/25">·</span>
+              <a href="mailto:ters9292@gmail.com" className="hover:text-[#f4f0ff] transition-colors">문의하기</a>
             </div>
 
-            <p className="text-center text-white/20 text-[11px]">© 2026 오늘운 · All rights reserved.</p>
+            <p className="text-center text-[#a8a6b7]/30 text-[11px]">© 2026 오늘운 · All rights reserved.</p>
           </div>
         </div>
       </footer>

@@ -107,6 +107,7 @@ const NAV_CARDS = [
   { href: "/admin/ai-usage", icon: "🤖", label: "AI 사용량",     color: "border-amber-400/20 hover:border-amber-400/50" },
   { href: "/admin/readings", icon: "📖", label: "운세 기록",     color: "border-indigo-400/20 hover:border-indigo-400/50" },
   { href: "/admin/batch",    icon: "⚡", label: "배치 관리",     color: "border-teal-400/20 hover:border-teal-400/50" },
+  { href: "/admin/prompts",  icon: "🔍", label: "AI 프롬프트",   color: "border-violet-400/20 hover:border-violet-400/50" },
 ];
 
 // ─── 컴포넌트 ─────────────────────────────────────────────────────────────────

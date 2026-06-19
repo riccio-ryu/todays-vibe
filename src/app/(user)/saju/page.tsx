@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { calculateSaju, HOUR_OPTIONS, type BirthInput, type SajuResult } from "@/lib/saju/calculator";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 import AILoadingIndicator from "@/components/common/AILoadingIndicator";
+import AdSlot from "@/components/common/AdSlot";
 import { boldHighlight } from "@/lib/utils/format";
 
 // ─── 사주 원국 테이블 ──────────────────────────────────────────────────
@@ -448,6 +449,11 @@ export default function SajuPage() {
               />
             )}
           </div>
+
+          {/* 광고 */}
+          {!loading && interpretation && (
+            <AdSlot slot="5693296487" className="rounded-xl" />
+          )}
 
           {/* 다시 보기 */}
           <button

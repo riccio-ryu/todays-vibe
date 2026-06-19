@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import AILoadingIndicator from "@/components/common/AILoadingIndicator";
+import AdSlot from "@/components/common/AdSlot";
 
 interface FortuneResultProps {
   result: string;
@@ -110,9 +111,14 @@ export default function FortuneResult({
         )}
       </div>
 
+      {/* 광고 — 결과 로딩 완료 후에만 노출 */}
+      {!isLoading && result && (
+        <AdSlot slot="5693296487" className="mt-5 rounded-xl" />
+      )}
+
       {/* 하단 버튼 */}
       {!isLoading && (
-        <div className="mt-5 flex gap-3">
+        <div className="mt-4 flex gap-3">
           <button
             onClick={onReset}
             className="flex-1 py-3 rounded-xl border border-white/20 text-white/70 text-sm font-medium hover:bg-white/10 hover:text-white transition-colors"
