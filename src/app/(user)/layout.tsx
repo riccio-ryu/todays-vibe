@@ -6,7 +6,7 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
   return (
     <TimeBackground>
       <Header />
-      <main className="pt-[60px]">
+      <main className="pt-20">
         {children}
       </main>
       <Footer />

@@ -40,6 +40,15 @@ body {
   background-clip: text;
 }
 
+/* Floating pill 헤더 */
+.header-pill {
+  background: rgba(6, 3, 23, 0.82);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow:
+    rgba(255,255,255,0.04) 0px 0px 20px 0px inset,
+    rgba(147,130,255,0.07) 0px 0px 48px 0px;
+}
+
 /* 카드 — 인셋 림라이트 글로우 (drop shadow 없음) */
 .card-glow {
   background: #060317;
