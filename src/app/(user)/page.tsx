@@ -1,11 +1,12 @@
 import fortunesData from "@/data/fortunes.json";
 import { getAdminFirestore } from "@/lib/firebase/admin";
+import { getDailyRanking } from "@/lib/firebase/daily-rank";
 import { todayKST } from "@/lib/utils/date";
 import type { MenuItem } from "@/types/menu";
 import FortuneGrid from "./FortuneGrid";
 import QuickMenu from "@/components/home/QuickMenu";
 import HeroCard from "@/components/home/HeroCard";
-import PopularSection from "@/components/home/PopularSection";
+import PopularSection, { type RankedItem } from "@/components/home/PopularSection";
 import OracleHeader from "@/components/home/OracleHeader";
 import AdSlot from "@/components/common/AdSlot";
 
@@ -40,7 +41,10 @@ async function getQuickMenuItems(allMenus: MenuItem[]): Promise<MenuItem[]> {
 export default async function Home() {
   const items = await getMenuItems();
   const { categories } = fortunesData;
-  const quickMenuItems = await getQuickMenuItems(items);
+  const [quickMenuItems, dailyRanking] = await Promise.all([
+    getQuickMenuItems(items),
+    getDailyRanking().catch(() => []),
+  ]);
   const today = todayKST();
 
   // Firestore 데이터가 없으면 fortunes.json으로 폴백
@@ -66,7 +70,25 @@ export default async function Home() {
           popular: (f as any).popular as boolean | undefined,
         }));
 
-  const popularItems = fortunes.filter((f) => f.popular && f.ready);
+  // 실시간 순위 → MenuItem 조인. 데이터 없으면 fortunes.json popular ID로 폴백
+  const menuMap = new Map(fortunes.map((f) => [f.id, f]));
+  const popularFallbackIds = fortunesData.fortunes
+    .filter((f) => (f as { popular?: boolean }).popular)
+    .map((f) => f.id);
+
+  const rankedItems: RankedItem[] = dailyRanking.length > 0
+    ? dailyRanking
+        .map(({ menuId, count }, i) => {
+          const item = menuMap.get(menuId);
+          if (!item || !item.ready) return null;
+          return { item, count, rank: i + 1 };
+        })
+        .filter(Boolean) as RankedItem[]
+    : popularFallbackIds
+        .map((id) => menuMap.get(id))
+        .filter((f): f is MenuItem => !!f && f.ready)
+        .slice(0, 5)
+        .map((item, i) => ({ item, count: 0, rank: i + 1 }));
 
   return (
     <div className="relative max-w-4xl mx-auto px-4 py-8 sm:py-12">
@@ -98,8 +120,8 @@ export default async function Home() {
       {/* Quick Menu */}
       <QuickMenu items={quickMenuItems} />
 
-      {/* 인기 운세 */}
-      <PopularSection items={popularItems} />
+      {/* 오늘 인기 운세 순위 */}
+      <PopularSection rankedItems={rankedItems} />
 
       {/* 광고 — 인기 섹션과 전체 목록 사이 */}
       <AdSlot slot="1099445352" className="mb-8 rounded-xl" />
