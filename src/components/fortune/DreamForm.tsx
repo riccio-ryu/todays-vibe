@@ -38,12 +38,12 @@ export default function DreamForm() {
     setMood("");
   };
 
-  // 결과가 있거나 로딩 중이면 결과 화면 표시
   if (result || isLoading) {
     return (
       <FortuneResult
         result={result}
         isLoading={isLoading}
+        error={error}
         onReset={handleReset}
         title="꿈해몽 결과"
         icon="💭"
