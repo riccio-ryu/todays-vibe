@@ -3,7 +3,7 @@ import { getAdminFirestore } from "@/lib/firebase/admin";
 import { getDailyRanking } from "@/lib/firebase/daily-rank";
 import { todayKST } from "@/lib/utils/date";
 import type { MenuItem } from "@/types/menu";
-import FortuneGrid from "./FortuneGrid";
+import HomeInteractive from "./HomeInteractive";
 import QuickMenu from "@/components/home/QuickMenu";
 import HeroCard from "@/components/home/HeroCard";
 import PopularSection, { type RankedItem } from "@/components/home/PopularSection";
@@ -126,8 +126,8 @@ export default async function Home() {
       {/* 광고 — 인기 섹션과 전체 목록 사이 */}
       <AdSlot slot="1099445352" className="mb-8 rounded-xl" />
 
-      {/* Category sections */}
-      <FortuneGrid categories={categories} fortunes={fortunes} />
+      {/* 즐겨찾기 + 카테고리 */}
+      <HomeInteractive categories={categories} fortunes={fortunes} />
     </div>
   );
 }
