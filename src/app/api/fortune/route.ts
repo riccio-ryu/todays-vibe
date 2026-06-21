@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
       userId: usage.userId,
       readingType: type as ReadingType,
       input: input as unknown as Record<string, unknown>,
+      onRollback: usage.rollback,
     });
   } catch (err) {
     console.error("[fortune API error]", err);

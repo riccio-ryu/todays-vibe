@@ -11,6 +11,7 @@ interface FortuneResultProps {
   title: string;
   icon?: string;
   fortuneType?: "tarot" | "saju" | "dream" | "default";
+  error?: string | null;
 }
 
 // 마크다운 헤더(## 제목)를 간단하게 렌더링하는 파서
@@ -80,6 +81,7 @@ export default function FortuneResult({
   title,
   icon,
   fortuneType = "default",
+  error,
 }: FortuneResultProps) {
   const topRef = useRef<HTMLDivElement>(null);
 
@@ -100,6 +102,11 @@ export default function FortuneResult({
       <div className="rounded-2xl bg-white/10 border border-white/15 backdrop-blur-sm px-6 py-5 min-h-[200px]">
         {isLoading && result === "" ? (
           <AILoadingIndicator type={fortuneType} />
+        ) : error && !result ? (
+          <div className="flex flex-col items-center justify-center py-8 gap-3">
+            <p className="text-3xl">⚠️</p>
+            <p className="text-white/70 text-sm text-center">{error}</p>
+          </div>
         ) : (
           <div>
             {parseMarkdown(result)}
@@ -125,21 +132,23 @@ export default function FortuneResult({
           >
             다시 해석하기
           </button>
-          <button
-            onClick={() => {
-              if (navigator.share) {
-                navigator.share({ title, text: result }).catch((e) => {
-                  if (e?.name !== "AbortError") throw e;
-                });
-              } else {
-                navigator.clipboard.writeText(result);
-                alert("결과가 클립보드에 복사됐어요!");
-              }
-            }}
-            className="flex-1 py-3 rounded-xl bg-purple-700/50 border border-purple-500/30 text-purple-200 text-sm font-medium hover:bg-purple-600/50 transition-colors"
-          >
-            📤 공유하기
-          </button>
+          {result && (
+            <button
+              onClick={() => {
+                if (navigator.share) {
+                  navigator.share({ title, text: result }).catch((e) => {
+                    if (e?.name !== "AbortError") throw e;
+                  });
+                } else {
+                  navigator.clipboard.writeText(result);
+                  alert("결과가 클립보드에 복사됐어요!");
+                }
+              }}
+              className="flex-1 py-3 rounded-xl bg-purple-700/50 border border-purple-500/30 text-purple-200 text-sm font-medium hover:bg-purple-600/50 transition-colors"
+            >
+              📤 공유하기
+            </button>
+          )}
         </div>
       )}
     </div>

@@ -2,6 +2,14 @@
 
 ---
 
+## 2026-06-20
+
+- 500 에러 처리 개선 — AI 호출 실패 시 `daily_usage` 카운트 롤백 (`src/lib/usage-check.ts`에 `rollback` 함수 반환, `src/lib/gemini/stream-response.ts`에서 `onRollback` 호출), `FortuneResult.tsx`에 `error` prop 추가해 ⚠️ 전용 에러 화면 표시, `GeneralFortuneForm` / `DreamForm` / `CompatibilityBirthForm`에 에러 상태 연결
+- 오늘 인기 운세 순위 섹션 추가 — `src/lib/firebase/daily-rank.ts` 신규 생성 (`daily_usage` 컬렉션 날짜 기준 집계, 1시간 캐시), `PopularSection.tsx` UI 전면 개편 (1~5위 순위 뱃지·배경 바·이용 수 표시), 실시간 데이터 없을 시 `fortunes.json` popular 항목으로 폴백
+- 즐겨찾기 메뉴 설정 구현 — `src/app/api/user/favorites/route.ts` 신규 생성 (GET/POST/DELETE, 최대 8개, Firestore `arrayUnion`/`arrayRemove`), `FortuneGrid.tsx` 카드 좌상단 ☆ 버튼 추가 (로그인 유저만, 낙관적 업데이트), `FavoritesSection.tsx` 신규 생성 (홈 상단 즐겨찾기 슬롯), `HomeInteractive.tsx` 신규 생성 (즐겨찾기 상태 공유 Client wrapper)
+
+---
+
 ## 2026-06-19
 
 - 육효점 추가 (`src/app/(user)/yuk-hyo/page.tsx`) — 본괘·지괘(변효 시스템) 6효 동전 던지기 UI, 효별 색상 표시, 변효 위치 강조, 심층 풀이 연동

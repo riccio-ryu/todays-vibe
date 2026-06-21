@@ -42,6 +42,7 @@ export function createTarotSpreadRoute<T extends TarotCardBase>(
         userId: usage.userId,
         readingType,
         input: { cards, question },
+        onRollback: usage.rollback,
       });
     } catch (err) {
       console.error(`[${readingType}]`, err);

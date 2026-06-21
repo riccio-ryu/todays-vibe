@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { ChevronDown, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { ChevronDown, ArrowRight, Eye, EyeOff, Star } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import LoginRequiredModal from "@/components/common/LoginRequiredModal";
 import type { MenuItem } from "@/types/menu";
@@ -20,9 +20,11 @@ interface Category {
 interface Props {
   categories: Category[];
   fortunes: MenuItem[];
+  favorites?: string[];
+  onFavoriteToggle?: (menuId: string) => void;
 }
 
-export default function FortuneGrid({ categories, fortunes }: Props) {
+export default function FortuneGrid({ categories, fortunes, favorites = [], onFavoriteToggle }: Props) {
   const { user, loading } = useAuth();
   const [modalPath, setModalPath] = useState<string | null>(null);
   const [showComingSoon, setShowComingSoon] = useState(false);
@@ -181,6 +183,8 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
                           const used = status?.used ?? 0;
                           const limit = status?.limit ?? null;
 
+                          const isFav = favorites.includes(fortune.id);
+
                           const card = (
                             <div
                               className={`group relative flex flex-col h-full rounded-xl p-4 transition-all duration-200
@@ -214,6 +218,22 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
                                   준비중
                                 </span>
                               )}
+
+                              {/* 즐겨찾기 버튼 */}
+                              {isReady && onFavoriteToggle && (
+                                <button
+                                  onClick={(e) => { e.preventDefault(); onFavoriteToggle(fortune.id); }}
+                                  className={`absolute top-2 left-2 w-5 h-5 flex items-center justify-center rounded-full transition-all
+                                    ${isFav
+                                      ? "text-yellow-400 opacity-100"
+                                      : "text-white/20 opacity-0 group-hover:opacity-100 hover:text-yellow-400"
+                                    }`}
+                                  title={isFav ? "즐겨찾기 해제" : "즐겨찾기 추가"}
+                                >
+                                  <Star className={`w-3.5 h-3.5 ${isFav ? "fill-current" : ""}`} />
+                                </button>
+                              )}
+
                               <div className="text-3xl mb-2">{fortune.icon}</div>
                               <h3 className="text-[#f4f0ff] font-medium text-sm mb-1 leading-tight">
                                 {fortune.nameKo}
