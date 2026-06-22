@@ -195,6 +195,35 @@ export default function TarotDailyPage() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* 타로 안내 */}
+      <div className="mt-12 border-t border-white/10 pt-10 space-y-5">
+        <h2 className="text-white font-bold text-lg">타로 원카드란?</h2>
+        <p className="text-white/50 text-sm leading-relaxed">
+          타로(Tarot)는 15세기 유럽에서 시작된 78장의 카드 덱으로, 오늘날 직관과 성찰의 도구로 널리 사용됩니다.
+          원카드(One Card Draw)는 하루를 시작하거나 마무리할 때 단 한 장을 뽑아
+          오늘의 에너지와 메시지를 읽는 방식입니다. 정방향은 카드 에너지가 원활히 흐를 때,
+          역방향은 그 에너지가 내면을 향하거나 지연될 때의 의미를 담습니다.
+        </p>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="rounded-xl bg-white/5 border border-white/10 p-4">
+            <p className="text-purple-300 text-xs font-semibold mb-2">메이저 아르카나 (22장)</p>
+            <p className="text-white/40 text-xs leading-relaxed">
+              삶의 큰 흐름과 영적 교훈을 담습니다.
+              0번 바보(The Fool)부터 21번 세계(The World)까지,
+              인간의 내면 여정을 상징합니다.
+            </p>
+          </div>
+          <div className="rounded-xl bg-white/5 border border-white/10 p-4">
+            <p className="text-purple-300 text-xs font-semibold mb-2">마이너 아르카나 (56장)</p>
+            <p className="text-white/40 text-xs leading-relaxed">
+              일상의 사건·감정·도전을 담습니다.
+              컵(감정)·완드(열정)·검(생각)·펜타클(물질)
+              4개 수트, 각 14장으로 구성됩니다.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

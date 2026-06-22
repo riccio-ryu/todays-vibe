@@ -258,6 +258,65 @@ export default function ZodiacSignPage() {
           </>
         )}
 
+        {/* 별자리 상세 안내 */}
+        <div className="mt-8 rounded-2xl bg-white/5 border border-white/10 p-5 space-y-4">
+          <h2 className="text-white/80 font-semibold text-sm">{signInfo.name}에 대하여</h2>
+
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
+            <div><span className="text-white/30">기간</span><span className="text-white/60 ml-2">{signInfo.dateRange}</span></div>
+            <div><span className="text-white/30">원소</span><span className={`ml-2 ${elColor}`}>{signInfo.elementKo}</span></div>
+            <div><span className="text-white/30">지배행성</span><span className="text-white/60 ml-2">{signInfo.rulingPlanet}</span></div>
+            <div><span className="text-white/30">행운의 색</span><span className="text-white/60 ml-2">{signInfo.luckyColors?.join(", ")}</span></div>
+          </div>
+
+          {signInfo.traits?.length > 0 && (
+            <div className="border-t border-white/10 pt-3">
+              <p className="text-white/30 text-xs mb-2">주요 특성</p>
+              <div className="flex flex-wrap gap-1.5">
+                {signInfo.traits.map((t: string) => (
+                  <span key={t} className={`text-[11px] px-2 py-0.5 rounded-full border ${elBorder} ${elColor} bg-white/5`}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-3 border-t border-white/10 pt-3">
+            {signInfo.strengths?.length > 0 && (
+              <div>
+                <p className="text-white/30 text-xs mb-1.5">강점</p>
+                <ul className="space-y-1">
+                  {signInfo.strengths.map((s: string) => (
+                    <li key={s} className={`text-xs ${elColor}`}>· {s}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {signInfo.weaknesses?.length > 0 && (
+              <div>
+                <p className="text-white/30 text-xs mb-1.5">주의할 점</p>
+                <ul className="space-y-1">
+                  {signInfo.weaknesses.map((w: string) => (
+                    <li key={w} className="text-xs text-white/40">· {w}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          {signInfo.compatibleSigns?.length > 0 && (
+            <div className="border-t border-white/10 pt-3">
+              <p className="text-white/30 text-xs mb-2">궁합이 좋은 별자리</p>
+              <div className="flex gap-2">
+                {signInfo.compatibleSigns.map((s: string) => (
+                  <span key={s} className="text-xs text-white/50 bg-white/5 border border-white/10 px-2 py-1 rounded-lg">{s}</span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* 다른 별자리 */}
         <div className="mt-8 text-center">
           <Link href="/zodiac" className="text-white/30 text-sm hover:text-white/60 transition-colors">

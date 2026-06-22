@@ -1,5 +1,4 @@
 # 📋 개발 일지
-
 ---
 
 ## 2026-06-20
@@ -7,11 +6,17 @@
 - 500 에러 처리 개선 — AI 호출 실패 시 `daily_usage` 카운트 롤백 (`src/lib/usage-check.ts`에 `rollback` 함수 반환, `src/lib/gemini/stream-response.ts`에서 `onRollback` 호출), `FortuneResult.tsx`에 `error` prop 추가해 ⚠️ 전용 에러 화면 표시, `GeneralFortuneForm` / `DreamForm` / `CompatibilityBirthForm`에 에러 상태 연결
 - 오늘 인기 운세 순위 섹션 추가 — `src/lib/firebase/daily-rank.ts` 신규 생성 (`daily_usage` 컬렉션 날짜 기준 집계, 1시간 캐시), `PopularSection.tsx` UI 전면 개편 (1~5위 순위 뱃지·배경 바·이용 수 표시), 실시간 데이터 없을 시 `fortunes.json` popular 항목으로 폴백
 - 즐겨찾기 메뉴 설정 구현 — `src/app/api/user/favorites/route.ts` 신규 생성 (GET/POST/DELETE, 최대 8개, Firestore `arrayUnion`/`arrayRemove`), `FortuneGrid.tsx` 카드 좌상단 ☆ 버튼 추가 (로그인 유저만, 낙관적 업데이트), `FavoritesSection.tsx` 신규 생성 (홈 상단 즐겨찾기 슬롯), `HomeInteractive.tsx` 신규 생성 (즐겨찾기 상태 공유 Client wrapper)
-
 ---
 
 ## 2026-06-19
 
+- Google AdSense 정책 위반 수정 — `src/app/layout.tsx`에서 AdSense `<Script>` 제거, `src/app/(user)/layout.tsx`로 이동하여 운세 콘텐츠 페이지에서만 광고 실행 (로그인·관리자·인증 페이지 광고 제거)
+- `src/components/home/AboutSection.tsx` 신규 생성 — 오늘운 서비스 소개(별자리·타로·사주·꿈해몽·주역·기타 6종 상세 설명), 자주 묻는 질문 4개 포함
+- 홈 페이지(`src/app/(user)/page.tsx`) 하단에 `AboutSection` 추가 — 구글 "가치가 별로 없는 콘텐츠" 위반 대응
+- 별자리 목록 페이지(`src/app/(user)/zodiac/page.tsx`) 하단에 점성술 역사·4원소(불/흙/바람/물) 설명 섹션 추가
+- 별자리 상세 페이지(`src/app/(user)/zodiac/[sign]/page.tsx`) 하단에 강점·약점·주요 특성·행운의 색·궁합 별자리 정적 데이터 섹션 추가
+- 타로 원카드 페이지(`src/app/(user)/tarot-daily/page.tsx`) 하단에 타로 역사·메이저/마이너 아르카나 설명 섹션 추가
+- `PWAInstallButton.tsx` iOS 가이드 팝오버 위치 버그 수정 — `absolute right-0` → `fixed` + `getBoundingClientRect()` 계산으로 변경, 뷰포트 좌우 12px 여백 클램핑으로 화면 잘림 해결, 꼬리 위치 버튼 중심 기준 동적 계산
 - 육효점 추가 (`src/app/(user)/yuk-hyo/page.tsx`) — 본괘·지괘(변효 시스템) 6효 동전 던지기 UI, 효별 색상 표시, 변효 위치 강조, 심층 풀이 연동
 - UI 전면 개편 Phase A/B/C — `TimeBackground.tsx`(시간대별 배경 그라데이션), `OracleHeader.tsx`(오라클 메시지 로테이션), `QuickMenu.tsx`(빠른 메뉴), `HeroCard.tsx` 모바일 개선 등 홈 UI 다수 파일 정비
 - 관리자 AI 프롬프트 편집기 구현 (`src/app/admin/prompts/`) — 20가지 운세 프롬프트 템플릿을 Firestore `ai_prompts/{type}`에 저장·수정·초기화, `{{변수}}` 플레이스홀더 지원, 5분 인메모리 캐시, 변수 칩 클릭으로 편집기에 삽입
@@ -32,7 +37,12 @@
 
 ## 2026-06-18
 
-- PWA 도입 — `public/manifest.json`, `public/sw.js`, `public/icons/` (192·512px) 추가, 오프라인 캐시 전략(API/Firebase 제외, 페이지·정적 파일 캐시-우선) 적용
+- PWA 도입 — `public/manifest.json`, `public/sw.js`, `public/icons/` (192×512px) 추가, 오프라인 캐시 전략 적용 (API/Firebase 제외, 정적 파일·페이지 캐시)
+- `src/app/layout.tsx` PWA 설정 추가 — `manifest`, `appleWebApp`(iOS 홈 화면 지원), `icons.apple`, `viewport.themeColor` 메타 반영
+- `src/components/common/IOSInstallBanner.tsx` 신규 생성 — iOS Safari 전용 하단 설치 안내 배너, 조건부 표시 (iOS + non-standalone + 세션 미해제), 닫기 시 `sessionStorage` 기록
+- `src/components/common/PWAInstallButton.tsx` 신규 생성 — 헤더용 다운로드 버튼, Android(`beforeinstallprompt`)·iOS(팝오버 가이드) 분기, standalone 모드 자동 숨김
+- `src/components/Header.tsx` 수정 — 로그인·비로그인 상태 모두에 `PWAInstallButton` 배치
+- `docs/pwa-guide.md` 작성 — PWA 도입 배경, 구현 파일 8개 상세 설명, 동작 흐름도, 장단점, 테스트 방법 포함
 - `src/app/layout.tsx` PWA 설정 추가 — `manifest`, `appleWebApp`(iOS Safari 홈 화면 추가 지원), `icons.apple`, `viewport.themeColor`, `mobile-web-app-capable` 메타 반영
 - `src/components/common/IOSInstallBanner.tsx` 신규 생성 — iOS Safari 전용 하단 설치 안내 배너, 조건부 표시(iOS 기기 + non-standalone + 세션 미해제), 닫기 시 `sessionStorage` 기록
 - `src/components/common/PWAInstallButton.tsx` 신규 생성 — 헤더용 다운로드 버튼, Android(`beforeinstallprompt` 이벤트 캡처)·iOS(팝오버 가이드) 분기 처리, standalone 모드 시 자동 숨김

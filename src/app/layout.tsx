@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Noto_Sans_KR, Roboto } from "next/font/google";
-import Script from "next/script";
 import { AuthProvider } from "@/contexts/AuthContext";
 import PWARegister from "@/components/common/PWARegister";
 import IOSInstallBanner from "@/components/common/IOSInstallBanner";
@@ -64,11 +63,6 @@ export default function RootLayout({
         <PWARegister />
         <IOSInstallBanner />
         <AuthProvider>{children}</AuthProvider>
-        <Script
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2343737818437914"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
       </body>
     </html>
   );
