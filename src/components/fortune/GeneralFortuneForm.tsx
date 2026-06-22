@@ -79,7 +79,7 @@ export default function GeneralFortuneForm({ config }: Props) {
     await submit(config.type, input);
   }
 
-  if (result || isLoading) {
+  if (result || isLoading || error) {
     return (
       <div>
         {saveStatus === "saved" && (
@@ -92,6 +92,7 @@ export default function GeneralFortuneForm({ config }: Props) {
         <FortuneResult
           result={result}
           isLoading={isLoading}
+          error={error}
           onReset={() => { reset(); setQuestion(""); setSaveStatus("idle"); }}
           title={`${config.title} 결과`}
           icon={config.icon}

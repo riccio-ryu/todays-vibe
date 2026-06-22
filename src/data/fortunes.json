@@ -175,11 +175,11 @@
       "name": "육효점",
       "category": "birthday",
       "icon": "☯️",
-      "description": "질문 + 동전 3개 던지기 → 주역 괘로 사건 성패 판단",
+      "description": "동전 6번 던져 본괘·지괘로 현재와 미래를 함께 읽는 전통 점술",
       "path": "/yuk-hyo",
       "difficulty": "medium",
       "isAI": true,
-      "ready": false,
+      "ready": true,
       "tags": [
         "전통",
         "동양"

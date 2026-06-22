@@ -25,7 +25,7 @@ type DenyReason =
   | "usage_limit_exceeded";
 
 type CheckResult =
-  | { allowed: true; remaining: number | null; userId: string | null; role: AccessLevel }
+  | { allowed: true; remaining: number | null; userId: string | null; role: AccessLevel; rollback: (() => Promise<void>) | null }
   | { allowed: false; reason: DenyReason };
 
 /**
@@ -57,11 +57,11 @@ export async function checkUsage(
 
   // usageLimits 없으면 무제한
   const limits = menu?.usageLimits;
-  if (!limits) return { allowed: true, remaining: null, userId, role };
+  if (!limits) return { allowed: true, remaining: null, userId, role, rollback: null };
 
   const limit: number = limits[role] ?? -1;
   if (limit === 0) return { allowed: false, reason: "insufficient_plan" };
-  if (limit === -1) return { allowed: true, remaining: null, userId, role };
+  if (limit === -1) return { allowed: true, remaining: null, userId, role, rollback: null };
 
   // 일별 카운트 체크 + 원자적 증가
   if (!userId) return { allowed: false, reason: "unauthenticated" };
@@ -88,7 +88,14 @@ export async function checkUsage(
   });
 
   if (!txAllowed) return { allowed: false, reason: "usage_limit_exceeded" };
-  return { allowed: true, remaining: txRemaining, userId, role };
+
+  const rollback = async () => {
+    await db.collection("daily_usage").doc(docId).update({
+      count: FieldValue.increment(-1),
+    });
+  };
+
+  return { allowed: true, remaining: txRemaining, userId, role, rollback };
 }
 
 const DENY_MESSAGES: Record<DenyReason, string> = {

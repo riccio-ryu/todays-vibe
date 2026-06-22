@@ -1,5 +1,11 @@
 # 📋 개발 일지
+---
 
+## 2026-06-20
+
+- 500 에러 처리 개선 — AI 호출 실패 시 `daily_usage` 카운트 롤백 (`src/lib/usage-check.ts`에 `rollback` 함수 반환, `src/lib/gemini/stream-response.ts`에서 `onRollback` 호출), `FortuneResult.tsx`에 `error` prop 추가해 ⚠️ 전용 에러 화면 표시, `GeneralFortuneForm` / `DreamForm` / `CompatibilityBirthForm`에 에러 상태 연결
+- 오늘 인기 운세 순위 섹션 추가 — `src/lib/firebase/daily-rank.ts` 신규 생성 (`daily_usage` 컬렉션 날짜 기준 집계, 1시간 캐시), `PopularSection.tsx` UI 전면 개편 (1~5위 순위 뱃지·배경 바·이용 수 표시), 실시간 데이터 없을 시 `fortunes.json` popular 항목으로 폴백
+- 즐겨찾기 메뉴 설정 구현 — `src/app/api/user/favorites/route.ts` 신규 생성 (GET/POST/DELETE, 최대 8개, Firestore `arrayUnion`/`arrayRemove`), `FortuneGrid.tsx` 카드 좌상단 ☆ 버튼 추가 (로그인 유저만, 낙관적 업데이트), `FavoritesSection.tsx` 신규 생성 (홈 상단 즐겨찾기 슬롯), `HomeInteractive.tsx` 신규 생성 (즐겨찾기 상태 공유 Client wrapper)
 ---
 
 ## 2026-06-19
@@ -11,6 +17,21 @@
 - 별자리 상세 페이지(`src/app/(user)/zodiac/[sign]/page.tsx`) 하단에 강점·약점·주요 특성·행운의 색·궁합 별자리 정적 데이터 섹션 추가
 - 타로 원카드 페이지(`src/app/(user)/tarot-daily/page.tsx`) 하단에 타로 역사·메이저/마이너 아르카나 설명 섹션 추가
 - `PWAInstallButton.tsx` iOS 가이드 팝오버 위치 버그 수정 — `absolute right-0` → `fixed` + `getBoundingClientRect()` 계산으로 변경, 뷰포트 좌우 12px 여백 클램핑으로 화면 잘림 해결, 꼬리 위치 버튼 중심 기준 동적 계산
+- 육효점 추가 (`src/app/(user)/yuk-hyo/page.tsx`) — 본괘·지괘(변효 시스템) 6효 동전 던지기 UI, 효별 색상 표시, 변효 위치 강조, 심층 풀이 연동
+- UI 전면 개편 Phase A/B/C — `TimeBackground.tsx`(시간대별 배경 그라데이션), `OracleHeader.tsx`(오라클 메시지 로테이션), `QuickMenu.tsx`(빠른 메뉴), `HeroCard.tsx` 모바일 개선 등 홈 UI 다수 파일 정비
+- 관리자 AI 프롬프트 편집기 구현 (`src/app/admin/prompts/`) — 20가지 운세 프롬프트 템플릿을 Firestore `ai_prompts/{type}`에 저장·수정·초기화, `{{변수}}` 플레이스홀더 지원, 5분 인메모리 캐시, 변수 칩 클릭으로 편집기에 삽입
+  - `src/lib/claude/promptTemplates.ts` 신규 생성 — 20종 운세의 `defaultTemplate`, `labelKo`, `vars` 메타데이터 정의
+  - `src/lib/claude/promptStore.ts` 신규 생성 — Firestore 읽기/쓰기/초기화/일괄 시드 + `buildPromptFromDB()` (DB 템플릿 우선, fallback 하드코딩)
+  - `src/app/api/fortune/route.ts` 수정 — `buildPrompt()` → `buildPromptFromDB()` 교체
+  - `src/app/admin/prompts/PromptsEditor.tsx` 신규 생성 — 아코디언 편집기 UI, 저장/초기화/전체 시드 버튼
+- AI 브랜딩 문구 사용자 노출 제거 — 18개 파일에서 "AI" 뱃지·버튼·레이블을 `✦` 심볼 및 "풀이"/"심층 풀이"/"풍수 분석" 등 중립 용어로 교체 (`AILoadingIndicator`, `PageHeader`, `TarotActionButtons`, `FortuneGrid`, `HeroCard`, `PopularSection` 등)
+- 메인 운세 카드 사용 횟수 표시 (`src/app/(user)/FortuneGrid.tsx`) — 로그인 사용자에게 카드마다 `N/N회 사용하기` 표시, 한도 소진 시 카드 dim + `오늘완료` 뱃지
+  - `src/app/api/user/fortune-status-bulk/route.ts` 신규 생성 — 활성 운세 전체 menuId를 한 번에 Firestore 조회해 `{used, limit, exhausted}` 맵 반환 (개별 N회 API 호출 대신 1회 bulk)
+- `card-glow` / `card-mini` 테두리 추가 (`src/app/globals.css`) — `border: 1px solid rgba(255,255,255,0.08)` 추가로 다크 배경과 카드 경계 구분 개선
+- 파비콘 수정 (`src/app/layout.tsx`) — `metadata.icons`에 `icon` (SVG + PNG) 및 `shortcut` 명시적 등록, 브라우저 탭 파비콘 미표시 문제 해결
+- 푸터 GitHub 링크 추가 (`src/components/Footer.tsx`) — 이용약관·개인정보·문의하기 링크 행에 GitHub 저장소 링크 추가
+- README 버전별 적용 내역 테이블 추가 (`README.md`) — v0.1(2026-05-02) ~ v0.9(2026-06-19) 9버전 이력, 라이브 링크 강조
+- TODO.md 생성 및 `/todo` 스킬 추가 — 프로젝트 작업 백로그 파일(`TODO.md`) 신규 생성, Claude가 항목 추가·완료처리·수정을 수행하는 `/todo` 슬래시 커맨드 스킬 등록 (`.claude/commands/todo.md`)
 
 ---
 
@@ -22,6 +43,11 @@
 - `src/components/common/PWAInstallButton.tsx` 신규 생성 — 헤더용 다운로드 버튼, Android(`beforeinstallprompt`)·iOS(팝오버 가이드) 분기, standalone 모드 자동 숨김
 - `src/components/Header.tsx` 수정 — 로그인·비로그인 상태 모두에 `PWAInstallButton` 배치
 - `docs/pwa-guide.md` 작성 — PWA 도입 배경, 구현 파일 8개 상세 설명, 동작 흐름도, 장단점, 테스트 방법 포함
+- `src/app/layout.tsx` PWA 설정 추가 — `manifest`, `appleWebApp`(iOS Safari 홈 화면 추가 지원), `icons.apple`, `viewport.themeColor`, `mobile-web-app-capable` 메타 반영
+- `src/components/common/IOSInstallBanner.tsx` 신규 생성 — iOS Safari 전용 하단 설치 안내 배너, 조건부 표시(iOS 기기 + non-standalone + 세션 미해제), 닫기 시 `sessionStorage` 기록
+- `src/components/common/PWAInstallButton.tsx` 신규 생성 — 헤더용 다운로드 버튼, Android(`beforeinstallprompt` 이벤트 캡처)·iOS(팝오버 가이드) 분기 처리, standalone 모드 시 자동 숨김
+- `src/components/Header.tsx` 수정 — 로그인·비로그인 상태 모두에 `PWAInstallButton` 배치
+- `docs/pwa-guide.md` 작성 — PWA 도입 배경, 구현 파일 8개 상세 설명(manifest·sw.js·icons·PWARegister·layout·IOSInstallBanner·PWAInstallButton·Header), 동작 흐름도, 장단점, 테스트 방법 포함
 
 ---
 
