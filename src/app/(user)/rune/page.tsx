@@ -170,7 +170,7 @@ export default function RunePage() {
               : "bg-gradient-to-r from-slate-600 to-gray-700 text-white hover:opacity-90"
           }`}
         >
-          {fortuneStatus?.exhausted ? "오늘 룬 해석을 이미 이용했어요" : "ᚱ AI 룬 해석 보기"}
+          {fortuneStatus?.exhausted ? "오늘 룬 해석을 이미 이용했어요" : "ᚱ 룬 해석 보기"}
         </button>
       </form>
 

@@ -266,7 +266,7 @@ export default function SangajiPage() {
 
               {fortuneStatus?.exhausted ? (
                 <div className="text-center py-3 text-amber-600/70 text-sm rounded-xl bg-amber-950/30 border border-amber-800/20">
-                  오늘의 AI 풀이를 모두 사용했습니다. 내일 다시 이용해 주세요.
+                  오늘의 풀이를 모두 사용했습니다. 내일 다시 이용해 주세요.
                 </div>
               ) : (
                 <motion.button
@@ -279,7 +279,7 @@ export default function SangajiPage() {
                   className="w-full py-3 rounded-xl text-amber-100 font-semibold text-sm shadow-lg"
                   style={{ background: "linear-gradient(to right, #7c2d0a, #c05008)" }}
                 >
-                  AI 심층 풀이 보기
+                  심층 풀이 보기
                   {fortuneStatus &&
                     fortuneStatus.limit !== null &&
                     fortuneStatus.limit !== -1 && (

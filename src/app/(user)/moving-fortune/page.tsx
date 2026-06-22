@@ -94,7 +94,7 @@ export default function MovingFortunePage() {
     <div className="max-w-xl mx-auto px-4 py-10">
       <div className="text-center mb-8">
         <h1 className="text-white font-bold text-2xl">이사/방위 길흉</h1>
-        <p className="text-white/50 text-sm mt-2">풍수·사주 기반 이사 방향 AI 분석</p>
+        <p className="text-white/50 text-sm mt-2">풍수·사주 기반 이사 방향 분석</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">

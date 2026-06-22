@@ -133,6 +133,7 @@ export default function CompatibilityBirthForm({ config }: Props) {
       <FortuneResult
         result={result}
         isLoading={isLoading}
+        error={error}
         onReset={reset}
         title={`${config.title} 결과`}
         icon={config.icon}
