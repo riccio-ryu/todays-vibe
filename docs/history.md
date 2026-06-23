@@ -1,6 +1,16 @@
 # 📋 개발 일지
 ---
 
+## 2026-06-23
+
+- 디자인 시스템 정립 (`docs/reflect-notes-style.md` 신규 생성) — "Reflect Notes" 스타일 가이드 문서화, 어두운 천문대 테마 컬러 토큰·타이포그래피·그림자·border-radius 토큰 정의
+- `src/app/globals.css` CSS 변수 확장 — Extended palette 변수(fog, steel, iris, mercury, dusk), 그라데이션(cosmic/aurora), inset rim-light 그림자 변수, border-radius 변수(btn 5px, card 16px, badge 32px) 추가; drop shadow 전부 제거 → inset 방식으로 통일
+- `FortuneGrid.tsx` 카드 UI 개선 — 16가지 그라데이션 팔레트 + djb2 해시(`cardColor()`)로 카드별 고유 배경 오버레이 적용, 카드 `rounded-xl` → `rounded-2xl`, hover 효과 drop shadow → inset shadow
+- `HeroCard.tsx` 럭키 정보 개선 — 럭키 번호·색상·방향·키워드를 날짜 단독 seed → 날짜+uid 조합(`hashUserDate()`) 기반으로 변경해 사용자별 다른 값 생성, 비로그인 사용자 localStorage `anon-id` 자동 발급
+- 전체 border-radius 통일 — 다수 컴포넌트(`Header`, `Footer`, `LoginRequiredModal`, `TarotActionButtons` 등 30+파일)에서 `rounded-full` → `rounded-[5px]`(버튼) / `rounded-[32px]`(뱃지) 디자인 토큰에 맞게 일괄 적용
+
+---
+
 ## 2026-06-20
 
 - 500 에러 처리 개선 — AI 호출 실패 시 `daily_usage` 카운트 롤백 (`src/lib/usage-check.ts`에 `rollback` 함수 반환, `src/lib/gemini/stream-response.ts`에서 `onRollback` 호출), `FortuneResult.tsx`에 `error` prop 추가해 ⚠️ 전용 에러 화면 표시, `GeneralFortuneForm` / `DreamForm` / `CompatibilityBirthForm`에 에러 상태 연결
