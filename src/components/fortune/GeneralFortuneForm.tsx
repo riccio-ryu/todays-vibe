@@ -84,7 +84,7 @@ export default function GeneralFortuneForm({ config }: Props) {
       <div>
         {saveStatus === "saved" && (
           <div className="max-w-xl mx-auto px-4 pt-6">
-            <div className="px-4 py-2.5 rounded-xl bg-green-500/10 border border-green-400/20 text-center">
+            <div className="px-4 py-2.5 rounded-2xl bg-green-500/10 border border-green-400/20 text-center">
               <p className="text-green-400 text-sm">출생 정보가 저장되었습니다</p>
             </div>
           </div>
@@ -114,7 +114,7 @@ export default function GeneralFortuneForm({ config }: Props) {
 
       {/* 저장된 정보 알림 */}
       {savedInfo && (
-        <div className="mb-4 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-400/20 flex items-center justify-between">
+        <div className="mb-4 px-4 py-3 rounded-2xl bg-amber-500/10 border border-amber-400/20 flex items-center justify-between">
           <p className="text-amber-300 text-sm">저장된 생년월일 정보가 있습니다</p>
           <button
             onClick={() => {
@@ -145,7 +145,7 @@ export default function GeneralFortuneForm({ config }: Props) {
                   max={currentYear}
                   placeholder="1990"
                   required
-                  className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/15 text-white text-sm placeholder-white/20 focus:outline-none focus:border-purple-400 transition-colors"
+                  className="w-full px-3 py-2 rounded-[5px] bg-white/5 border border-white/10 text-[#f4f0ff] text-sm placeholder-white/20 focus:outline-none focus:border-[#9382ff]/50 transition-colors"
                 />
               </div>
               <div>
@@ -154,7 +154,7 @@ export default function GeneralFortuneForm({ config }: Props) {
                   value={month}
                   onChange={(e) => setMonth(e.target.value)}
                   required
-                  className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/15 text-white text-sm focus:outline-none focus:border-purple-400 transition-colors appearance-none"
+                  className="w-full px-3 py-2 rounded-[5px] bg-white/5 border border-white/10 text-[#f4f0ff] text-sm focus:outline-none focus:border-[#9382ff]/50 transition-colors appearance-none"
                 >
                   <option value="" className="bg-gray-900 text-white/40">월</option>
                   {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
@@ -168,7 +168,7 @@ export default function GeneralFortuneForm({ config }: Props) {
                   value={day}
                   onChange={(e) => setDay(e.target.value)}
                   required
-                  className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/15 text-white text-sm focus:outline-none focus:border-purple-400 transition-colors appearance-none"
+                  className="w-full px-3 py-2 rounded-[5px] bg-white/5 border border-white/10 text-[#f4f0ff] text-sm focus:outline-none focus:border-[#9382ff]/50 transition-colors appearance-none"
                 >
                   <option value="" className="bg-gray-900 text-white/40">일</option>
                   {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
@@ -188,10 +188,10 @@ export default function GeneralFortuneForm({ config }: Props) {
                   key={val}
                   type="button"
                   onClick={() => setGender(val)}
-                  className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                  className={`flex-1 py-2 rounded-[5px] text-sm font-medium transition-colors ${
                     gender === val
-                      ? "bg-purple-600 text-white"
-                      : "bg-white/10 text-white/50 hover:bg-white/15"
+                      ? "bg-[#5046e4] text-[#f4f0ff]"
+                      : "bg-white/5 text-[#a8a6b7] hover:bg-white/10"
                   }`}
                 >
                   {label}
@@ -210,7 +210,7 @@ export default function GeneralFortuneForm({ config }: Props) {
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               placeholder={config.questionPlaceholder}
-              className="w-full px-3 py-2.5 rounded-lg bg-white/10 border border-white/15 text-white text-sm placeholder-white/30 focus:outline-none focus:border-purple-400 transition-colors"
+              className="w-full px-3 py-2.5 rounded-[5px] bg-white/5 border border-white/10 text-[#f4f0ff] text-sm placeholder-white/25 focus:outline-none focus:border-[#9382ff]/50 transition-colors"
             />
           </div>
 
@@ -220,7 +220,7 @@ export default function GeneralFortuneForm({ config }: Props) {
               <div
                 onClick={() => setSaveBirth((v) => !v)}
                 className={`w-10 h-5 rounded-full transition-colors relative shrink-0 ${
-                  saveBirth ? "bg-purple-600" : "bg-white/20"
+                  saveBirth ? "bg-[#5046e4]" : "bg-white/20"
                 }`}
               >
                 <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${
@@ -240,10 +240,10 @@ export default function GeneralFortuneForm({ config }: Props) {
         <button
           type="submit"
           disabled={fortuneStatus?.exhausted === true}
-          className={`w-full py-3 rounded-xl font-bold text-sm transition-opacity ${
+          className={`w-full py-3 rounded-[5px] font-medium text-sm transition-colors ${
             fortuneStatus?.exhausted
-              ? "bg-white/10 text-white/30 cursor-not-allowed"
-              : "bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:opacity-90"
+              ? "bg-white/8 text-[#a8a6b7]/40 cursor-not-allowed"
+              : "bg-[#5046e4] text-[#f4f0ff] hover:bg-[#3d36c4]"
           }`}
         >
           {fortuneStatus?.exhausted

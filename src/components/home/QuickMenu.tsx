@@ -18,7 +18,7 @@ export default function QuickMenu({ items }: { items: MenuItem[] }) {
           <Link
             key={item.id}
             href={item.path}
-            className="group flex flex-col items-center gap-1.5 py-3.5 px-2 rounded-xl card-glow hover:-translate-y-0.5 transition-all duration-200"
+            className="group flex flex-col items-center gap-1.5 py-3.5 px-2 rounded-2xl card-glow hover:-translate-y-0.5 transition-all duration-200"
           >
             <span className="text-2xl">{item.icon}</span>
             <span className="text-[#a8a6b7] group-hover:text-[#f4f0ff] text-xs font-medium text-center leading-tight transition-colors">

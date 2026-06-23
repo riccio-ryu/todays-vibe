@@ -8,7 +8,6 @@ import QuickMenu from "@/components/home/QuickMenu";
 import HeroCard from "@/components/home/HeroCard";
 import PopularSection, { type RankedItem } from "@/components/home/PopularSection";
 import OracleHeader from "@/components/home/OracleHeader";
-import AboutSection from "@/components/home/AboutSection";
 import AdSlot from "@/components/common/AdSlot";
 
 async function getMenuItems(): Promise<MenuItem[]> {
@@ -129,9 +128,6 @@ export default async function Home() {
 
       {/* 즐겨찾기 + 카테고리 */}
       <HomeInteractive categories={categories} fortunes={fortunes} />
-
-      {/* 서비스 소개 · FAQ */}
-      <AboutSection />
     </div>
   );
 }

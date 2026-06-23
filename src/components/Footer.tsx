@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import LegalModal from "@/components/common/LegalModal";
 
@@ -26,7 +27,7 @@ export default function Footer() {
           <div className="px-6 pb-8 space-y-6 max-w-xl mx-auto">
 
             {/* 면책조항 */}
-            <div className="rounded-xl bg-white/4 border border-white/8 px-4 py-3">
+            <div className="rounded-2xl bg-white/4 border border-white/8 px-4 py-3">
               <p className="text-[#a8a6b7]/60 text-[11px] leading-relaxed">
                 본 서비스의 AI 운세 해석은 <span className="text-[#f4f0ff]/70">재미와 참고 목적</span>으로 제공됩니다.
                 실제 의사결정, 투자, 건강, 법률 등 중요한 사안에 활용하지 마세요.
@@ -36,6 +37,8 @@ export default function Footer() {
 
             {/* 링크 */}
             <div className="flex justify-center gap-6 text-xs text-[#a8a6b7]/50">
+              <Link href="/about" className="hover:text-[#f4f0ff] transition-colors">서비스 소개</Link>
+              <span className="text-[#a8a6b7]/25">·</span>
               <button onClick={() => setModal("terms")} className="hover:text-[#f4f0ff] transition-colors">이용약관</button>
               <span className="text-[#a8a6b7]/25">·</span>
               <button onClick={() => setModal("privacy")} className="hover:text-[#f4f0ff] transition-colors">개인정보처리방침</button>

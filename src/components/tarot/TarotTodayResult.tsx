@@ -14,7 +14,7 @@ export default function TarotTodayResult({ todayReading }: Props) {
         <span className="text-white/30 text-xs">오늘의 타로 결과</span>
         <div className="flex-1 h-px bg-white/10" />
       </div>
-      <div className="rounded-xl bg-white/5 border border-white/10 p-5">
+      <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
         <div className="flex items-center justify-between mb-3">
           <p className="text-white/40 text-xs">카드 해석</p>
           {todayReading.createdAt && (

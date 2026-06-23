@@ -41,7 +41,7 @@ export default function SpriteCard({ type, id, className = "" }: SpriteCardProps
 
   return (
     <div
-      className={`rounded-xl overflow-hidden ${className}`}
+      className={`rounded-2xl overflow-hidden ${className}`}
       style={{
         backgroundImage: `url('${imgSrc}')`,
         backgroundSize: "600% 200%",

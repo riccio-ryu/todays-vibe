@@ -62,7 +62,7 @@ function GradeTag({ grade }: { grade: SangajiEntry["grade"] }) {
     대흉: "bg-red-500/20 border-red-400/60 text-red-300",
   };
   return (
-    <span className={`inline-block px-3 py-1 rounded-full border text-sm font-medium ${cls[grade]}`}>
+    <span className={`inline-block px-3 py-1 rounded-[32px] border text-sm font-medium ${cls[grade]}`}>
       {GRADE_INFO[grade].label}
     </span>
   );
@@ -382,7 +382,7 @@ export default function SangajiPage() {
                 whileTap={!isAnimating ? { scale: 0.96 } : {}}
                 onClick={handleShake}
                 disabled={isAnimating || phase === "drawing"}
-                className="w-full py-3 rounded-full font-bold text-base text-amber-100 disabled:opacity-40"
+                className="w-full py-3 rounded-[5px] font-bold text-base text-amber-100 disabled:opacity-40"
                 style={{ background: "linear-gradient(to right, #92400e, #c2500a)" }}
               >
                 {phase === "shaking"
@@ -404,7 +404,7 @@ export default function SangajiPage() {
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.96 }}
                   onClick={() => pickStick(Math.floor(Math.random() * STICK_COUNT))}
-                  className="w-full py-3 rounded-full font-bold text-base text-yellow-100 border border-yellow-600/40"
+                  className="w-full py-3 rounded-[5px] font-bold text-base text-yellow-100 border border-yellow-600/40"
                   style={{ background: "linear-gradient(to right, #b45309, #d97706)" }}
                 >
                   산가지 뽑기

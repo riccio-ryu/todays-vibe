@@ -70,7 +70,7 @@ export default function PWAInstallButton() {
         <>
           <div className="fixed inset-0 z-40" onClick={() => setShowIOSGuide(false)} />
           <div
-            className="fixed z-50 w-56 rounded-xl bg-gray-900 border border-purple-500/40 shadow-xl p-3"
+            className="fixed z-50 w-56 rounded-2xl bg-[#060317] border border-[#9382ff]/25 p-3 card-glow"
             style={{ top: popoverStyle.top, left: popoverStyle.left }}
           >
             {/* 말풍선 꼬리 */}
@@ -95,8 +95,8 @@ export default function PWAInstallButton() {
         className="relative group"
         aria-label="앱 설치"
       >
-        <div className="w-7 h-7 flex items-center justify-center rounded-full bg-purple-600/20 border border-purple-400/30 group-hover:bg-purple-600/40 transition-colors">
-          <Download className="w-3.5 h-3.5 text-purple-300" />
+        <div className="w-7 h-7 flex items-center justify-center rounded-full bg-[#9382ff]/15 border border-[#9382ff]/25 group-hover:bg-[#9382ff]/25 transition-colors">
+          <Download className="w-3.5 h-3.5 text-[#9382ff]" />
         </div>
 
         {/* 말풍선 — 헤더 아래로 absolute */}
@@ -104,7 +104,7 @@ export default function PWAInstallButton() {
           {/* 꼬리 */}
           <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-b-[6px] border-b-purple-600/90" />
           {/* 말풍선 본체 */}
-          <span className="text-[11px] text-white bg-purple-600/90 border border-purple-400/40 px-2.5 py-1 rounded-lg leading-none whitespace-nowrap shadow-lg group-hover:bg-purple-500/90 transition-colors">
+          <span className="text-[11px] text-[#f4f0ff] bg-[#5046e4]/90 border border-[#9382ff]/30 px-2.5 py-1 rounded-[32px] leading-none whitespace-nowrap group-hover:bg-[#5046e4] transition-colors">
             앱으로 이용하기
           </span>
         </div>

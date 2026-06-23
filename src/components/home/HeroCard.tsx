@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight, BookOpen, Layers, Star } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 // ─── 달 위상 ──────────────────────────────────────────────────────────────────
 
@@ -68,16 +69,28 @@ const KEYWORD_POOL = [
   "기회", "따뜻함", "정돈", "자유", "신뢰", "통찰", "비움", "지혜",
 ];
 
-function getLuckyInfo(dateStr: string) {
-  const seed = parseInt(dateStr, 10);
-  const number    = Math.floor(1 + lcg(seed + 3)  * 9);
-  const colorIdx  = Math.floor(lcg(seed + 17) * LUCKY_COLORS.length);
-  const dirIdx    = Math.floor(lcg(seed + 31) * DIRECTIONS.length);
+function hashUserDate(uid: string, dateStr: string): number {
+  const str = uid + dateStr;
+  let h = 5381;
+  for (let i = 0; i < str.length; i++) {
+    h = (h * 33) ^ str.charCodeAt(i);
+  }
+  h = (h ^ (h >>> 16)) | 0;
+  h = Math.imul(h, 0x45d9f3b) | 0;
+  h = (h ^ (h >>> 16)) | 0;
+  return h >>> 0;
+}
+
+function getLuckyInfo(uid: string, dateStr: string) {
+  const seed = hashUserDate(uid, dateStr);
+  const number   = Math.floor(1 + lcg(seed + 3)  * 9);
+  const colorIdx = Math.floor(lcg(seed + 17) * LUCKY_COLORS.length);
+  const dirIdx   = Math.floor(lcg(seed + 31) * DIRECTIONS.length);
   return { number, color: LUCKY_COLORS[colorIdx], direction: DIRECTIONS[dirIdx] };
 }
 
-function getKeywords(dateStr: string): [string, string] {
-  const seed = parseInt(dateStr, 10);
+function getKeywords(uid: string, dateStr: string): [string, string] {
+  const seed = hashUserDate(uid, dateStr);
   const n = KEYWORD_POOL.length;
   const i1 = Math.floor(lcg(seed + 41) * n);
   const i2 = (Math.floor(lcg(seed + 53) * (n - 1)) + i1 + 1) % n;
@@ -135,9 +148,24 @@ function BgDecorations() {
 
 // ─── 컴포넌트 ──────────────────────────────────────────────────────────────────
 
+const ANON_ID_KEY = "todays-vibe:anon-id";
+
 export default function HeroCard({ today }: { today: string }) {
+  const { user } = useAuth();
   const [data, setData] = useState<DailyHeroData | null>(null);
   const [viewState, setViewState] = useState<"prompt" | "receiving" | "result">("prompt");
+  const [anonId, setAnonId] = useState<string>("__guest__");
+
+  useEffect(() => {
+    if (!user) {
+      let id = localStorage.getItem(ANON_ID_KEY);
+      if (!id) {
+        id = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+        localStorage.setItem(ANON_ID_KEY, id);
+      }
+      setAnonId(id);
+    }
+  }, [user]);
 
   useEffect(() => {
     fetch("/api/user/daily-hero")
@@ -160,9 +188,10 @@ export default function HeroCard({ today }: { today: string }) {
     setTimeout(() => setViewState("result"), 700);
   }
 
+  const uid      = user?.uid ?? anonId;
   const moon     = getMoonPhase(today);
-  const lucky    = getLuckyInfo(today);
-  const keywords = getKeywords(today);
+  const lucky    = getLuckyInfo(uid, today);
+  const keywords = getKeywords(uid, today);
   const dateKo   = formatDateKo(today);
   const state    = data?.state;
   const message  = data?.message;
@@ -196,7 +225,7 @@ export default function HeroCard({ today }: { today: string }) {
           <p className="text-[#a8a6b7] text-sm mb-5 sm:mb-7">아직 받지 않았어요 · 하루 한 번 무료</p>
           <button
             onClick={handleReceive}
-            className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#9382ff]/20 border border-[#9382ff]/30 text-[#9382ff] text-sm font-medium hover:bg-[#9382ff]/30 transition-all active:scale-95"
+            className="inline-flex items-center gap-2 px-7 py-3 rounded-[5px] bg-[#9382ff]/20 border border-[#9382ff]/30 text-[#9382ff] text-sm font-medium hover:bg-[#9382ff]/30 transition-all active:scale-95"
           >
             오늘의 기운 받기
           </button>
@@ -254,7 +283,7 @@ export default function HeroCard({ today }: { today: string }) {
               content: <p className="text-[#f4f0ff] text-xs font-medium mt-2">{lucky.direction}</p>,
             },
           ].map(({ label, content }) => (
-            <div key={label} className="rounded-xl card-mini p-3 text-center">
+            <div key={label} className="rounded-2xl card-mini p-3 text-center">
               <p className="text-[#a8a6b7]/70 text-[10px] mb-2">{label}</p>
               {content}
             </div>
@@ -264,7 +293,7 @@ export default function HeroCard({ today }: { today: string }) {
         {/* 키워드 */}
         <div className="flex gap-2 justify-center mb-4">
           {keywords.map((k) => (
-            <span key={k} className="px-3 py-1 rounded-full bg-[#9382ff]/10 border border-[#9382ff]/25 text-[#9382ff] text-xs font-medium">
+            <span key={k} className="px-3 py-1 rounded-[32px] bg-[#9382ff]/10 border border-[#9382ff]/25 text-[#9382ff] text-xs font-medium">
               {k}
             </span>
           ))}
@@ -280,9 +309,9 @@ export default function HeroCard({ today }: { today: string }) {
         {/* AI 점수 뱃지 */}
         {state === "ready" && data.score !== undefined && (
           <div className="flex justify-center mb-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full card-mini">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-[32px] card-mini">
               {data.isAI && (
-                <span className="text-[10px] font-medium text-[#9382ff] bg-[#9382ff]/10 px-1.5 py-0.5 rounded-full">✦</span>
+                <span className="text-[10px] font-medium text-[#9382ff] bg-[#9382ff]/10 px-1.5 py-0.5 rounded-[32px]">✦</span>
               )}
               <span className="text-sm font-bold text-[#9382ff]">{data.score}점</span>
             </div>
@@ -300,7 +329,7 @@ export default function HeroCard({ today }: { today: string }) {
                 { href: "/zodiac",       label: "별자리", icon: <Star     className="w-4 h-4" /> },
               ].map((item) => (
                 <Link key={item.href} href={item.href}
-                  className="flex flex-col items-center gap-1 py-2.5 rounded-xl card-mini hover:bg-[#9382ff]/8 transition-all text-[#a8a6b7]/70 hover:text-[#9382ff]">
+                  className="flex flex-col items-center gap-1 py-2.5 rounded-2xl card-mini hover:bg-[#9382ff]/8 transition-all text-[#a8a6b7]/70 hover:text-[#9382ff]">
                   {item.icon}
                   <span className="text-xs">{item.label}</span>
                 </Link>
@@ -313,7 +342,7 @@ export default function HeroCard({ today }: { today: string }) {
         {state === "not_logged_in" && (
           <div className="border-t border-white/6 pt-3 mt-1 text-center">
             <p className="text-[#a8a6b7]/60 text-xs mb-2">{data.settings.notLoggedInText}</p>
-            <Link href="/login" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#9382ff]/15 border border-[#9382ff]/30 text-[#9382ff] text-xs hover:bg-[#9382ff]/25 transition-colors">
+            <Link href="/login" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[32px] bg-[#9382ff]/15 border border-[#9382ff]/30 text-[#9382ff] text-xs hover:bg-[#9382ff]/25 transition-colors">
               로그인하기 <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
@@ -323,7 +352,7 @@ export default function HeroCard({ today }: { today: string }) {
         {state === "no_birth_info" && (
           <div className="border-t border-white/6 pt-3 mt-1 text-center">
             <p className="text-[#a8a6b7]/60 text-xs mb-2">{data.settings.noBirthInfoText}</p>
-            <Link href="/mypage?focus=birth" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#9382ff]/15 border border-[#9382ff]/30 text-[#9382ff] text-xs hover:bg-[#9382ff]/25 transition-colors">
+            <Link href="/mypage?focus=birth" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[32px] bg-[#9382ff]/15 border border-[#9382ff]/30 text-[#9382ff] text-xs hover:bg-[#9382ff]/25 transition-colors">
               생년월일 등록하기 <ArrowRight className="w-3 h-3" />
             </Link>
           </div>

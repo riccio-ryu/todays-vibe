@@ -17,13 +17,13 @@ export default function TarotActionButtons({ onInterpret, onReset }: Props) {
     >
       <button
         onClick={onInterpret}
-        className="flex-1 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-sm transition-colors shadow-lg shadow-purple-900/40"
+        className="flex-1 py-3 rounded-[5px] bg-[#5046e4] hover:bg-[#3d36c4] text-[#f4f0ff] font-medium text-sm transition-colors"
       >
         ✨ 해석 받기
       </button>
       <button
         onClick={onReset}
-        className="px-4 py-3 rounded-xl border border-white/10 text-white/40 hover:text-white/60 text-sm transition-colors"
+        className="px-4 py-3 rounded-[5px] border border-white/10 text-[#a8a6b7]/50 hover:text-[#a8a6b7] text-sm transition-colors"
       >
         다시
       </button>

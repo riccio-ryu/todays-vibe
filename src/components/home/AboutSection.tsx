@@ -61,7 +61,7 @@ export default function AboutSection() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {SERVICES.map((s) => (
-            <div key={s.title} className="rounded-xl bg-white/5 border border-white/10 p-4">
+            <div key={s.title} className="rounded-2xl bg-white/5 border border-white/10 p-4">
               <h3 className="text-white font-semibold text-sm mb-1.5">{s.title}</h3>
               <p className="text-white/45 text-xs leading-relaxed">{s.desc}</p>
             </div>
@@ -74,7 +74,7 @@ export default function AboutSection() {
         <h2 className="text-white font-bold text-xl mb-5">자주 묻는 질문</h2>
         <div className="space-y-3">
           {FAQS.map((faq) => (
-            <div key={faq.q} className="rounded-xl bg-white/5 border border-white/10 p-4">
+            <div key={faq.q} className="rounded-2xl bg-white/5 border border-white/10 p-4">
               <p className="text-white/80 text-sm font-medium mb-1.5">Q. {faq.q}</p>
               <p className="text-white/45 text-xs leading-relaxed">A. {faq.a}</p>
             </div>

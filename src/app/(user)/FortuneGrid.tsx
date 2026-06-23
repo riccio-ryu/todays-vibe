@@ -11,6 +11,31 @@ import type { BulkFortuneStatus } from "@/app/api/user/fortune-status-bulk/route
 
 const STORAGE_KEY = "todays-vibe:accordion";
 
+const CARD_GRADIENTS = [
+  "from-violet-600 to-purple-700",
+  "from-indigo-600 to-violet-700",
+  "from-purple-600 to-indigo-700",
+  "from-blue-600 to-indigo-700",
+  "from-violet-500 to-indigo-600",
+  "from-indigo-700 to-violet-800",
+  "from-purple-500 to-violet-600",
+  "from-sky-600 to-indigo-700",
+  "from-blue-700 to-violet-800",
+  "from-indigo-500 to-blue-600",
+  "from-violet-700 to-purple-800",
+  "from-slate-500 to-indigo-600",
+  "from-blue-600 to-violet-700",
+  "from-purple-700 to-indigo-800",
+  "from-indigo-600 to-blue-700",
+  "from-violet-600 to-blue-700",
+];
+
+function cardColor(id: string): string {
+  let h = 5381;
+  for (let i = 0; i < id.length; i++) h = (h * 33) ^ id.charCodeAt(i);
+  return CARD_GRADIENTS[Math.abs(h) % CARD_GRADIENTS.length];
+}
+
 interface Category {
   id: string;
   name: string;
@@ -100,13 +125,13 @@ export default function FortuneGrid({ categories, fortunes, favorites = [], onFa
         <div className="flex items-center gap-0.5">
           <button
             onClick={expandAll}
-            className="px-2.5 py-1.5 rounded-l-full text-xs text-[#a8a6b7]/70 border border-white/10 bg-white/4 hover:bg-white/8 hover:text-[#f4f0ff] transition-colors"
+            className="px-2.5 py-1.5 rounded-l-[5px] text-xs text-[#a8a6b7]/70 border border-white/10 bg-white/4 hover:bg-white/8 hover:text-[#f4f0ff] transition-colors"
           >
             모두펼치기
           </button>
           <button
             onClick={collapseAll}
-            className="px-2.5 py-1.5 rounded-r-full text-xs text-[#a8a6b7]/70 border border-white/10 border-l-0 bg-white/4 hover:bg-white/8 hover:text-[#f4f0ff] transition-colors"
+            className="px-2.5 py-1.5 rounded-r-[5px] text-xs text-[#a8a6b7]/70 border border-white/10 border-l-0 bg-white/4 hover:bg-white/8 hover:text-[#f4f0ff] transition-colors"
           >
             모두접기
           </button>
@@ -115,7 +140,7 @@ export default function FortuneGrid({ categories, fortunes, favorites = [], onFa
         {/* 준비중 토글 */}
         <button
           onClick={() => setShowComingSoon((v) => !v)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[32px] text-xs font-medium border transition-colors whitespace-nowrap ${
             showComingSoon
               ? "bg-[#9382ff]/10 border-[#9382ff]/25 text-[#9382ff] hover:bg-[#9382ff]/20"
               : "bg-white/4 border-white/10 text-[#a8a6b7]/60 hover:bg-white/8 hover:text-[#a8a6b7]"
@@ -187,24 +212,27 @@ export default function FortuneGrid({ categories, fortunes, favorites = [], onFa
 
                           const card = (
                             <div
-                              className={`group relative flex flex-col h-full rounded-xl p-4 transition-all duration-200
+                              className={`group relative flex flex-col h-full rounded-2xl p-4 transition-all duration-200 overflow-hidden
                                 ${
                                   isReady
                                     ? isExhausted
                                       ? "card-mini cursor-pointer opacity-50"
-                                      : "card-mini cursor-pointer hover:-translate-y-0.5 hover:bg-[#9382ff]/6 hover:shadow-[rgba(147,130,255,0.12)_0px_0px_20px_0px]"
+                                      : "card-mini cursor-pointer hover:-translate-y-0.5 hover:bg-[#9382ff]/6 hover:shadow-[rgba(147,130,255,0.10)_0px_0px_24px_0px_inset]"
                                     : "bg-white/2 border border-white/4 cursor-not-allowed opacity-40 grayscale"
                                 }`}
                             >
+                              {isReady && (
+                                <div className={`absolute inset-0 bg-gradient-to-br ${cardColor(fortune.id)} opacity-[0.13] pointer-events-none`} />
+                              )}
                               {/* 오늘 완료 뱃지 */}
                               {isExhausted && (
-                                <span className="absolute top-2 right-2 text-[10px] font-medium text-[#a8a6b7]/70 bg-white/8 px-1.5 py-0.5 rounded-full">
+                                <span className="absolute top-2 right-2 text-[10px] font-medium text-[#a8a6b7]/70 bg-white/8 px-1.5 py-0.5 rounded-[32px]">
                                   오늘완료
                                 </span>
                               )}
                               {/* Premium 뱃지 */}
                               {fortune.accessLevel === "premium" && isReady && !isExhausted && (
-                                <span className="absolute top-2 right-2 text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                                <span className="absolute top-2 right-2 text-[10px] font-bold px-1.5 py-0.5 rounded-[32px]"
                                   style={{
                                     background: "linear-gradient(to right, #92400e, #d97706)",
                                     color: "#fef3c7",
@@ -214,7 +242,7 @@ export default function FortuneGrid({ categories, fortunes, favorites = [], onFa
                                 </span>
                               )}
                               {!isReady && (
-                                <span className="absolute top-2 right-2 text-[10px] font-medium text-[#a8a6b7]/60 bg-white/6 px-1.5 py-0.5 rounded-full">
+                                <span className="absolute top-2 right-2 text-[10px] font-medium text-[#a8a6b7]/60 bg-white/6 px-1.5 py-0.5 rounded-[32px]">
                                   준비중
                                 </span>
                               )}
@@ -244,7 +272,7 @@ export default function FortuneGrid({ categories, fortunes, favorites = [], onFa
                               {/* 하단 행: AI 뱃지 + 사용하기 */}
                               <div className="flex items-center justify-between mt-2.5">
                                 {fortune.isAI && isReady ? (
-                                  <span className="text-[10px] font-medium text-[#9382ff] bg-[#9382ff]/10 px-1.5 py-0.5 rounded-full">
+                                  <span className="text-[10px] font-medium text-[#9382ff] bg-[#9382ff]/10 px-1.5 py-0.5 rounded-[32px]">
                                     ✦
                                   </span>
                                 ) : <span />}
