@@ -76,7 +76,7 @@ export default function DreamForm() {
             placeholder="어떤 꿈을 꾸셨나요? 기억나는 내용을 최대한 자세히 적어주세요. (사람, 장소, 사건, 색깔 등)"
             rows={6}
             maxLength={1000}
-            className="w-full rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/30 px-4 py-3 text-sm focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 resize-none transition-colors"
+            className="w-full rounded-[5px] bg-white/5 border border-white/10 text-[#f4f0ff] placeholder-white/25 px-4 py-3 text-sm focus:outline-none focus:border-[#9382ff]/50 focus:ring-1 focus:ring-[#9382ff]/30 resize-none transition-colors"
             required
           />
           <div className="text-right text-white/30 text-xs mt-1">
@@ -98,10 +98,10 @@ export default function DreamForm() {
                 onClick={() =>
                   setMood(mood === option.value ? "" : option.value)
                 }
-                className={`px-3 py-1.5 rounded-full text-sm transition-all duration-150 ${
+                className={`px-3 py-1.5 rounded-[32px] text-sm transition-all duration-150 ${
                   mood === option.value
-                    ? "bg-purple-600 text-white border border-purple-400"
-                    : "bg-white/10 text-white/60 border border-white/20 hover:bg-white/15 hover:text-white/80"
+                    ? "bg-[#5046e4] text-[#f4f0ff] border border-[#9382ff]/40"
+                    : "bg-white/5 text-[#a8a6b7] border border-white/10 hover:bg-white/10 hover:text-[#f4f0ff]"
                 }`}
               >
                 {option.label}
@@ -112,7 +112,7 @@ export default function DreamForm() {
 
         {/* 에러 메시지 */}
         {error && (
-          <div className="rounded-xl bg-red-900/30 border border-red-500/30 px-4 py-3 text-red-300 text-sm">
+          <div className="rounded-2xl bg-red-900/30 border border-red-500/30 px-4 py-3 text-red-300 text-sm">
             {error}
           </div>
         )}
@@ -121,7 +121,7 @@ export default function DreamForm() {
         <button
           type="submit"
           disabled={!dreamDescription.trim() || isLoading}
-          className="w-full py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-purple-900/50"
+          className="w-full py-3.5 rounded-[5px] font-medium text-[#f4f0ff] bg-[#5046e4] hover:bg-[#3d36c4] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
           ✨ 꿈 해석하기
         </button>

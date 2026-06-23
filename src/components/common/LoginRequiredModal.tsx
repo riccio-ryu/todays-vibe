@@ -23,7 +23,7 @@ export default function LoginRequiredModal({ isOpen, onClose, redirectPath }: Pr
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative bg-[#1a1033] border border-white/10 rounded-2xl p-8 max-w-sm w-full mx-4 shadow-2xl">
+      <div className="relative bg-[#060317] border border-white/10 rounded-[16px] p-8 max-w-sm w-full mx-4 card-glow">
         <div className="text-center mb-6">
           <span className="text-4xl mb-4 block">🔒</span>
           <h2 className="text-white font-bold text-lg mb-2">로그인이 필요합니다</h2>
@@ -32,13 +32,13 @@ export default function LoginRequiredModal({ isOpen, onClose, redirectPath }: Pr
         <div className="space-y-3">
           <button
             onClick={handleLogin}
-            className="w-full py-2.5 rounded-lg bg-purple-600 text-white font-semibold text-sm hover:bg-purple-500 transition-colors"
+            className="w-full py-2.5 rounded-[5px] bg-[#5046e4] text-[#f4f0ff] font-medium text-sm hover:bg-[#3d36c4] transition-colors"
           >
             로그인하기
           </button>
           <button
             onClick={onClose}
-            className="w-full py-2.5 rounded-lg bg-white/10 text-white/70 font-semibold text-sm hover:bg-white/15 transition-colors"
+            className="w-full py-2.5 rounded-[5px] bg-white/8 text-[#a8a6b7] font-medium text-sm hover:bg-white/12 transition-colors"
           >
             취소
           </button>

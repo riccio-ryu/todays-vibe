@@ -14,7 +14,7 @@ export default function TarotConfirmButton({ onClick }: Props) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
       onClick={onClick}
-      className="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-sm transition-colors shadow-lg shadow-purple-900/40 flex items-center justify-center gap-2"
+      className="w-full py-3 rounded-[5px] bg-[#5046e4] hover:bg-[#3d36c4] text-[#f4f0ff] font-medium text-sm transition-colors flex items-center justify-center gap-2"
     >
       선택 완료 <ArrowRight className="w-4 h-4" />
     </motion.button>

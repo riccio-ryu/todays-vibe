@@ -240,10 +240,10 @@ export default function SajuPage() {
                   key={t}
                   type="button"
                   onClick={() => setIsLunar(i === 1)}
-                  className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                  className={`flex-1 py-2 rounded-[5px] text-sm font-medium transition-colors ${
                     isLunar === (i === 1)
-                      ? "bg-purple-600 text-white"
-                      : "bg-white/10 text-white/50 hover:bg-white/15"
+                      ? "bg-[#5046e4] text-[#f4f0ff]"
+                      : "bg-white/5 text-[#a8a6b7] hover:bg-white/10"
                   }`}
                 >
                   {t}
@@ -266,7 +266,7 @@ export default function SajuPage() {
                     max={currentYear}
                     placeholder="1990"
                     required
-                    className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/15 text-white text-sm placeholder-white/20 focus:outline-none focus:border-purple-400 transition-colors"
+                    className="w-full px-3 py-2 rounded-[5px] bg-white/5 border border-white/10 text-[#f4f0ff] text-sm placeholder-white/20 focus:outline-none focus:border-[#9382ff]/50 transition-colors"
                   />
                 </div>
                 {/* 월 */}
@@ -276,7 +276,7 @@ export default function SajuPage() {
                     value={month}
                     onChange={(e) => setMonth(e.target.value)}
                     required
-                    className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/15 text-white text-sm focus:outline-none focus:border-purple-400 transition-colors appearance-none"
+                    className="w-full px-3 py-2 rounded-[5px] bg-white/5 border border-white/10 text-[#f4f0ff] text-sm focus:outline-none focus:border-[#9382ff]/50 transition-colors appearance-none"
                   >
                     <option value="" className="bg-gray-900 text-white/40">월</option>
                     {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
@@ -291,7 +291,7 @@ export default function SajuPage() {
                     value={day}
                     onChange={(e) => setDay(e.target.value)}
                     required
-                    className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/15 text-white text-sm focus:outline-none focus:border-purple-400 transition-colors appearance-none"
+                    className="w-full px-3 py-2 rounded-[5px] bg-white/5 border border-white/10 text-[#f4f0ff] text-sm focus:outline-none focus:border-[#9382ff]/50 transition-colors appearance-none"
                   >
                     <option value="" className="bg-gray-900 text-white/40">일</option>
                     {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
@@ -308,7 +308,7 @@ export default function SajuPage() {
               <select
                 value={hour}
                 onChange={(e) => setHour(parseInt(e.target.value))}
-                className="w-full px-3 py-2.5 rounded-lg bg-white/10 border border-white/15 text-white text-sm focus:outline-none focus:border-purple-400 transition-colors appearance-none"
+                className="w-full px-3 py-2.5 rounded-[5px] bg-white/5 border border-white/10 text-[#f4f0ff] text-sm focus:outline-none focus:border-[#9382ff]/50 transition-colors appearance-none"
               >
                 {HOUR_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value} className="bg-gray-900">
@@ -327,10 +327,10 @@ export default function SajuPage() {
                     key={val}
                     type="button"
                     onClick={() => setGender(val)}
-                    className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                    className={`flex-1 py-2 rounded-[5px] text-sm font-medium transition-colors ${
                       gender === val
-                        ? "bg-purple-600 text-white"
-                        : "bg-white/10 text-white/50 hover:bg-white/15"
+                        ? "bg-[#5046e4] text-[#f4f0ff]"
+                        : "bg-white/5 text-[#a8a6b7] hover:bg-white/10"
                     }`}
                   >
                     {label}
@@ -347,7 +347,7 @@ export default function SajuPage() {
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 placeholder="예: 올해 직장운이 궁금해요"
-                className="w-full px-3 py-2.5 rounded-lg bg-white/10 border border-white/15 text-white text-sm placeholder-white/30 focus:outline-none focus:border-purple-400 transition-colors"
+                className="w-full px-3 py-2.5 rounded-[5px] bg-white/5 border border-white/10 text-[#f4f0ff] text-sm placeholder-white/25 focus:outline-none focus:border-[#9382ff]/50 transition-colors"
               />
             </div>
 
@@ -357,7 +357,7 @@ export default function SajuPage() {
                 <div
                   onClick={() => setSaveBirth((v) => !v)}
                   className={`w-10 h-5 rounded-full transition-colors relative shrink-0 ${
-                    saveBirth ? "bg-purple-600" : "bg-white/20"
+                    saveBirth ? "bg-[#5046e4]" : "bg-white/20"
                   }`}
                 >
                   <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${
@@ -377,10 +377,10 @@ export default function SajuPage() {
           <button
             type="submit"
             disabled={fortuneStatus?.exhausted === true}
-            className={`w-full py-3 rounded-xl font-bold text-sm transition-opacity ${
+            className={`w-full py-3 rounded-[5px] font-medium text-sm transition-colors ${
               fortuneStatus?.exhausted
-                ? "bg-white/10 text-white/30 cursor-not-allowed"
-                : "bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:opacity-90"
+                ? "bg-white/8 text-[#a8a6b7]/40 cursor-not-allowed"
+                : "bg-[#5046e4] text-[#f4f0ff] hover:bg-[#3d36c4]"
             }`}
           >
             {fortuneStatus?.exhausted ? "오늘 사주풀이를 이미 이용했어요" : "사주 풀이 보기"}
@@ -430,7 +430,7 @@ export default function SajuPage() {
 
           {/* 저장 완료 알림 */}
           {saveStatus === "saved" && (
-            <div className="px-4 py-2.5 rounded-xl bg-green-500/10 border border-green-400/20 text-center">
+            <div className="px-4 py-2.5 rounded-2xl bg-green-500/10 border border-green-400/20 text-center">
               <p className="text-green-400 text-sm">출생 정보가 저장되었습니다</p>
             </div>
           )}
@@ -458,7 +458,7 @@ export default function SajuPage() {
           {/* 다시 보기 */}
           <button
             onClick={handleReset}
-            className="w-full py-2.5 rounded-xl bg-white/10 text-white/70 text-sm font-semibold hover:bg-white/15 transition-colors"
+            className="w-full py-2.5 rounded-[5px] bg-white/5 text-[#a8a6b7] text-sm font-medium hover:bg-white/10 transition-colors"
           >
             다시 입력하기
           </button>

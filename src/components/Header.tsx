@@ -72,9 +72,7 @@ export default function Header() {
 
             {/* 드롭다운 */}
             {open && (
-              <div className="absolute right-0 top-full mt-3 w-52 rounded-2xl bg-[#060317] border border-white/10 shadow-xl overflow-hidden"
-                style={{ boxShadow: "rgba(147,130,255,0.08) 0px 8px 32px 0px, rgba(0,0,0,0.4) 0px 4px 16px 0px" }}
-              >
+              <div className="absolute right-0 top-full mt-3 w-52 rounded-[16px] overflow-hidden card-glow">
                 <div className="px-4 py-3 border-b border-white/8">
                   <p className="text-[#f4f0ff] text-sm font-medium truncate">
                     {user.displayName ?? "사용자"}
@@ -104,7 +102,7 @@ export default function Header() {
                   <div className="border-t border-white/8 my-1" />
                   <button
                     onClick={handleSignOut}
-                    className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-white/5 transition-colors"
+                    className="w-full text-left px-4 py-2 text-sm text-[#a8a6b7]/60 hover:bg-white/5 hover:text-[#a8a6b7] transition-colors"
                   >
                     로그아웃
                   </button>
@@ -117,13 +115,13 @@ export default function Header() {
             <PWAInstallButton />
             <Link
               href="/login"
-              className="px-3.5 py-1.5 text-sm text-[#a8a6b7] border border-white/15 rounded-full hover:bg-white/8 hover:text-[#f4f0ff] transition-colors"
+              className="px-3.5 py-1.5 text-sm text-[#a8a6b7] border border-white/15 rounded-[5px] hover:bg-white/8 hover:text-[#f4f0ff] transition-colors"
             >
               로그인
             </Link>
             <Link
               href="/signup"
-              className="px-3.5 py-1.5 text-sm text-[#f4f0ff] font-medium bg-[#9382ff] rounded-full hover:bg-[#7a6be0] transition-colors"
+              className="px-3.5 py-1.5 text-sm text-[#f4f0ff] font-medium bg-[#5046e4] rounded-[5px] hover:bg-[#3d36c4] transition-colors"
             >
               회원가입
             </Link>

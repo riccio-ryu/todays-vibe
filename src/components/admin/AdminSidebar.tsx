@@ -67,9 +67,9 @@ export default function AdminSidebar() {
               href={item.href}
               onClick={onNav}
               title={collapsed ? item.label : undefined}
-              className={`flex items-center rounded-lg transition-all duration-150 text-sm
+              className={`flex items-center rounded-[5px] transition-all duration-150 text-sm
                 ${collapsed ? "justify-center px-0 py-2.5" : "gap-3 px-3 py-2.5"}
-                ${isActive ? "bg-purple-600/30 text-purple-300" : "text-white/50 hover:text-white hover:bg-white/8"}`}
+                ${isActive ? "bg-[#5046e4]/25 text-[#9382ff]" : "text-[#a8a6b7]/60 hover:text-[#f4f0ff] hover:bg-white/8"}`}
             >
               <Icon className="w-4 h-4 shrink-0" />
               {!collapsed && <span>{item.label}</span>}
@@ -82,7 +82,7 @@ export default function AdminSidebar() {
       <div className="hidden md:block px-2 py-3 border-t border-white/10">
         <button
           onClick={() => setCollapsed((v) => !v)}
-          className={`w-full flex items-center rounded-lg py-2 text-white/30 hover:text-white/60 hover:bg-white/5 transition-all text-xs
+          className={`w-full flex items-center rounded-[5px] py-2 text-[#54525f] hover:text-[#a8a6b7] hover:bg-white/5 transition-all text-xs
             ${collapsed ? "justify-center" : "gap-2 px-3"}`}
         >
           {collapsed ? <ChevronRight className="w-4 h-4" /> : <><ChevronLeft className="w-4 h-4" /><span>접기</span></>}

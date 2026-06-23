@@ -26,7 +26,7 @@ export default function PageHeader({
       <span className="text-white/20">|</span>
       <h1 className="text-white font-semibold text-lg">{title}</h1>
       {badge && (
-        <span className="ml-auto text-[10px] text-purple-300 bg-purple-900/40 px-2 py-0.5 rounded-full border border-purple-500/20">
+        <span className="ml-auto text-[10px] text-[#9382ff] bg-[#9382ff]/10 px-2 py-0.5 rounded-[32px] border border-[#9382ff]/20">
           {badge}
         </span>
       )}

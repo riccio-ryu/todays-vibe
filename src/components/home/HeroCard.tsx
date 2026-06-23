@@ -196,7 +196,7 @@ export default function HeroCard({ today }: { today: string }) {
           <p className="text-[#a8a6b7] text-sm mb-5 sm:mb-7">아직 받지 않았어요 · 하루 한 번 무료</p>
           <button
             onClick={handleReceive}
-            className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#9382ff]/20 border border-[#9382ff]/30 text-[#9382ff] text-sm font-medium hover:bg-[#9382ff]/30 transition-all active:scale-95"
+            className="inline-flex items-center gap-2 px-7 py-3 rounded-[5px] bg-[#9382ff]/20 border border-[#9382ff]/30 text-[#9382ff] text-sm font-medium hover:bg-[#9382ff]/30 transition-all active:scale-95"
           >
             오늘의 기운 받기
           </button>
@@ -254,7 +254,7 @@ export default function HeroCard({ today }: { today: string }) {
               content: <p className="text-[#f4f0ff] text-xs font-medium mt-2">{lucky.direction}</p>,
             },
           ].map(({ label, content }) => (
-            <div key={label} className="rounded-xl card-mini p-3 text-center">
+            <div key={label} className="rounded-2xl card-mini p-3 text-center">
               <p className="text-[#a8a6b7]/70 text-[10px] mb-2">{label}</p>
               {content}
             </div>
@@ -264,7 +264,7 @@ export default function HeroCard({ today }: { today: string }) {
         {/* 키워드 */}
         <div className="flex gap-2 justify-center mb-4">
           {keywords.map((k) => (
-            <span key={k} className="px-3 py-1 rounded-full bg-[#9382ff]/10 border border-[#9382ff]/25 text-[#9382ff] text-xs font-medium">
+            <span key={k} className="px-3 py-1 rounded-[32px] bg-[#9382ff]/10 border border-[#9382ff]/25 text-[#9382ff] text-xs font-medium">
               {k}
             </span>
           ))}
@@ -280,9 +280,9 @@ export default function HeroCard({ today }: { today: string }) {
         {/* AI 점수 뱃지 */}
         {state === "ready" && data.score !== undefined && (
           <div className="flex justify-center mb-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full card-mini">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-[32px] card-mini">
               {data.isAI && (
-                <span className="text-[10px] font-medium text-[#9382ff] bg-[#9382ff]/10 px-1.5 py-0.5 rounded-full">✦</span>
+                <span className="text-[10px] font-medium text-[#9382ff] bg-[#9382ff]/10 px-1.5 py-0.5 rounded-[32px]">✦</span>
               )}
               <span className="text-sm font-bold text-[#9382ff]">{data.score}점</span>
             </div>
@@ -300,7 +300,7 @@ export default function HeroCard({ today }: { today: string }) {
                 { href: "/zodiac",       label: "별자리", icon: <Star     className="w-4 h-4" /> },
               ].map((item) => (
                 <Link key={item.href} href={item.href}
-                  className="flex flex-col items-center gap-1 py-2.5 rounded-xl card-mini hover:bg-[#9382ff]/8 transition-all text-[#a8a6b7]/70 hover:text-[#9382ff]">
+                  className="flex flex-col items-center gap-1 py-2.5 rounded-2xl card-mini hover:bg-[#9382ff]/8 transition-all text-[#a8a6b7]/70 hover:text-[#9382ff]">
                   {item.icon}
                   <span className="text-xs">{item.label}</span>
                 </Link>
@@ -313,7 +313,7 @@ export default function HeroCard({ today }: { today: string }) {
         {state === "not_logged_in" && (
           <div className="border-t border-white/6 pt-3 mt-1 text-center">
             <p className="text-[#a8a6b7]/60 text-xs mb-2">{data.settings.notLoggedInText}</p>
-            <Link href="/login" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#9382ff]/15 border border-[#9382ff]/30 text-[#9382ff] text-xs hover:bg-[#9382ff]/25 transition-colors">
+            <Link href="/login" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[32px] bg-[#9382ff]/15 border border-[#9382ff]/30 text-[#9382ff] text-xs hover:bg-[#9382ff]/25 transition-colors">
               로그인하기 <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
@@ -323,7 +323,7 @@ export default function HeroCard({ today }: { today: string }) {
         {state === "no_birth_info" && (
           <div className="border-t border-white/6 pt-3 mt-1 text-center">
             <p className="text-[#a8a6b7]/60 text-xs mb-2">{data.settings.noBirthInfoText}</p>
-            <Link href="/mypage?focus=birth" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#9382ff]/15 border border-[#9382ff]/30 text-[#9382ff] text-xs hover:bg-[#9382ff]/25 transition-colors">
+            <Link href="/mypage?focus=birth" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[32px] bg-[#9382ff]/15 border border-[#9382ff]/30 text-[#9382ff] text-xs hover:bg-[#9382ff]/25 transition-colors">
               생년월일 등록하기 <ArrowRight className="w-3 h-3" />
             </Link>
           </div>

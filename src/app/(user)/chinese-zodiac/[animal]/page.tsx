@@ -162,7 +162,7 @@ export default function ChineseZodiacAnimalPage() {
                     <button
                       key={y}
                       onClick={() => setSelectedYear(selectedYear === y ? null : y)}
-                      className={`text-xs px-2.5 py-1 rounded-full border transition-all duration-150 ${
+                      className={`text-xs px-2.5 py-1 rounded-[32px] border transition-all duration-150 ${
                         selectedYear === y
                           ? `${animalColor} border-current bg-white/10 font-semibold`
                           : `text-white/40 ${animalBorder} hover:text-white/70`

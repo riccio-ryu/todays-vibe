@@ -144,7 +144,7 @@ export default function FortuneResult({
                   alert("결과가 클립보드에 복사됐어요!");
                 }
               }}
-              className="flex-1 py-3 rounded-xl bg-purple-700/50 border border-purple-500/30 text-purple-200 text-sm font-medium hover:bg-purple-600/50 transition-colors"
+              className="flex-1 py-3 rounded-[5px] bg-[#5046e4]/30 border border-[#9382ff]/25 text-[#9382ff] text-sm font-medium hover:bg-[#5046e4]/50 transition-colors"
             >
               📤 공유하기
             </button>

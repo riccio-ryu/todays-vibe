@@ -19,7 +19,7 @@ export default function TarotReadingResult({ interpretRef, interpretation, isLoa
       initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
       className="w-full space-y-4"
     >
-      <div className="rounded-xl bg-white/5 border border-white/10 p-5 min-h-[120px]">
+      <div className="rounded-2xl bg-white/5 border border-white/10 p-5 min-h-[120px]">
         <p className="text-white/40 text-xs mb-3">카드 해석</p>
         {isLoading && !interpretation && (
           <AILoadingIndicator type="tarot" />
@@ -40,7 +40,7 @@ export default function TarotReadingResult({ interpretRef, interpretation, isLoa
       {!isLoading && (
         <button
           onClick={onReset}
-          className="w-full py-3 rounded-xl border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-sm transition-colors"
+          className="w-full py-3 rounded-[5px] border border-white/10 text-[#a8a6b7]/50 hover:text-[#a8a6b7] hover:border-white/20 text-sm transition-colors"
         >
           새로운 배치로 다시 보기
         </button>

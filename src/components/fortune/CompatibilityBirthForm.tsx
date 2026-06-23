@@ -86,8 +86,8 @@ function BirthInputGroup({
             key={val}
             type="button"
             onClick={() => onGender(val)}
-            className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-              gender === val ? "bg-purple-600 text-white" : "bg-white/10 text-white/50 hover:bg-white/15"
+            className={`flex-1 py-1.5 rounded-[5px] text-xs font-medium transition-colors ${
+              gender === val ? "bg-[#5046e4] text-[#f4f0ff]" : "bg-white/5 text-[#a8a6b7] hover:bg-white/10"
             }`}
           >
             {lbl}
