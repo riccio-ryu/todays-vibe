@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight, BookOpen, Layers, Star } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 // ─── 달 위상 ──────────────────────────────────────────────────────────────────
 
@@ -68,16 +69,28 @@ const KEYWORD_POOL = [
   "기회", "따뜻함", "정돈", "자유", "신뢰", "통찰", "비움", "지혜",
 ];
 
-function getLuckyInfo(dateStr: string) {
-  const seed = parseInt(dateStr, 10);
-  const number    = Math.floor(1 + lcg(seed + 3)  * 9);
-  const colorIdx  = Math.floor(lcg(seed + 17) * LUCKY_COLORS.length);
-  const dirIdx    = Math.floor(lcg(seed + 31) * DIRECTIONS.length);
+function hashUserDate(uid: string, dateStr: string): number {
+  const str = uid + dateStr;
+  let h = 5381;
+  for (let i = 0; i < str.length; i++) {
+    h = (h * 33) ^ str.charCodeAt(i);
+  }
+  h = (h ^ (h >>> 16)) | 0;
+  h = Math.imul(h, 0x45d9f3b) | 0;
+  h = (h ^ (h >>> 16)) | 0;
+  return h >>> 0;
+}
+
+function getLuckyInfo(uid: string, dateStr: string) {
+  const seed = hashUserDate(uid, dateStr);
+  const number   = Math.floor(1 + lcg(seed + 3)  * 9);
+  const colorIdx = Math.floor(lcg(seed + 17) * LUCKY_COLORS.length);
+  const dirIdx   = Math.floor(lcg(seed + 31) * DIRECTIONS.length);
   return { number, color: LUCKY_COLORS[colorIdx], direction: DIRECTIONS[dirIdx] };
 }
 
-function getKeywords(dateStr: string): [string, string] {
-  const seed = parseInt(dateStr, 10);
+function getKeywords(uid: string, dateStr: string): [string, string] {
+  const seed = hashUserDate(uid, dateStr);
   const n = KEYWORD_POOL.length;
   const i1 = Math.floor(lcg(seed + 41) * n);
   const i2 = (Math.floor(lcg(seed + 53) * (n - 1)) + i1 + 1) % n;
@@ -135,9 +148,24 @@ function BgDecorations() {
 
 // ─── 컴포넌트 ──────────────────────────────────────────────────────────────────
 
+const ANON_ID_KEY = "todays-vibe:anon-id";
+
 export default function HeroCard({ today }: { today: string }) {
+  const { user } = useAuth();
   const [data, setData] = useState<DailyHeroData | null>(null);
   const [viewState, setViewState] = useState<"prompt" | "receiving" | "result">("prompt");
+  const [anonId, setAnonId] = useState<string>("__guest__");
+
+  useEffect(() => {
+    if (!user) {
+      let id = localStorage.getItem(ANON_ID_KEY);
+      if (!id) {
+        id = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+        localStorage.setItem(ANON_ID_KEY, id);
+      }
+      setAnonId(id);
+    }
+  }, [user]);
 
   useEffect(() => {
     fetch("/api/user/daily-hero")
@@ -160,9 +188,10 @@ export default function HeroCard({ today }: { today: string }) {
     setTimeout(() => setViewState("result"), 700);
   }
 
+  const uid      = user?.uid ?? anonId;
   const moon     = getMoonPhase(today);
-  const lucky    = getLuckyInfo(today);
-  const keywords = getKeywords(today);
+  const lucky    = getLuckyInfo(uid, today);
+  const keywords = getKeywords(uid, today);
   const dateKo   = formatDateKo(today);
   const state    = data?.state;
   const message  = data?.message;
