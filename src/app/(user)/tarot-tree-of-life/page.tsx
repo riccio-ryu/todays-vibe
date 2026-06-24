@@ -67,14 +67,16 @@ export default function TarotTreeOfLifePage() {
       <AnimatePresence mode="wait">
 
         {phase === "input" && (
-          <TarotInputPhase
-            subtitle="카발라의 세피로트 10위치로 삶의 전 영역을 탐색합니다"
-            placeholder="예: 지금 나의 삶 전체를 보고 싶어요"
-            question={question}
-            setQuestion={setQuestion}
-            fortuneStatus={fortuneStatus}
-            handleStartShuffle={handleStartShuffle}
-          />
+          fortuneStatus?.exhausted && fortuneStatus?.todayReading
+            ? <TarotTodayResult todayReading={fortuneStatus.todayReading} />
+            : <TarotInputPhase
+                subtitle="카발라의 세피로트 10위치로 삶의 전 영역을 탐색합니다"
+                placeholder="예: 지금 나의 삶 전체를 보고 싶어요"
+                question={question}
+                setQuestion={setQuestion}
+                fortuneStatus={fortuneStatus}
+                handleStartShuffle={handleStartShuffle}
+              />
         )}
 
         {phase === "shuffling" && <TarotShufflingAnimation />}
@@ -201,9 +203,6 @@ export default function TarotTreeOfLifePage() {
 
       </AnimatePresence>
 
-      {fortuneStatus?.exhausted && phase === "input" && (
-        <TarotTodayResult todayReading={fortuneStatus.todayReading} />
-      )}
     </div>
   );
 }

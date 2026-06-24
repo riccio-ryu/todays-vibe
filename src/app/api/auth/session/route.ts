@@ -135,7 +135,9 @@ export async function POST(request: NextRequest) {
     }
 
     // ④ HMAC 세션 토큰 발급
-    const token = await createSessionToken(uid, email, isAdmin, plan);
+    const displayName = (decoded.name as string | undefined) ?? "";
+    const photoURL = (decoded.picture as string | undefined) ?? "";
+    const token = await createSessionToken(uid, email, isAdmin, plan, displayName, photoURL);
     const response = Response.json({ status: "ok", isAdmin, plan });
     response.headers.set("Set-Cookie", buildSetCookieHeader(token));
     return response;

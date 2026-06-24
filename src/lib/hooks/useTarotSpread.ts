@@ -79,7 +79,11 @@ export function useTarotSpread(menuId: string, cardCount: number) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      if (!res.ok || !res.body) throw new Error();
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? `서버 오류 (${res.status})`);
+      }
+      if (!res.body) throw new Error("스트림 응답을 받을 수 없습니다.");
       const reader = res.body.getReader();
       const dec    = new TextDecoder();
       while (true) {
@@ -87,8 +91,8 @@ export function useTarotSpread(menuId: string, cardCount: number) {
         if (done) break;
         setInterpretation((prev) => prev + dec.decode(value, { stream: true }));
       }
-    } catch {
-      setInterpretation("해석을 불러오는 중 오류가 발생했습니다. 다시 시도해주세요.");
+    } catch (err) {
+      setInterpretation(err instanceof Error ? err.message : "해석을 불러오는 중 오류가 발생했습니다. 다시 시도해주세요.");
     } finally {
       setIsLoading(false);
       if (user) {

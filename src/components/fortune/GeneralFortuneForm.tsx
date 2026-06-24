@@ -101,6 +101,23 @@ export default function GeneralFortuneForm({ config }: Props) {
     );
   }
 
+  // 오늘 이미 이용 + 저장된 결과 있으면 바로 결과 노출
+  if (fortuneStatus?.exhausted && fortuneStatus?.todayReading) {
+    return (
+      <div className="max-w-xl mx-auto px-4 py-10">
+        <div className="text-center mb-8">
+          <span className="text-5xl block mb-3">{config.icon}</span>
+          <h1 className="text-white font-bold text-2xl">{config.title}</h1>
+          <p className="text-white/50 text-sm mt-2">{config.questionLabel}</p>
+        </div>
+        <TodayFortuneCard
+          label={`오늘의 ${config.title} 결과`}
+          todayReading={fortuneStatus.todayReading}
+        />
+      </div>
+    );
+  }
+
   const currentYear = new Date().getFullYear();
 
   return (
@@ -252,12 +269,6 @@ export default function GeneralFortuneForm({ config }: Props) {
         </button>
       </form>
 
-      {fortuneStatus?.exhausted && fortuneStatus.todayReading && (
-        <TodayFortuneCard
-          label={`오늘의 ${config.title} 결과`}
-          todayReading={fortuneStatus.todayReading}
-        />
-      )}
     </div>
   );
 }

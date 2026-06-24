@@ -57,14 +57,16 @@ export default function TarotHorseshoePage() {
       <AnimatePresence mode="wait">
 
         {phase === "input" && (
-          <TarotInputPhase
-            subtitle="현재에서 결과까지, 5장으로 흐름을 읽어드립니다"
-            placeholder="예: 이 일을 계속해야 할까요?"
-            question={question}
-            setQuestion={setQuestion}
-            fortuneStatus={fortuneStatus}
-            handleStartShuffle={handleStartShuffle}
-          />
+          fortuneStatus?.exhausted && fortuneStatus?.todayReading
+            ? <TarotTodayResult todayReading={fortuneStatus.todayReading} />
+            : <TarotInputPhase
+                subtitle="현재에서 결과까지, 5장으로 흐름을 읽어드립니다"
+                placeholder="예: 이 일을 계속해야 할까요?"
+                question={question}
+                setQuestion={setQuestion}
+                fortuneStatus={fortuneStatus}
+                handleStartShuffle={handleStartShuffle}
+              />
         )}
 
         {phase === "shuffling" && <TarotShufflingAnimation />}
@@ -190,9 +192,6 @@ export default function TarotHorseshoePage() {
 
       </AnimatePresence>
 
-      {fortuneStatus?.exhausted && phase === "input" && (
-        <TarotTodayResult todayReading={fortuneStatus.todayReading} />
-      )}
     </div>
   );
 }
