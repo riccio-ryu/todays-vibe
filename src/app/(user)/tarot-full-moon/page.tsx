@@ -61,14 +61,16 @@ export default function TarotFullMoonPage() {
       <AnimatePresence mode="wait">
 
         {phase === "input" && (
-          <TarotInputPhase
-            subtitle="보름달 에너지로 삶의 흐름과 목표를 탐색합니다"
-            placeholder="예: 지금 내가 집중해야 할 것은 무엇인가요?"
-            question={question}
-            setQuestion={setQuestion}
-            fortuneStatus={fortuneStatus}
-            handleStartShuffle={handleStartShuffle}
-          />
+          fortuneStatus?.exhausted && fortuneStatus?.todayReading
+            ? <TarotTodayResult todayReading={fortuneStatus.todayReading} onReshuffle={handleStartShuffle} />
+            : <TarotInputPhase
+                subtitle="보름달 에너지로 삶의 흐름과 목표를 탐색합니다"
+                placeholder="예: 지금 내가 집중해야 할 것은 무엇인가요?"
+                question={question}
+                setQuestion={setQuestion}
+                fortuneStatus={fortuneStatus}
+                handleStartShuffle={handleStartShuffle}
+              />
         )}
 
         {phase === "shuffling" && <TarotShufflingAnimation />}
@@ -176,7 +178,7 @@ export default function TarotFullMoonPage() {
             </div>
 
             {phase === "drawn" && revealed.every(Boolean) && (
-              <TarotActionButtons onInterpret={handleInterpret} onReset={handleReset} />
+              <TarotActionButtons onInterpret={handleInterpret} onReset={handleReset} exhausted={fortuneStatus?.exhausted === true} />
             )}
 
             {phase === "reading" && (
@@ -192,9 +194,6 @@ export default function TarotFullMoonPage() {
 
       </AnimatePresence>
 
-      {fortuneStatus?.exhausted && phase === "input" && (
-        <TarotTodayResult todayReading={fortuneStatus.todayReading} />
-      )}
     </div>
   );
 }

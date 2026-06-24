@@ -184,13 +184,29 @@ export default function TarotDailyPage() {
                 </p>
               )}
 
-              {/* 다시 뽑기 */}
-              <button
-                onClick={handleReset}
-                className="w-full py-3 rounded-xl border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-sm transition-colors"
-              >
-                다시 뽑기
-              </button>
+              {/* 다시 뽑기 + 공유하기 */}
+              <div className="flex gap-3">
+                <button
+                  onClick={handleReset}
+                  className="flex-1 py-3 rounded-xl border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-sm transition-colors"
+                >
+                  다시 뽑기
+                </button>
+                <button
+                  onClick={() => {
+                    if (navigator.share) {
+                      navigator.share({ title: `${drawn.card.nameKo} 타로 원카드 | 오늘운`, url: window.location.href })
+                        .catch((e) => { if (e?.name !== "AbortError") throw e; });
+                    } else {
+                      navigator.clipboard.writeText(window.location.href);
+                      alert("링크가 클립보드에 복사됐어요!");
+                    }
+                  }}
+                  className="flex-1 py-3 rounded-xl bg-[#5046e4]/30 border border-[#9382ff]/25 text-[#9382ff] text-sm font-medium hover:bg-[#5046e4]/50 transition-colors"
+                >
+                  📤 공유하기
+                </button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

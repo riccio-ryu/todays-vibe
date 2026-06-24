@@ -19,5 +19,7 @@ export async function GET(request: NextRequest) {
     email: payload.email,
     isAdmin: payload.isAdmin,
     plan: payload.isAdmin ? "admin" : payload.plan,
+    displayName: payload.displayName ?? null,
+    photoURL: payload.photoURL ?? null,
   });
 }

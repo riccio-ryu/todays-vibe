@@ -7,6 +7,7 @@ import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 import AILoadingIndicator from "@/components/common/AILoadingIndicator";
 import AdSlot from "@/components/common/AdSlot";
 import { boldHighlight } from "@/lib/utils/format";
+import TodayFortuneCard from "@/components/common/TodayFortuneCard";
 
 // ─── 사주 원국 테이블 ──────────────────────────────────────────────────
 function SajuTable({ result }: { result: SajuResult }) {
@@ -165,7 +166,10 @@ export default function SajuPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ summary: saju.summary, question: question || undefined }),
       });
-      if (!res.ok) throw new Error(await res.text());
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? `서버 오류 (${res.status})`);
+      }
       const reader = res.body!.getReader();
       const decoder = new TextDecoder();
       let text = "";
@@ -174,11 +178,9 @@ export default function SajuPage() {
         if (done) break;
         text += decoder.decode(value, { stream: true });
         setInterp(text);
-        interpRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
       }
     } catch (err) {
-      setError("풀이 중 오류가 발생했습니다.");
-      console.error(err);
+      setError(err instanceof Error ? err.message : "풀이 중 오류가 발생했습니다.");
     } finally {
       setLoading(false);
       refreshFortuneStatus();
@@ -200,6 +202,23 @@ export default function SajuPage() {
   }
 
   const currentYear = new Date().getFullYear();
+
+  // 오늘 이미 이용 + 저장된 결과 있으면 바로 결과 노출
+  if (fortuneStatus?.exhausted && fortuneStatus.todayReading && !result) {
+    return (
+      <div className="max-w-xl mx-auto px-4 py-10">
+        <div className="text-center mb-8">
+          <h1 className="text-white font-bold text-2xl">사주팔자</h1>
+          <p className="text-white/50 text-sm mt-2">생년월일시로 풀어보는 나의 운명</p>
+        </div>
+        <TodayFortuneCard
+          label="오늘의 사주 결과"
+          todayReading={fortuneStatus.todayReading}
+          highlightColor="text-amber-300"
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-xl mx-auto px-4 py-10">
@@ -388,31 +407,6 @@ export default function SajuPage() {
         </form>
       )}
 
-      {/* 오늘의 사주 결과 (사용량 소진 시) */}
-      {fortuneStatus?.exhausted && fortuneStatus.todayReading && !result && (
-        <div className="mt-6 space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="flex-1 h-px bg-white/10" />
-            <span className="text-white/30 text-xs">오늘의 사주 결과</span>
-            <div className="flex-1 h-px bg-white/10" />
-          </div>
-          <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-white/60 text-xs font-semibold uppercase tracking-widest">사주 풀이</h2>
-              {fortuneStatus.todayReading.createdAt && (
-                <span className="text-white/30 text-xs">
-                  {new Date(fortuneStatus.todayReading.createdAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })} 열람
-                </span>
-              )}
-            </div>
-            <div
-              className="text-white/80 text-sm leading-relaxed whitespace-pre-wrap"
-              dangerouslySetInnerHTML={{ __html: boldHighlight(fortuneStatus.todayReading.result, "text-amber-300") }}
-            />
-          </div>
-        </div>
-      )}
-
       {/* 결과 */}
       {result && (
         <div className="space-y-6">
@@ -455,13 +449,31 @@ export default function SajuPage() {
             <AdSlot slot="5693296487" className="rounded-xl" />
           )}
 
-          {/* 다시 보기 */}
-          <button
-            onClick={handleReset}
-            className="w-full py-2.5 rounded-[5px] bg-white/5 text-[#a8a6b7] text-sm font-medium hover:bg-white/10 transition-colors"
-          >
-            다시 입력하기
-          </button>
+          {/* 공유 + 다시 보기 */}
+          <div className="flex gap-3">
+            {!loading && interpretation && (
+              <button
+                onClick={() => {
+                  if (navigator.share) {
+                    navigator.share({ title: "사주팔자 풀이 | 오늘운", url: window.location.href })
+                      .catch((e) => { if (e?.name !== "AbortError") throw e; });
+                  } else {
+                    navigator.clipboard.writeText(window.location.href);
+                    alert("링크가 클립보드에 복사됐어요!");
+                  }
+                }}
+                className="flex-1 py-2.5 rounded-[5px] bg-[#5046e4]/30 border border-[#9382ff]/25 text-[#9382ff] text-sm font-medium hover:bg-[#5046e4]/50 transition-colors"
+              >
+                📤 공유하기
+              </button>
+            )}
+            <button
+              onClick={handleReset}
+              className="flex-1 py-2.5 rounded-[5px] bg-white/5 text-[#a8a6b7] text-sm font-medium hover:bg-white/10 transition-colors"
+            >
+              다시 입력하기
+            </button>
+          </div>
         </div>
       )}
     </div>

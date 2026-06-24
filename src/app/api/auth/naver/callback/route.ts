@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createCustomToken, upsertOAuthUser } from "@/lib/firebase/admin";
+import { upsertOAuthUser } from "@/lib/firebase/admin";
+import { createOAuthSession, applySessionCookie } from "@/lib/firebase/server-session";
 
 interface NaverTokenResponse {
   access_token: string;
@@ -63,18 +64,11 @@ export async function GET(req: NextRequest) {
 
     await upsertOAuthUser(uid, { email, displayName, photoURL });
 
-    const customToken = await createCustomToken(uid, {
-      provider: "naver",
-      email,
-      displayName,
-      photoURL,
-    });
-
-    // 4. 완료 페이지로 리다이렉트 (custom token 전달)
-    const completeUrl = new URL("/auth/complete", req.url);
-    completeUrl.searchParams.set("ct", customToken);
-    const res = NextResponse.redirect(completeUrl.toString());
+    // 4. 서버에서 직접 세션 생성 후 리다이렉트
+    const { sessionToken, isAdmin } = await createOAuthSession({ uid, email, displayName, photoURL, provider: "naver" });
+    const res = NextResponse.redirect(new URL(isAdmin ? "/admin" : "/", req.url));
     res.cookies.delete("naver_oauth_state");
+    applySessionCookie(res, sessionToken);
     return res;
   } catch {
     return NextResponse.redirect(new URL("/login?error=naver_failed", req.url));

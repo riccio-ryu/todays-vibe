@@ -24,11 +24,12 @@ self.addEventListener('fetch', event => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // API, Firebase, 외부 리소스는 캐시 안 함
+  // API, 인증, 외부 리소스는 캐시 안 함
   if (
     url.origin !== self.location.origin ||
     url.pathname.startsWith('/api/') ||
     url.pathname.startsWith('/_next/') ||
+    url.pathname.startsWith('/auth/') ||
     request.method !== 'GET'
   ) {
     return;
@@ -50,6 +51,6 @@ self.addEventListener('fetch', event => {
         caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
         return response;
       })
-      .catch(() => caches.match(request))
+      .catch(() => caches.match(request).then(cached => cached ?? new Response('', { status: 408, statusText: 'Network Error' })))
   );
 });

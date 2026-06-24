@@ -37,14 +37,16 @@ export default function Tarot3CardsPage() {
       <AnimatePresence mode="wait">
 
         {phase === "input" && (
-          <TarotInputPhase
-            subtitle="마음속으로 질문을 생각하며 카드를 뽑아보세요"
-            placeholder="예: 올해 연애운은 어떤가요?"
-            question={question}
-            setQuestion={setQuestion}
-            fortuneStatus={fortuneStatus}
-            handleStartShuffle={handleStartShuffle}
-          />
+          fortuneStatus?.exhausted && fortuneStatus?.todayReading
+            ? <TarotTodayResult todayReading={fortuneStatus.todayReading} onReshuffle={handleStartShuffle} />
+            : <TarotInputPhase
+                subtitle="마음속으로 질문을 생각하며 카드를 뽑아보세요"
+                placeholder="예: 올해 연애운은 어떤가요?"
+                question={question}
+                setQuestion={setQuestion}
+                fortuneStatus={fortuneStatus}
+                handleStartShuffle={handleStartShuffle}
+              />
         )}
 
         {phase === "shuffling" && <TarotShufflingAnimation />}
@@ -123,7 +125,7 @@ export default function Tarot3CardsPage() {
             </div>
 
             {phase === "drawn" && revealed.every(Boolean) && (
-              <TarotActionButtons onInterpret={handleInterpret} onReset={handleReset} />
+              <TarotActionButtons onInterpret={handleInterpret} onReset={handleReset} exhausted={fortuneStatus?.exhausted === true} />
             )}
 
             {phase === "reading" && (
@@ -139,9 +141,6 @@ export default function Tarot3CardsPage() {
 
       </AnimatePresence>
 
-      {fortuneStatus?.exhausted && phase === "input" && (
-        <TarotTodayResult todayReading={fortuneStatus.todayReading} />
-      )}
     </div>
   );
 }

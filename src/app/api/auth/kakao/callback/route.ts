@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createCustomToken, upsertOAuthUser } from "@/lib/firebase/admin";
+import { upsertOAuthUser } from "@/lib/firebase/admin";
+import { createOAuthSession, applySessionCookie } from "@/lib/firebase/server-session";
 
 interface KakaoTokenResponse {
   access_token: string;
@@ -63,18 +64,10 @@ export async function GET(req: NextRequest) {
       await upsertOAuthUser(uid, { email, displayName, photoURL });
     }
 
-    const customToken = await createCustomToken(uid, {
-      provider: "kakao",
-      email,
-      displayName,
-      photoURL,
-    });
-
-    // 4. 완료 페이지로 리다이렉트
-    const completeUrl = new URL("/auth/complete", req.url);
-    completeUrl.searchParams.set("ct", customToken);
-    const res = NextResponse.redirect(completeUrl.toString());
+    const { sessionToken, isAdmin } = await createOAuthSession({ uid, email, displayName, photoURL, provider: "kakao" });
+    const res = NextResponse.redirect(new URL(isAdmin ? "/admin" : "/", req.url));
     res.cookies.delete("kakao_oauth_state");
+    applySessionCookie(res, sessionToken);
     return res;
   } catch {
     return NextResponse.redirect(new URL("/login?error=kakao_failed", req.url));
