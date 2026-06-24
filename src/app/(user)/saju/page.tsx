@@ -449,13 +449,31 @@ export default function SajuPage() {
             <AdSlot slot="5693296487" className="rounded-xl" />
           )}
 
-          {/* 다시 보기 */}
-          <button
-            onClick={handleReset}
-            className="w-full py-2.5 rounded-[5px] bg-white/5 text-[#a8a6b7] text-sm font-medium hover:bg-white/10 transition-colors"
-          >
-            다시 입력하기
-          </button>
+          {/* 공유 + 다시 보기 */}
+          <div className="flex gap-3">
+            {!loading && interpretation && (
+              <button
+                onClick={() => {
+                  if (navigator.share) {
+                    navigator.share({ title: "사주팔자 풀이 | 오늘운", url: window.location.href })
+                      .catch((e) => { if (e?.name !== "AbortError") throw e; });
+                  } else {
+                    navigator.clipboard.writeText(window.location.href);
+                    alert("링크가 클립보드에 복사됐어요!");
+                  }
+                }}
+                className="flex-1 py-2.5 rounded-[5px] bg-[#5046e4]/30 border border-[#9382ff]/25 text-[#9382ff] text-sm font-medium hover:bg-[#5046e4]/50 transition-colors"
+              >
+                📤 공유하기
+              </button>
+            )}
+            <button
+              onClick={handleReset}
+              className="flex-1 py-2.5 rounded-[5px] bg-white/5 text-[#a8a6b7] text-sm font-medium hover:bg-white/10 transition-colors"
+            >
+              다시 입력하기
+            </button>
+          </div>
         </div>
       )}
     </div>

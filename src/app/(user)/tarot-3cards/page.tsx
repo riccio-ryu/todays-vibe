@@ -38,7 +38,7 @@ export default function Tarot3CardsPage() {
 
         {phase === "input" && (
           fortuneStatus?.exhausted && fortuneStatus?.todayReading
-            ? <TarotTodayResult todayReading={fortuneStatus.todayReading} />
+            ? <TarotTodayResult todayReading={fortuneStatus.todayReading} onReshuffle={handleStartShuffle} />
             : <TarotInputPhase
                 subtitle="마음속으로 질문을 생각하며 카드를 뽑아보세요"
                 placeholder="예: 올해 연애운은 어떤가요?"
@@ -125,7 +125,7 @@ export default function Tarot3CardsPage() {
             </div>
 
             {phase === "drawn" && revealed.every(Boolean) && (
-              <TarotActionButtons onInterpret={handleInterpret} onReset={handleReset} />
+              <TarotActionButtons onInterpret={handleInterpret} onReset={handleReset} exhausted={fortuneStatus?.exhausted === true} />
             )}
 
             {phase === "reading" && (

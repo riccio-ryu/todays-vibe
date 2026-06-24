@@ -68,7 +68,7 @@ export default function TarotTreeOfLifePage() {
 
         {phase === "input" && (
           fortuneStatus?.exhausted && fortuneStatus?.todayReading
-            ? <TarotTodayResult todayReading={fortuneStatus.todayReading} />
+            ? <TarotTodayResult todayReading={fortuneStatus.todayReading} onReshuffle={handleStartShuffle} />
             : <TarotInputPhase
                 subtitle="카발라의 세피로트 10위치로 삶의 전 영역을 탐색합니다"
                 placeholder="예: 지금 나의 삶 전체를 보고 싶어요"
@@ -187,7 +187,7 @@ export default function TarotTreeOfLifePage() {
             </div>
 
             {phase === "drawn" && revealed.every(Boolean) && (
-              <TarotActionButtons onInterpret={handleInterpret} onReset={handleReset} />
+              <TarotActionButtons onInterpret={handleInterpret} onReset={handleReset} exhausted={fortuneStatus?.exhausted === true} />
             )}
 
             {phase === "reading" && (

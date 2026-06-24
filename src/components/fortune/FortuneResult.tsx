@@ -136,12 +136,12 @@ export default function FortuneResult({
             <button
               onClick={() => {
                 if (navigator.share) {
-                  navigator.share({ title, text: result }).catch((e) => {
+                  navigator.share({ title, text: result, url: window.location.href }).catch((e) => {
                     if (e?.name !== "AbortError") throw e;
                   });
                 } else {
-                  navigator.clipboard.writeText(result);
-                  alert("결과가 클립보드에 복사됐어요!");
+                  navigator.clipboard.writeText(window.location.href);
+                  alert("링크가 클립보드에 복사됐어요!");
                 }
               }}
               className="flex-1 py-3 rounded-[5px] bg-[#5046e4]/30 border border-[#9382ff]/25 text-[#9382ff] text-sm font-medium hover:bg-[#5046e4]/50 transition-colors"

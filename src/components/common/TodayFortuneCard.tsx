@@ -1,3 +1,5 @@
+"use client";
+
 import { boldHighlight } from "@/lib/utils/format";
 
 interface Props {
@@ -7,6 +9,16 @@ interface Props {
 }
 
 export default function TodayFortuneCard({ label, todayReading, highlightColor = "text-purple-300" }: Props) {
+  function handleShare() {
+    if (navigator.share) {
+      navigator.share({ title: `${label} | 오늘운`, url: window.location.href })
+        .catch((e) => { if (e?.name !== "AbortError") throw e; });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      alert("링크가 클립보드에 복사됐어요!");
+    }
+  }
+
   return (
     <div className="mt-6 space-y-4">
       <div className="flex items-center gap-2">
@@ -29,6 +41,12 @@ export default function TodayFortuneCard({ label, todayReading, highlightColor =
           dangerouslySetInnerHTML={{ __html: boldHighlight(todayReading.result, highlightColor) }}
         />
       </div>
+      <button
+        onClick={handleShare}
+        className="w-full py-3 rounded-[5px] bg-[#5046e4]/30 border border-[#9382ff]/25 text-[#9382ff] text-sm font-medium hover:bg-[#5046e4]/50 transition-colors"
+      >
+        📤 공유하기
+      </button>
     </div>
   );
 }

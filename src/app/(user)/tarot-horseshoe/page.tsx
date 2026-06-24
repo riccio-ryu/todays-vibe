@@ -58,7 +58,7 @@ export default function TarotHorseshoePage() {
 
         {phase === "input" && (
           fortuneStatus?.exhausted && fortuneStatus?.todayReading
-            ? <TarotTodayResult todayReading={fortuneStatus.todayReading} />
+            ? <TarotTodayResult todayReading={fortuneStatus.todayReading} onReshuffle={handleStartShuffle} />
             : <TarotInputPhase
                 subtitle="현재에서 결과까지, 5장으로 흐름을 읽어드립니다"
                 placeholder="예: 이 일을 계속해야 할까요?"
@@ -176,7 +176,7 @@ export default function TarotHorseshoePage() {
             </div>
 
             {phase === "drawn" && revealed.every(Boolean) && (
-              <TarotActionButtons onInterpret={handleInterpret} onReset={handleReset} />
+              <TarotActionButtons onInterpret={handleInterpret} onReset={handleReset} exhausted={fortuneStatus?.exhausted === true} />
             )}
 
             {phase === "reading" && (
