@@ -203,8 +203,8 @@ export default function SajuPage() {
 
   const currentYear = new Date().getFullYear();
 
-  // 오늘 이미 이용 + 저장된 결과 있으면 바로 결과 노출
-  if (fortuneStatus?.exhausted && fortuneStatus.todayReading && !result) {
+  // 오늘 이용 기록 있으면 결과 노출
+  if (fortuneStatus?.todayReading && !result) {
     return (
       <div className="max-w-xl mx-auto px-4 py-10">
         <div className="text-center mb-8">
@@ -215,6 +215,8 @@ export default function SajuPage() {
           label="오늘의 사주 결과"
           todayReading={fortuneStatus.todayReading}
           highlightColor="text-amber-300"
+          exhausted={fortuneStatus.exhausted}
+          onNewReading={handleReset}
         />
       </div>
     );

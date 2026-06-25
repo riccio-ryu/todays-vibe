@@ -6,6 +6,7 @@ import { drawSangaji, GRADE_INFO, type SangajiEntry } from "@/data/sangaji";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import FortuneResult from "@/components/fortune/FortuneResult";
+import TodayFortuneCard from "@/components/common/TodayFortuneCard";
 
 // 50개 산가지 — 컨테이너 168px, 벽에서 10px 안쪽 → 최대 ±74px
 const STICK_COUNT = 50;
@@ -478,6 +479,15 @@ export default function SangajiPage() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {phase === "idle" && fortuneStatus?.todayReading && (
+          <TodayFortuneCard
+            label="오늘의 산가지 심층 풀이"
+            todayReading={fortuneStatus.todayReading}
+            highlightColor="text-amber-300"
+            exhausted={fortuneStatus.exhausted}
+          />
+        )}
 
         {/* 전통 설명 — 항상 공간 예약 */}
         <div

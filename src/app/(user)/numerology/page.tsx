@@ -248,11 +248,12 @@ export default function NumerologyPage() {
         </button>
       </form>
 
-      {fortuneStatus?.exhausted && fortuneStatus.todayReading && (
+      {fortuneStatus?.todayReading && (
         <TodayFortuneCard
           label="오늘의 생일 숫자 운세 결과"
           todayReading={fortuneStatus.todayReading}
           highlightColor="text-blue-300"
+          exhausted={fortuneStatus.exhausted}
         />
       )}
     </div>

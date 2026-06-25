@@ -39,24 +39,29 @@ export async function GET(req: NextRequest) {
 
     const exhausted = limit !== null && limit !== -1 && used >= limit;
 
-    // 오늘 기록 조회 (exhausted일 때만)
+    // 오늘 기록 조회 — 사용 이력이 있으면 항상 시도 (exhausted 여부 무관)
     let todayReading = null;
-    if (exhausted) {
-      const readingSnap = await db
-        .collection("ai_readings")
-        .where("userId", "==", session.uid)
-        .where("type", "==", menuId)
-        .where("date", "==", today)
-        .limit(1)
-        .get();
+    if (used > 0) {
+      try {
+        const readingSnap = await db
+          .collection("ai_readings")
+          .where("userId", "==", session.uid)
+          .where("type", "==", menuId)
+          .where("date", "==", today)
+          .limit(1)
+          .get();
 
-      if (!readingSnap.empty) {
-        const d = readingSnap.docs[0].data();
-        todayReading = {
-          id: readingSnap.docs[0].id,
-          result: d.result as string,
-          createdAt: d.createdAt?.toDate?.()?.toISOString() ?? null,
-        };
+        if (!readingSnap.empty) {
+          const d = readingSnap.docs[0].data();
+          todayReading = {
+            id: readingSnap.docs[0].id,
+            result: d.result as string,
+            createdAt: d.createdAt?.toDate?.()?.toISOString() ?? null,
+          };
+        }
+      } catch (readErr) {
+        // 조회 실패해도 used/exhausted 응답은 정상 반환
+        console.error("[fortune-status] todayReading fetch error:", readErr);
       }
     }
 
