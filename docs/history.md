@@ -1,6 +1,15 @@
 # 📋 개발 일지
 ---
 
+## 2026-06-25
+
+- 운세 페이지 내 즐겨찾기 추가/제거 버튼 구현 — `src/components/common/FavoriteButton.tsx` 신규 생성 (로그인 유저만 표시, `/api/user/favorites` GET·POST·DELETE 연동, 낙관적 업데이트, ★ 아이콘 채우기/비채우기 토글)
+- 전체 운세 33종 페이지에 FavoriteButton 추가 — `PageHeader.tsx`에 `menuId` prop 추가(타로 6종 일괄 적용), `GeneralFortuneForm` / `CompatibilityBirthForm` / `DreamForm` 공통 컴포넌트 수정, 나머지 개별 페이지 20종 직접 삽입; 다중 return 섹션(todayReading·main form 등) 모두 적용
+- 모바일 즐겨찾기 버튼 가시성 개선 — `FavoritesSection.tsx` 삭제 버튼, `FortuneGrid.tsx` 별 버튼, `mypage/page.tsx` 프로필 오버레이에서 `group-hover:opacity-0` 패턴 제거, 모바일에서 항상 보이고 데스크톱에서만 hover 표시하도록 `sm:` 반응형 클래스 적용
+- 전체 운세 33종 페이지에 ← 홈 뒤로가기 버튼 추가 — `FortuneResult.tsx`(결과 스트리밍 화면), `GeneralFortuneForm` / `CompatibilityBirthForm` / `DreamForm` 공통 컴포넌트, 개별 페이지(`saju`, `tojeong`, `life-fortune`, `iching`, `rune`, `oracle`, `numerology`, `sangaji`, `sangaji-new`, `zodiac`, `chinese-zodiac`, `moving-fortune`, `name-fortune`, `name-compatibility`, `zodiac-compatibility`, `yuk-hyo` 등) 모든 return 섹션에 적용
+
+---
+
 ## 2026-06-24
 
 - 운세 결과 공유하기 버튼 추가 — `navigator.share({ title, text, url })` 적용, 미지원 브라우저는 URL 클립보드 복사 fallback; `FortuneResult.tsx`, `TarotReadingResult.tsx`, `saju`, `zodiac/[sign]`, `chinese-zodiac/[animal]`, `tarot-daily` 페이지에 공유 버튼 추가
