@@ -1,6 +1,23 @@
 # 📋 개발 일지
 ---
 
+## 2026-06-24
+
+- 운세 결과 공유하기 버튼 추가 — `navigator.share({ title, text, url })` 적용, 미지원 브라우저는 URL 클립보드 복사 fallback; `FortuneResult.tsx`, `TarotReadingResult.tsx`, `saju`, `zodiac/[sign]`, `chinese-zodiac/[animal]`, `tarot-daily` 페이지에 공유 버튼 추가
+- 재방문 시 오늘 운세 결과 자동 노출 — 33개 전 운세 메뉴 대상으로, 오늘 이미 해석을 받은 경우 해당 페이지 재방문 시 이전 결과 표시
+  - `src/app/api/user/fortune-status/route.ts` 수정 — `exhausted` 여부와 무관하게 `used > 0`이면 `ai_readings` Firestore 조회, 별도 try-catch로 쿼리 실패 시 전체 응답 유지
+  - `TodayFortuneCard.tsx` 개선 — 공유 버튼·"새로 해석받기" 버튼 포함, `exhausted` prop으로 소진 메시지 표시
+  - `TarotTodayResult.tsx` / `TarotActionButtons.tsx` 재작성 — 소진 시 "오늘 해석을 이미 이용했어요" amber 안내, `onReshuffle` prop 추가
+  - 타로 스프레드 6개 페이지(`tarot-3cards`, `tarot-celtic`, `tarot-horseshoe`, `tarot-full-moon`, `tarot-tree-of-life`) — `useTarotSpread` menuId 불일치 버그 수정 (`"tarot"` → `"tarot-3cards"` 등), `fortuneStatus?.todayReading` 조건으로 변경
+  - `GeneralFortuneForm.tsx` / `CompatibilityBirthForm.tsx` — `showForm` 상태 추가, todayReading 표시 후 "새로 해석받기" 버튼으로 폼 전환 가능
+  - `saju/page.tsx` — `exhausted && todayReading` → `todayReading` 조건 수정, `TodayFortuneCard`에 `exhausted` / `onNewReading` prop 연결
+  - 8개 커스텀 페이지(`numerology`, `name-fortune`, `moving-fortune`, `rune`, `name-compatibility`, `zodiac-compatibility`, `iching`, `yuk-hyo`) — 동일 조건 수정; 인라인 HTML 표시 5개(`rune`, `name-compatibility`, `zodiac-compatibility`, `iching`, `yuk-hyo`)는 `TodayFortuneCard`로 교체
+  - `sangaji/page.tsx` / `sangaji-new/page.tsx` — idle 단계에서 `fortuneStatus.todayReading` 있으면 `TodayFortuneCard` 노출
+  - `DreamForm.tsx` — `useFortuneStatus("dream")` + `TodayFortuneCard` + `showForm` 상태 추가
+- Naver 로그인 콜백 버그 수정 (`src/app/api/auth/naver/callback/route.ts`)
+
+---
+
 ## 2026-06-23
 
 - 디자인 시스템 정립 (`docs/reflect-notes-style.md` 신규 생성) — "Reflect Notes" 스타일 가이드 문서화, 어두운 천문대 테마 컬러 토큰·타이포그래피·그림자·border-radius 토큰 정의
