@@ -101,6 +101,7 @@ function MyPageInner() {
   const [birthInfo, setBirthInfo]       = useState<BirthInfo | null>(null);
   const [birthLoading, setBirthLoading] = useState(true);
   const [editingBirth, setEditingBirth] = useState(false);
+  const [birthSaving, setBirthSaving]   = useState(false);
   const [birthDraft, setBirthDraft]     = useState<BirthInfo>({
     year: 1990, month: 1, day: 1, hour: -1, isLunar: false, gender: "male",
   });
@@ -211,22 +212,38 @@ function MyPageInner() {
 
   // ── 출생 정보 저장 ────────────────────────────────────────────
   async function handleBirthSave() {
-    await fetch("/api/user/birth-info", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(birthDraft),
-    });
-    setBirthInfo(birthDraft);
-    setEditingBirth(false);
-    showToast("출생 정보가 저장되었어요");
+    setBirthSaving(true);
+    try {
+      const res = await fetch("/api/user/birth-info", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(birthDraft),
+      });
+      if (!res.ok) throw new Error();
+      setBirthInfo(birthDraft);
+      setEditingBirth(false);
+      showToast("출생 정보가 저장되었어요");
+    } catch {
+      showToast("저장에 실패했어요. 다시 시도해 주세요.");
+    } finally {
+      setBirthSaving(false);
+    }
   }
 
   async function handleBirthDelete() {
-    await fetch("/api/user/birth-info", { method: "DELETE" });
-    setBirthInfo(null);
-    setBirthDraft({ year: 1990, month: 1, day: 1, hour: -1, isLunar: false, gender: "male" });
-    setEditingBirth(false);
-    showToast("출생 정보가 삭제되었어요");
+    setBirthSaving(true);
+    try {
+      const res = await fetch("/api/user/birth-info", { method: "DELETE" });
+      if (!res.ok) throw new Error();
+      setBirthInfo(null);
+      setBirthDraft({ year: 1990, month: 1, day: 1, hour: -1, isLunar: false, gender: "male" });
+      setEditingBirth(false);
+      showToast("출생 정보가 삭제되었어요");
+    } catch {
+      showToast("삭제에 실패했어요. 다시 시도해 주세요.");
+    } finally {
+      setBirthSaving(false);
+    }
   }
 
   // ── 프로필 사진 변경 ───────────────────────────────────────────
@@ -632,16 +649,19 @@ function MyPageInner() {
               {/* 버튼 */}
               <div className="flex gap-2 pt-1">
                 <button onClick={handleBirthSave}
-                  className="flex-1 py-2 rounded-lg bg-purple-600 text-white text-xs font-semibold hover:bg-purple-500 transition-colors">
-                  저장
+                  disabled={birthSaving}
+                  className="flex-1 py-2 rounded-lg bg-purple-600 text-white text-xs font-semibold hover:bg-purple-500 transition-colors disabled:opacity-50">
+                  {birthSaving ? "저장중..." : "저장"}
                 </button>
                 <button onClick={() => setEditingBirth(false)}
-                  className="flex-1 py-2 rounded-lg bg-white/10 text-white/50 text-xs font-semibold hover:bg-white/15 transition-colors">
+                  disabled={birthSaving}
+                  className="flex-1 py-2 rounded-lg bg-white/10 text-white/50 text-xs font-semibold hover:bg-white/15 transition-colors disabled:opacity-50">
                   취소
                 </button>
                 {birthInfo && (
                   <button onClick={handleBirthDelete}
-                    className="px-3 py-2 rounded-lg bg-red-500/10 text-red-400 text-xs font-semibold hover:bg-red-500/20 transition-colors">
+                    disabled={birthSaving}
+                    className="px-3 py-2 rounded-lg bg-red-500/10 text-red-400 text-xs font-semibold hover:bg-red-500/20 transition-colors disabled:opacity-50">
                     삭제
                   </button>
                 )}
