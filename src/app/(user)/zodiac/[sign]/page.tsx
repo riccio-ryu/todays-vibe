@@ -8,6 +8,7 @@ import zodiacData from "@/data/zodiac-signs.json";
 import SpriteCard from "@/components/common/SpriteCard";
 import FortuneCard from "@/components/common/FortuneCard";
 import LuckyBadge from "@/components/common/LuckyBadge";
+import FavoriteButton from "@/components/common/FavoriteButton";
 import {
   getWeeklyZodiacFortune,
   getMonthlyZodiacFortune,
@@ -107,7 +108,10 @@ export default function ZodiacSignPage() {
             />
             {/* 텍스트 */}
             <div>
-              <h1 className="text-white text-2xl font-bold">{signInfo.name}</h1>
+              <div className="flex items-center gap-2">
+                <h1 className="text-white text-2xl font-bold">{signInfo.name}</h1>
+                <FavoriteButton menuId="zodiac" />
+              </div>
               <p className="text-white/40 text-sm mt-1">{signInfo.dateRange}</p>
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3">
                 <span className={`text-xs font-medium ${elColor}`}>

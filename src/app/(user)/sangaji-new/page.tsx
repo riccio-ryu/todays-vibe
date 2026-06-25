@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
 import { drawSangaji, GRADE_INFO, type SangajiEntry } from "@/data/sangaji";
@@ -8,6 +10,7 @@ import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import FortuneResult from "@/components/fortune/FortuneResult";
 import TodayFortuneCard from "@/components/common/TodayFortuneCard";
+import FavoriteButton from "@/components/common/FavoriteButton";
 import type { Phase } from "@/components/sangaji/SangajiScene3D";
 
 const SangajiScene3D = dynamic(
@@ -141,11 +144,19 @@ export default function SangajiPage() {
         <div className="relative z-10 flex flex-col min-h-screen px-4 py-8 pointer-events-none">
 
           {/* 헤더 */}
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-amber-200 drop-shadow-lg">산가지 점</h1>
-            <p className="text-amber-400/70 text-sm mt-1 drop-shadow">
-              마음속 질문을 품고 막대를 흔드세요
-            </p>
+          <div>
+            <Link href="/" className="inline-flex items-center gap-1 text-amber-700/60 hover:text-amber-400/80 text-sm transition-colors mb-4 pointer-events-auto">
+              <ArrowLeft className="w-4 h-4" /> 홈
+            </Link>
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-2">
+                <h1 className="text-2xl font-bold text-amber-200 drop-shadow-lg">산가지 점</h1>
+                <FavoriteButton menuId="sangaji-new" />
+              </div>
+              <p className="text-amber-400/70 text-sm mt-1 drop-shadow">
+                마음속 질문을 품고 막대를 흔드세요
+              </p>
+            </div>
           </div>
 
           {/* 질문 입력 */}
@@ -241,8 +252,14 @@ export default function SangajiPage() {
             className="relative z-20 min-h-screen bg-gradient-to-b from-amber-950 via-stone-900 to-gray-900 px-4 py-8"
           >
             <div className="max-w-sm mx-auto">
+              <Link href="/" className="inline-flex items-center gap-1 text-amber-700/60 hover:text-amber-400/80 text-sm transition-colors mb-6">
+                <ArrowLeft className="w-4 h-4" /> 홈
+              </Link>
               <div className="text-center mb-6">
-                <h1 className="text-2xl font-bold text-amber-200">산가지 점</h1>
+                <div className="flex items-center justify-center gap-2">
+                  <h1 className="text-2xl font-bold text-amber-200">산가지 점</h1>
+                  <FavoriteButton menuId="sangaji-new" />
+                </div>
               </div>
 
               <div className="rounded-2xl overflow-hidden border border-amber-700/30 shadow-2xl mb-4">

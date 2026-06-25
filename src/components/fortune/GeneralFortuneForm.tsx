@@ -1,12 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 import { type FortuneType, type GeneralFortuneInput } from "@/types/fortune";
 import FortuneResult from "./FortuneResult";
 import TodayFortuneCard from "@/components/common/TodayFortuneCard";
+import FavoriteButton from "@/components/common/FavoriteButton";
 
 interface Config {
   type: FortuneType;
@@ -106,9 +109,15 @@ export default function GeneralFortuneForm({ config }: Props) {
   if (fortuneStatus?.todayReading && !result && !showForm) {
     return (
       <div className="max-w-xl mx-auto px-4 py-10">
+        <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+          <ArrowLeft className="w-4 h-4" /> 홈
+        </Link>
         <div className="text-center mb-8">
           <span className="text-5xl block mb-3">{config.icon}</span>
-          <h1 className="text-white font-bold text-2xl">{config.title}</h1>
+          <div className="flex items-center justify-center gap-2">
+            <h1 className="text-white font-bold text-2xl">{config.title}</h1>
+            <FavoriteButton menuId={config.type} />
+          </div>
           <p className="text-white/50 text-sm mt-2">{config.questionLabel}</p>
         </div>
         <TodayFortuneCard
@@ -125,10 +134,16 @@ export default function GeneralFortuneForm({ config }: Props) {
 
   return (
     <div className="max-w-xl mx-auto px-4 py-10">
+      <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+        <ArrowLeft className="w-4 h-4" /> 홈
+      </Link>
       {/* 헤더 */}
       <div className="text-center mb-8">
         <span className="text-5xl block mb-3">{config.icon}</span>
-        <h1 className="text-white font-bold text-2xl">{config.title}</h1>
+        <div className="flex items-center justify-center gap-2">
+          <h1 className="text-white font-bold text-2xl">{config.title}</h1>
+          <FavoriteButton menuId={config.type} />
+        </div>
         <p className="text-white/50 text-sm mt-2">{config.questionLabel}</p>
       </div>
 

@@ -32,7 +32,7 @@ export default function Tarot3CardsPage() {
 
   return (
     <div className="max-w-lg mx-auto px-4 py-10">
-      <PageHeader title="타로 3장 스프레드" />
+      <PageHeader title="타로 3장 스프레드" menuId="tarot-3cards" />
 
       <AnimatePresence mode="wait">
 

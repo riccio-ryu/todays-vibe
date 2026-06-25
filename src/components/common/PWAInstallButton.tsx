@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Download } from "lucide-react";
+import { Download, X } from "lucide-react";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -19,6 +19,7 @@ export default function PWAInstallButton() {
   const [isIOS, setIsIOS] = useState(false);
   const [showIOSGuide, setShowIOSGuide] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const [tooltipDismissed, setTooltipDismissed] = useState(false);
   const [popoverStyle, setPopoverStyle] = useState<PopoverStyle | null>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
 
@@ -26,6 +27,11 @@ export default function PWAInstallButton() {
     if (window.matchMedia("(display-mode: standalone)").matches) {
       setHidden(true);
       return;
+    }
+
+    const today = new Date().toDateString();
+    if (localStorage.getItem("pwa-tooltip-dismissed") === today) {
+      setTooltipDismissed(true);
     }
 
     const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
@@ -38,6 +44,13 @@ export default function PWAInstallButton() {
     window.addEventListener("beforeinstallprompt", handler);
     return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
+
+  function dismissTooltip(e: React.MouseEvent) {
+    e.stopPropagation();
+    const today = new Date().toDateString();
+    localStorage.setItem("pwa-tooltip-dismissed", today);
+    setTooltipDismissed(true);
+  }
 
   if (hidden) return null;
   if (!isIOS && !deferredPrompt) return null;
@@ -98,17 +111,26 @@ export default function PWAInstallButton() {
         <div className="w-7 h-7 flex items-center justify-center rounded-full bg-[#9382ff]/15 border border-[#9382ff]/25 group-hover:bg-[#9382ff]/25 transition-colors">
           <Download className="w-3.5 h-3.5 text-[#9382ff]" />
         </div>
+      </button>
 
-        {/* 말풍선 — 헤더 아래로 absolute */}
+      {/* 말풍선 — 바깥 div 기준 absolute */}
+      {!tooltipDismissed && (
         <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1.5 flex flex-col items-center z-50 pointer-events-none">
           {/* 꼬리 */}
           <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-b-[6px] border-b-purple-600/90" />
           {/* 말풍선 본체 */}
-          <span className="text-[11px] text-[#f4f0ff] bg-[#5046e4]/90 border border-[#9382ff]/30 px-2.5 py-1 rounded-[32px] leading-none whitespace-nowrap group-hover:bg-[#5046e4] transition-colors">
-            앱으로 이용하기
-          </span>
+          <div className="flex items-center gap-1 text-[11px] text-[#f4f0ff] bg-[#5046e4]/90 border border-[#9382ff]/30 pl-2.5 pr-1.5 py-1 rounded-[32px] whitespace-nowrap pointer-events-auto">
+            <span className="leading-none">앱으로 이용하기</span>
+            <button
+              onClick={dismissTooltip}
+              className="flex items-center justify-center w-3.5 h-3.5 rounded-full bg-white/20 hover:bg-white/35 transition-colors shrink-0"
+              aria-label="닫기"
+            >
+              <X className="w-2 h-2 text-white" />
+            </button>
+          </div>
         </div>
-      </button>
+      )}
     </div>
   );
 }

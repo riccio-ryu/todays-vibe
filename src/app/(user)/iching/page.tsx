@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
@@ -8,6 +10,7 @@ import { getHexagramByLines, HEXAGRAMS } from "@/data/iching";
 import { type IChingInput } from "@/types/fortune";
 import FortuneResult from "@/components/fortune/FortuneResult";
 import TodayFortuneCard from "@/components/common/TodayFortuneCard";
+import FavoriteButton from "@/components/common/FavoriteButton";
 
 // 복희 선천 64괘도 위치 계산 (SVG 800×800, 중심 400,400, r≈170, 5.625°/괘)
 function getFuxiPos(linesStr: string): number {
@@ -217,8 +220,14 @@ export default function IChingPage() {
 
   return (
     <div className="max-w-xl mx-auto px-4 py-10">
+      <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+        <ArrowLeft className="w-4 h-4" /> 홈
+      </Link>
       <div className="text-center mb-8">
-        <h1 className="text-white font-bold text-2xl">주역 괘</h1>
+        <div className="flex items-center justify-center gap-2">
+          <h1 className="text-white font-bold text-2xl">주역 괘</h1>
+          <FavoriteButton menuId="iching" />
+        </div>
         <p className="text-white/50 text-sm mt-2">동전을 6번 던져 64괘 중 하나를 뽑습니다</p>
       </div>
 

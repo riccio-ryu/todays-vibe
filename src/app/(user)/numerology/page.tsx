@@ -1,12 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 import { type NumerologyInput } from "@/types/fortune";
 import FortuneResult from "@/components/fortune/FortuneResult";
 import TodayFortuneCard from "@/components/common/TodayFortuneCard";
+import FavoriteButton from "@/components/common/FavoriteButton";
 
 // ─── 수비학 계산 ──────────────────────────────────────────────────────────────
 
@@ -137,9 +140,15 @@ export default function NumerologyPage() {
   // ─── 입력 폼 ──────────────────────────────────────────────────────────────
   return (
     <div className="max-w-xl mx-auto px-4 py-10">
+      <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+        <ArrowLeft className="w-4 h-4" /> 홈
+      </Link>
       {/* 헤더 */}
       <div className="text-center mb-8">
-        <h1 className="text-white font-bold text-2xl">생일 숫자 운세</h1>
+        <div className="flex items-center justify-center gap-2">
+          <h1 className="text-white font-bold text-2xl">생일 숫자 운세</h1>
+          <FavoriteButton menuId="numerology" />
+        </div>
         <p className="text-white/50 text-sm mt-2">생년월일 숫자로 풀어보는 나의 인생 에너지</p>
       </div>
 

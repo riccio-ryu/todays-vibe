@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
@@ -8,6 +10,7 @@ import { drawRunes, type Rune } from "@/data/runes";
 import { type RuneInput } from "@/types/fortune";
 import FortuneResult from "@/components/fortune/FortuneResult";
 import TodayFortuneCard from "@/components/common/TodayFortuneCard";
+import FavoriteButton from "@/components/common/FavoriteButton";
 
 const POSITION_LABELS = ["과거", "현재", "미래"];
 
@@ -77,9 +80,15 @@ export default function RunePage() {
 
   return (
     <div className="max-w-xl mx-auto px-4 py-10">
+      <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+        <ArrowLeft className="w-4 h-4" /> 홈
+      </Link>
       <div className="text-center mb-8">
         <span className="text-5xl block mb-3 font-serif">ᚱ</span>
-        <h1 className="text-white font-bold text-2xl">룬 문자</h1>
+        <div className="flex items-center justify-center gap-2">
+          <h1 className="text-white font-bold text-2xl">룬 문자</h1>
+          <FavoriteButton menuId="rune" />
+        </div>
         <p className="text-white/50 text-sm mt-2">북유럽 고대 룬 3개로 과거·현재·미래를 읽습니다</p>
       </div>
 

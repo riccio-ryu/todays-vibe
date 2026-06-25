@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
@@ -8,6 +10,7 @@ import { type NameFortuneInput } from "@/types/fortune";
 import FortuneResult from "@/components/fortune/FortuneResult";
 import TodayFortuneCard from "@/components/common/TodayFortuneCard";
 import { ChevronRight } from "lucide-react";
+import FavoriteButton from "@/components/common/FavoriteButton";
 
 export default function NameFortunePage() {
   const { user } = useAuth();
@@ -65,8 +68,14 @@ export default function NameFortunePage() {
 
   return (
     <div className="max-w-xl mx-auto px-4 py-10">
+      <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+        <ArrowLeft className="w-4 h-4" /> 홈
+      </Link>
       <div className="text-center mb-8">
-        <h1 className="text-white font-bold text-2xl">성명학</h1>
+        <div className="flex items-center justify-center gap-2">
+          <h1 className="text-white font-bold text-2xl">성명학</h1>
+          <FavoriteButton menuId="name-fortune" />
+        </div>
         <p className="text-white/50 text-sm mt-2">이름 획수와 음양오행으로 풀어보는 나의 운세</p>
       </div>
 

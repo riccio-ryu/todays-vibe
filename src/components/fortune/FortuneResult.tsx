@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import AILoadingIndicator from "@/components/common/AILoadingIndicator";
 import AdSlot from "@/components/common/AdSlot";
 
@@ -92,6 +94,9 @@ export default function FortuneResult({
 
   return (
     <div ref={topRef} className="max-w-xl mx-auto px-4 py-8">
+      <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+        <ArrowLeft className="w-4 h-4" /> 홈
+      </Link>
       {/* 헤더 */}
       <div className="text-center mb-6">
         {icon && <div className="text-5xl mb-2">{icon}</div>}

@@ -1,9 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { type LifeFortuneInput } from "@/types/fortune";
 import FortuneResult from "@/components/fortune/FortuneResult";
+import FavoriteButton from "@/components/common/FavoriteButton";
 
 type CachedReading = { result: string; createdAt: string | null };
 
@@ -124,8 +127,11 @@ export default function LifeFortunePage() {
   if (cachedReading) {
     return (
       <div className="max-w-xl mx-auto px-4 py-10">
+        <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+          <ArrowLeft className="w-4 h-4" /> 홈
+        </Link>
         <div className="text-center mb-8">
-          <h1 className="text-white font-bold text-2xl">평생운세</h1>
+          <div className="flex items-center justify-center gap-2"><h1 className="text-white font-bold text-2xl">평생운세</h1><FavoriteButton menuId="life-fortune" /></div>
           <p className="text-white/50 text-sm mt-2">
             {y}년 {m}월 {d}일생의 운명 풀이
           </p>
@@ -165,8 +171,14 @@ export default function LifeFortunePage() {
   // 입력 폼
   return (
     <div className="max-w-xl mx-auto px-4 py-10">
+      <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+        <ArrowLeft className="w-4 h-4" /> 홈
+      </Link>
       <div className="text-center mb-8">
-        <h1 className="text-white font-bold text-2xl">평생운세</h1>
+        <div className="flex items-center justify-center gap-2">
+          <h1 className="text-white font-bold text-2xl">평생운세</h1>
+          <FavoriteButton menuId="life-fortune" />
+        </div>
         <p className="text-white/50 text-sm mt-2">타고난 운명과 인생의 흐름을 풀어드립니다</p>
       </div>
 

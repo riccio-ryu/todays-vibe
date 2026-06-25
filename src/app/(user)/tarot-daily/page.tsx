@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, Heart, Briefcase, DollarSign } from "lucide-react";
 import TarotCard from "@/components/tarot/TarotCard";
 import { drawCards, getCardMeaning, getSuitLabel, type DrawnCard } from "@/lib/tarot/utils";
+import FavoriteButton from "@/components/common/FavoriteButton";
 
 export default function TarotDailyPage() {
   const [drawn, setDrawn] = useState<DrawnCard | null>(null);
@@ -35,6 +36,7 @@ export default function TarotDailyPage() {
         </Link>
         <span className="text-white/20">|</span>
         <h1 className="text-white font-semibold text-lg">타로 원카드</h1>
+        <FavoriteButton menuId="tarot-daily" />
       </div>
 
       {/* 메인 */}

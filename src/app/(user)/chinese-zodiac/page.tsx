@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import chineseData from "@/data/chinese-zodiac.json";
 import SpriteCard from "@/components/common/SpriteCard";
+import FavoriteButton from "@/components/common/FavoriteButton";
 
 const CURRENT_YEAR = new Date().getFullYear();
 
@@ -11,11 +13,17 @@ export default function ChineseZodiacPage() {
   return (
     <div className="min-h-screen px-4 py-12">
       <div className="max-w-3xl mx-auto">
+        <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+          <ArrowLeft className="w-4 h-4" /> 홈
+        </Link>
 
         {/* 헤더 */}
         <div className="text-center mb-10">
           <p className="text-white/40 text-sm mb-2">띠별 운세</p>
-          <h1 className="text-3xl font-bold text-white mb-3">나의 띠 운세</h1>
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <h1 className="text-3xl font-bold text-white">나의 띠 운세</h1>
+            <FavoriteButton menuId="chinese-zodiac" />
+          </div>
           <p className="text-white/50 text-sm">태어난 해의 띠를 선택하세요</p>
           {thisYearAnimal && (
             <div className="mt-3 inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5">

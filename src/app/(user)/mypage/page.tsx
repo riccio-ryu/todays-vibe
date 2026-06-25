@@ -12,6 +12,7 @@ import { getFirebaseApp } from "@/lib/firebase/config";
 import { uploadProfilePhoto } from "@/lib/firebase/storage";
 import { validateNickname } from "@/lib/utils/nickname-validator";
 import { HOUR_OPTIONS } from "@/lib/saju/calculator";
+import Select from "@/components/ui/Select";
 
 type BirthInfo = {
   year: number; month: number; day: number;
@@ -101,6 +102,7 @@ function MyPageInner() {
   const [birthInfo, setBirthInfo]       = useState<BirthInfo | null>(null);
   const [birthLoading, setBirthLoading] = useState(true);
   const [editingBirth, setEditingBirth] = useState(false);
+  const [birthSaving, setBirthSaving]   = useState(false);
   const [birthDraft, setBirthDraft]     = useState<BirthInfo>({
     year: 1990, month: 1, day: 1, hour: -1, isLunar: false, gender: "male",
   });
@@ -211,22 +213,38 @@ function MyPageInner() {
 
   // ── 출생 정보 저장 ────────────────────────────────────────────
   async function handleBirthSave() {
-    await fetch("/api/user/birth-info", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(birthDraft),
-    });
-    setBirthInfo(birthDraft);
-    setEditingBirth(false);
-    showToast("출생 정보가 저장되었어요");
+    setBirthSaving(true);
+    try {
+      const res = await fetch("/api/user/birth-info", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(birthDraft),
+      });
+      if (!res.ok) throw new Error();
+      setBirthInfo(birthDraft);
+      setEditingBirth(false);
+      showToast("출생 정보가 저장되었어요");
+    } catch {
+      showToast("저장에 실패했어요. 다시 시도해 주세요.");
+    } finally {
+      setBirthSaving(false);
+    }
   }
 
   async function handleBirthDelete() {
-    await fetch("/api/user/birth-info", { method: "DELETE" });
-    setBirthInfo(null);
-    setBirthDraft({ year: 1990, month: 1, day: 1, hour: -1, isLunar: false, gender: "male" });
-    setEditingBirth(false);
-    showToast("출생 정보가 삭제되었어요");
+    setBirthSaving(true);
+    try {
+      const res = await fetch("/api/user/birth-info", { method: "DELETE" });
+      if (!res.ok) throw new Error();
+      setBirthInfo(null);
+      setBirthDraft({ year: 1990, month: 1, day: 1, hour: -1, isLunar: false, gender: "male" });
+      setEditingBirth(false);
+      showToast("출생 정보가 삭제되었어요");
+    } catch {
+      showToast("삭제에 실패했어요. 다시 시도해 주세요.");
+    } finally {
+      setBirthSaving(false);
+    }
   }
 
   // ── 프로필 사진 변경 ───────────────────────────────────────────
@@ -310,6 +328,7 @@ function MyPageInner() {
                     src={photoPreview}
                     alt="프로필"
                     fill
+                    sizes="80px"
                     className="object-cover"
                   />
                 ) : (
@@ -318,7 +337,7 @@ function MyPageInner() {
                   </div>
                 )}
                 {/* 호버 오버레이 */}
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/50 opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   {photoUploading
                     ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     : <span className="text-white text-xs">변경</span>
@@ -339,37 +358,39 @@ function MyPageInner() {
               {/* 닉네임 */}
               {editingNick ? (
                 <div className="mb-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                     <input
                       value={nickname}
                       onChange={(e) => {
                         setNickname(e.target.value);
-                        setNickError(null); // 입력 시 에러 초기화
+                        setNickError(null);
                       }}
                       onKeyDown={(e) => e.key === "Enter" && handleNickSave()}
                       maxLength={12}
                       autoFocus
-                      className={`flex-1 bg-white/10 border rounded-lg px-3 py-1 text-white text-sm focus:outline-none transition-colors ${
+                      className={`w-full sm:flex-1 bg-white/10 border rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none transition-colors ${
                         nickError ? "border-red-400/60 focus:border-red-400" : "border-white/20 focus:border-purple-400"
                       }`}
                     />
-                    <button
-                      onClick={handleNickSave}
-                      disabled={nickSaving}
-                      className="text-xs px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors disabled:opacity-50 shrink-0"
-                    >
-                      {nickSaving ? "저장중..." : "저장"}
-                    </button>
-                    <button
-                      onClick={() => {
-                        setEditingNick(false);
-                        setNickname(user.displayName ?? "");
-                        setNickError(null);
-                      }}
-                      className="text-xs px-2 py-1.5 text-white/40 hover:text-white/70 transition-colors shrink-0"
-                    >
-                      취소
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleNickSave}
+                        disabled={nickSaving}
+                        className="flex-1 sm:flex-none text-xs px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        {nickSaving ? "저장중..." : "저장"}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setEditingNick(false);
+                          setNickname(user.displayName ?? "");
+                          setNickError(null);
+                        }}
+                        className="text-xs px-3 py-1.5 text-white/40 hover:text-white/70 bg-white/5 rounded-lg transition-colors"
+                      >
+                        취소
+                      </button>
+                    </div>
                   </div>
                   {/* 에러 메시지 + 글자수 */}
                   <div className="flex items-center justify-between mt-1 px-0.5">
@@ -581,42 +602,30 @@ function MyPageInner() {
                 {/* 월 */}
                 <div>
                   <label className="block text-white/30 text-[10px] mb-1">월</label>
-                  <select
+                  <Select
                     value={birthDraft.month}
-                    onChange={(e) => setBirthDraft((d) => ({ ...d, month: parseInt(e.target.value) }))}
-                    className="w-full px-2 py-1.5 rounded-lg bg-white/10 border border-white/15 text-white text-xs focus:outline-none focus:border-purple-400 appearance-none"
-                  >
-                    {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                      <option key={m} value={m} className="bg-gray-900">{m}월</option>
-                    ))}
-                  </select>
+                    onChange={(v) => setBirthDraft((d) => ({ ...d, month: parseInt(v) }))}
+                    options={Array.from({ length: 12 }, (_, i) => ({ value: i + 1, label: `${i + 1}월` }))}
+                  />
                 </div>
                 {/* 일 */}
                 <div>
                   <label className="block text-white/30 text-[10px] mb-1">일</label>
-                  <select
+                  <Select
                     value={birthDraft.day}
-                    onChange={(e) => setBirthDraft((d) => ({ ...d, day: parseInt(e.target.value) }))}
-                    className="w-full px-2 py-1.5 rounded-lg bg-white/10 border border-white/15 text-white text-xs focus:outline-none focus:border-purple-400 appearance-none"
-                  >
-                    {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
-                      <option key={d} value={d} className="bg-gray-900">{d}일</option>
-                    ))}
-                  </select>
+                    onChange={(v) => setBirthDraft((d) => ({ ...d, day: parseInt(v) }))}
+                    options={Array.from({ length: 31 }, (_, i) => ({ value: i + 1, label: `${i + 1}일` }))}
+                  />
                 </div>
               </div>
               {/* 태어난 시간 */}
               <div>
                 <label className="block text-white/30 text-[10px] mb-1">태어난 시간</label>
-                <select
+                <Select
                   value={birthDraft.hour}
-                  onChange={(e) => setBirthDraft((d) => ({ ...d, hour: parseInt(e.target.value) }))}
-                  className="w-full px-2 py-1.5 rounded-lg bg-white/10 border border-white/15 text-white text-xs focus:outline-none focus:border-purple-400 appearance-none"
-                >
-                  {HOUR_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value} className="bg-gray-900">{opt.label}</option>
-                  ))}
-                </select>
+                  onChange={(v) => setBirthDraft((d) => ({ ...d, hour: parseInt(v) }))}
+                  options={HOUR_OPTIONS.map((opt) => ({ value: opt.value, label: opt.label }))}
+                />
               </div>
               {/* 성별 */}
               <div className="flex gap-2">
@@ -632,16 +641,19 @@ function MyPageInner() {
               {/* 버튼 */}
               <div className="flex gap-2 pt-1">
                 <button onClick={handleBirthSave}
-                  className="flex-1 py-2 rounded-lg bg-purple-600 text-white text-xs font-semibold hover:bg-purple-500 transition-colors">
-                  저장
+                  disabled={birthSaving}
+                  className="flex-1 py-2 rounded-lg bg-purple-600 text-white text-xs font-semibold hover:bg-purple-500 transition-colors disabled:opacity-50">
+                  {birthSaving ? "저장중..." : "저장"}
                 </button>
                 <button onClick={() => setEditingBirth(false)}
-                  className="flex-1 py-2 rounded-lg bg-white/10 text-white/50 text-xs font-semibold hover:bg-white/15 transition-colors">
+                  disabled={birthSaving}
+                  className="flex-1 py-2 rounded-lg bg-white/10 text-white/50 text-xs font-semibold hover:bg-white/15 transition-colors disabled:opacity-50">
                   취소
                 </button>
                 {birthInfo && (
                   <button onClick={handleBirthDelete}
-                    className="px-3 py-2 rounded-lg bg-red-500/10 text-red-400 text-xs font-semibold hover:bg-red-500/20 transition-colors">
+                    disabled={birthSaving}
+                    className="px-3 py-2 rounded-lg bg-red-500/10 text-red-400 text-xs font-semibold hover:bg-red-500/20 transition-colors disabled:opacity-50">
                     삭제
                   </button>
                 )}

@@ -72,7 +72,6 @@ export function useTarotSpread(menuId: string, cardCount: number) {
     setIsLoading(true);
     setPhase("reading");
     setInterpretation("");
-    setTimeout(() => interpretRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
     try {
       const res = await fetch(apiPath, {
         method: "POST",

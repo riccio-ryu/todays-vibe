@@ -1,12 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 import { type MovingFortuneInput, type Direction } from "@/types/fortune";
 import FortuneResult from "@/components/fortune/FortuneResult";
 import TodayFortuneCard from "@/components/common/TodayFortuneCard";
+import FavoriteButton from "@/components/common/FavoriteButton";
 
 const DIRECTIONS: { label: Direction; desc: string }[] = [
   { label: "북서", desc: "건(乾)" },
@@ -92,8 +95,14 @@ export default function MovingFortunePage() {
 
   return (
     <div className="max-w-xl mx-auto px-4 py-10">
+      <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+        <ArrowLeft className="w-4 h-4" /> 홈
+      </Link>
       <div className="text-center mb-8">
-        <h1 className="text-white font-bold text-2xl">이사/방위 길흉</h1>
+        <div className="flex items-center justify-center gap-2">
+          <h1 className="text-white font-bold text-2xl">이사/방위 길흉</h1>
+          <FavoriteButton menuId="moving-fortune" />
+        </div>
         <p className="text-white/50 text-sm mt-2">풍수·사주 기반 이사 방향 분석</p>
       </div>
 
