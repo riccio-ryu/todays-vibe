@@ -14,14 +14,6 @@
 
 ---
 
-### 4. 메인 재방문 시 레이아웃 간격 벌어짐 (진행 중)
-- **내용**: 재방문/뒤로가기 시 `FavoritesSection`이 null → 등장하면서 아래를 밀어내는 CLS 문제. favorites 상태를 `null | [] | string[]` 3단계로 분리하고 로딩 중 스켈레톤 표시
-- **목적**: 일관된 UI 유지
-- **구현 힌트**: `src/app/(user)/HomeInteractive.tsx` — favorites 타입 `string[] | null`로 변경, 스켈레톤 JSX 추가 / `FavoritesSection.tsx` 변경 없음
-- **설계 문서**: `docs/superpowers/specs/2026-06-24-favorites-skeleton-design.md`
-
----
-
 ### 6. 금일 운세 알림 설정
 - **내용**: 사용자가 매일 운세 확인을 잊지 않도록 푸시 알림 설정 기능 추가 → 원하는 시간에 "오늘의 운세를 확인해보세요" 알림 발송
 - **목적**: 리텐션 향상, 매일 방문 유도
@@ -64,3 +56,4 @@
 | 2026-06-20 | 즐겨찾기 메뉴 설정 (카드 ☆ 버튼, Firestore 저장, 홈 상단 섹션) |
 | 2026-06-24 | 운세 해석 결과 공유하기 버튼 (Web Share API + URL, 6개 페이지 추가) |
 | 2026-06-24 | 운세 해석 중 자동 스크롤 제거 (useTarotSpread scrollIntoView 제거) |
+| 2026-06-25 | 메인 재방문 시 즐겨찾기 스켈레톤 로딩 (HomeInteractive favorites null 상태 도입, CLS 해결) |
