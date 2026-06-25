@@ -337,7 +337,7 @@ function MyPageInner() {
                   </div>
                 )}
                 {/* 호버 오버레이 */}
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/50 opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   {photoUploading
                     ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     : <span className="text-white text-xs">변경</span>

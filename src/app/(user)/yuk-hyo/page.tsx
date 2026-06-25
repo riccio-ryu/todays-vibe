@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
@@ -8,6 +10,7 @@ import { getHexagramByLines, HEXAGRAMS } from "@/data/iching";
 import { type YukHyoInput } from "@/types/fortune";
 import FortuneResult from "@/components/fortune/FortuneResult";
 import TodayFortuneCard from "@/components/common/TodayFortuneCard";
+import FavoriteButton from "@/components/common/FavoriteButton";
 
 // 효 값별 이름
 const LINE_NAMES: Record<number, { ko: string; type: "yang" | "yin"; changing: boolean }> = {
@@ -274,8 +277,14 @@ export default function YukHyoPage() {
 
   return (
     <div className="max-w-xl mx-auto px-4 py-10">
+      <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+        <ArrowLeft className="w-4 h-4" /> 홈
+      </Link>
       <div className="text-center mb-8">
-        <h1 className="text-white font-bold text-2xl">육효점</h1>
+        <div className="flex items-center justify-center gap-2">
+          <h1 className="text-white font-bold text-2xl">육효점</h1>
+          <FavoriteButton menuId="yuk-hyo" />
+        </div>
         <p className="text-white/50 text-sm mt-2">동전을 6번 던져 본괘와 지괘로 현재와 미래를 읽습니다</p>
         <p className="text-white/25 text-xs mt-1">앞(3점) · 뒤(2점) → 합산 6·7·8·9로 효 결정</p>
       </div>

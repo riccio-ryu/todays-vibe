@@ -1,9 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { type TojeongInput } from "@/types/fortune";
 import FortuneResult from "@/components/fortune/FortuneResult";
+import FavoriteButton from "@/components/common/FavoriteButton";
 
 const STEM_LABELS = ["", "一", "二", "三", "四", "五"];
 const MONTH_LABELS = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"];
@@ -145,8 +148,11 @@ export default function TojeongPage() {
   if (annualReading) {
     return (
       <div className="max-w-xl mx-auto px-4 py-10">
+        <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+          <ArrowLeft className="w-4 h-4" /> 홈
+        </Link>
         <div className="text-center mb-8">
-          <h1 className="text-white font-bold text-2xl">토정비결</h1>
+          <div className="flex items-center justify-center gap-2"><h1 className="text-white font-bold text-2xl">토정비결</h1><FavoriteButton menuId="tojeong" /></div>
           <p className="text-white/50 text-sm mt-2">{currentYear}년 한 해 운세</p>
         </div>
 
@@ -177,8 +183,14 @@ export default function TojeongPage() {
   // 입력 폼
   return (
     <div className="max-w-xl mx-auto px-4 py-10">
+      <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+        <ArrowLeft className="w-4 h-4" /> 홈
+      </Link>
       <div className="text-center mb-8">
-        <h1 className="text-white font-bold text-2xl">토정비결</h1>
+        <div className="flex items-center justify-center gap-2">
+          <h1 className="text-white font-bold text-2xl">토정비결</h1>
+          <FavoriteButton menuId="tojeong" />
+        </div>
         <p className="text-white/50 text-sm mt-2">음력 생년월일로 풀어보는 {currentYear}년 한 해 운세</p>
       </div>
 

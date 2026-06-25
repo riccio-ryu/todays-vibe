@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import zodiacData from "@/data/zodiac-signs.json";
 import SpriteCard from "@/components/common/SpriteCard";
+import FavoriteButton from "@/components/common/FavoriteButton";
 
 export default function ZodiacPage() {
   const signs = zodiacData.zodiacSigns;
@@ -8,10 +10,16 @@ export default function ZodiacPage() {
   return (
     <div className="min-h-screen px-4 py-12">
       <div className="max-w-3xl mx-auto">
+        <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+          <ArrowLeft className="w-4 h-4" /> 홈
+        </Link>
         {/* 헤더 */}
         <div className="text-center mb-10">
           <p className="text-white/40 text-sm mb-2">별자리 운세</p>
-          <h1 className="text-3xl font-bold text-white mb-3">오늘의 별자리</h1>
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <h1 className="text-3xl font-bold text-white">오늘의 별자리</h1>
+            <FavoriteButton menuId="zodiac" />
+          </div>
           <p className="text-white/50 text-sm">나의 별자리를 선택하세요</p>
         </div>
 

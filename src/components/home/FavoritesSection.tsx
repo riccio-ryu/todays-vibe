@@ -35,7 +35,7 @@ export default function FavoritesSection({ items, onRemove }: Props) {
             {/* 제거 버튼 */}
             <button
               onClick={(e) => { e.preventDefault(); onRemove(item.id); }}
-              className="absolute top-1 right-1 w-5 h-5 flex items-center justify-center rounded-full bg-white/0 hover:bg-white/15 text-yellow-400/60 hover:text-yellow-400 transition-all opacity-0 group-hover:opacity-100"
+              className="absolute top-1 right-1 w-5 h-5 flex items-center justify-center rounded-full bg-white/0 hover:bg-white/15 text-yellow-400/60 hover:text-yellow-400 transition-all opacity-90 sm:opacity-0 sm:group-hover:opacity-100"
               title="즐겨찾기 해제"
             >
               <Star className="w-3 h-3 fill-current" />

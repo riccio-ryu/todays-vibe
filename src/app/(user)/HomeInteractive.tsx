@@ -19,16 +19,17 @@ interface Props {
 }
 
 export default function HomeInteractive({ categories, fortunes }: Props) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const [favorites, setFavorites] = useState<string[] | null>(null);
 
   useEffect(() => {
-    if (!user) { setFavorites([]); return; }
+    if (loading) return;                         // auth 로드 전 — 스켈레톤 유지
+    if (!user) { setFavorites([]); return; }     // 비로그인 — 스켈레톤 제거
     fetch("/api/user/favorites")
       .then((r) => r.json())
       .then((d) => setFavorites(d.favorites ?? []))
       .catch(() => { setFavorites([]); });
-  }, [user]);
+  }, [user, loading]);
 
   const toggleFavorite = useCallback(async (menuId: string) => {
     const isFav = (favorites ?? []).includes(menuId);

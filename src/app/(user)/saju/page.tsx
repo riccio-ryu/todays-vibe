@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { calculateSaju, HOUR_OPTIONS, type BirthInput, type SajuResult } from "@/lib/saju/calculator";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
@@ -8,6 +10,7 @@ import AILoadingIndicator from "@/components/common/AILoadingIndicator";
 import AdSlot from "@/components/common/AdSlot";
 import { boldHighlight } from "@/lib/utils/format";
 import TodayFortuneCard from "@/components/common/TodayFortuneCard";
+import FavoriteButton from "@/components/common/FavoriteButton";
 
 // ─── 사주 원국 테이블 ──────────────────────────────────────────────────
 function SajuTable({ result }: { result: SajuResult }) {
@@ -207,8 +210,14 @@ export default function SajuPage() {
   if (fortuneStatus?.todayReading && !result) {
     return (
       <div className="max-w-xl mx-auto px-4 py-10">
+        <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+          <ArrowLeft className="w-4 h-4" /> 홈
+        </Link>
         <div className="text-center mb-8">
-          <h1 className="text-white font-bold text-2xl">사주팔자</h1>
+          <div className="flex items-center justify-center gap-2">
+            <h1 className="text-white font-bold text-2xl">사주팔자</h1>
+            <FavoriteButton menuId="saju" />
+          </div>
           <p className="text-white/50 text-sm mt-2">생년월일시로 풀어보는 나의 운명</p>
         </div>
         <TodayFortuneCard
@@ -224,9 +233,15 @@ export default function SajuPage() {
 
   return (
     <div className="max-w-xl mx-auto px-4 py-10">
+      <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+        <ArrowLeft className="w-4 h-4" /> 홈
+      </Link>
       {/* 헤더 */}
       <div className="text-center mb-8">
-        <h1 className="text-white font-bold text-2xl">사주팔자</h1>
+        <div className="flex items-center justify-center gap-2">
+          <h1 className="text-white font-bold text-2xl">사주팔자</h1>
+          <FavoriteButton menuId="saju" />
+        </div>
         <p className="text-white/50 text-sm mt-2">생년월일시로 풀어보는 나의 운명</p>
       </div>
 

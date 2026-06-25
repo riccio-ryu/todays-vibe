@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 import { DreamInput } from "@/types/fortune";
 import FortuneResult from "./FortuneResult";
 import TodayFortuneCard from "@/components/common/TodayFortuneCard";
+import FavoriteButton from "@/components/common/FavoriteButton";
 
 const MOOD_OPTIONS = [
   { value: "행복함", label: "😊 행복함" },
@@ -59,9 +62,15 @@ export default function DreamForm() {
   if (fortuneStatus?.todayReading && !showForm) {
     return (
       <div className="max-w-xl mx-auto px-4 py-8">
+        <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+          <ArrowLeft className="w-4 h-4" /> 홈
+        </Link>
         <div className="text-center mb-8">
           <div className="text-6xl mb-3">💭</div>
-          <h1 className="text-3xl font-bold text-white mb-2">꿈해몽</h1>
+          <div className="flex items-center justify-center gap-2">
+            <h1 className="text-3xl font-bold text-white mb-2">꿈해몽</h1>
+            <FavoriteButton menuId="dream" />
+          </div>
         </div>
         <TodayFortuneCard
           label="오늘의 꿈해몽 결과"
@@ -76,10 +85,16 @@ export default function DreamForm() {
 
   return (
     <div className="max-w-xl mx-auto px-4 py-8">
+      <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+        <ArrowLeft className="w-4 h-4" /> 홈
+      </Link>
       {/* 헤더 */}
       <div className="text-center mb-8">
         <div className="text-6xl mb-3">💭</div>
-        <h1 className="text-3xl font-bold text-white mb-2">꿈해몽</h1>
+        <div className="flex items-center justify-center gap-2">
+          <h1 className="text-3xl font-bold text-white mb-2">꿈해몽</h1>
+          <FavoriteButton menuId="dream" />
+        </div>
         <p className="text-purple-300 text-sm">
           꾼 꿈을 자세히 적어주세요. 전통 해몽과 심리학적 관점으로 풀이해
           드립니다.

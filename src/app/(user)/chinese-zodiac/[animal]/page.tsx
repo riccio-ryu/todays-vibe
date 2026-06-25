@@ -8,6 +8,7 @@ import chineseData from "@/data/chinese-zodiac.json";
 import SpriteCard from "@/components/common/SpriteCard";
 import FortuneCard from "@/components/common/FortuneCard";
 import LuckyBadge from "@/components/common/LuckyBadge";
+import FavoriteButton from "@/components/common/FavoriteButton";
 import {
   getWeeklyChineseFortune,
   getMonthlyChineseFortune,
@@ -152,7 +153,10 @@ export default function ChineseZodiacAnimalPage() {
               className="w-24 shrink-0 aspect-[2/3] rounded-xl shadow-lg"
             />
             <div>
-              <h1 className="text-white text-2xl font-bold">{animalInfo.name}띠</h1>
+              <div className="flex items-center gap-2">
+                <h1 className="text-white text-2xl font-bold">{animalInfo.name}띠</h1>
+                <FavoriteButton menuId="chinese-zodiac" />
+              </div>
               <p className="text-white/40 text-sm mt-1">{animalInfo.nameEn}</p>
               {/* 출생연도 선택 버튼 */}
               <div className="mt-3">

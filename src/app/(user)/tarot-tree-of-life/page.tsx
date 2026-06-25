@@ -62,7 +62,7 @@ export default function TarotTreeOfLifePage() {
 
   return (
     <div className="max-w-lg mx-auto px-4 py-10">
-      <PageHeader title="생명의 나무 타로" />
+      <PageHeader title="생명의 나무 타로" menuId="tarot-tree-of-life" />
 
       <AnimatePresence mode="wait">
 

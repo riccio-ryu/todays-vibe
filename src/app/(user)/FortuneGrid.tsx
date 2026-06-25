@@ -254,7 +254,7 @@ export default function FortuneGrid({ categories, fortunes, favorites = [], onFa
                                   className={`absolute top-2 left-2 w-5 h-5 flex items-center justify-center rounded-full transition-all
                                     ${isFav
                                       ? "text-yellow-400 opacity-100"
-                                      : "text-white/20 opacity-0 group-hover:opacity-100 hover:text-yellow-400"
+                                      : "text-white/70 opacity-80 sm:text-white/20 sm:opacity-0 sm:group-hover:opacity-100 hover:text-yellow-400"
                                     }`}
                                   title={isFav ? "즐겨찾기 해제" : "즐겨찾기 추가"}
                                 >
