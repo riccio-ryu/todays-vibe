@@ -30,6 +30,7 @@ export default function GeneralFortuneForm({ config }: Props) {
   const [day, setDay] = useState("");
   const [gender, setGender] = useState<"male" | "female">("male");
   const [question, setQuestion] = useState("");
+  const [showForm, setShowForm] = useState(false);
 
   const [saveBirth, setSaveBirth] = useState(false);
   const [savedInfo, setSavedInfo] = useState<{ year: number; month: number; day: number; gender: "male" | "female" } | null>(null);
@@ -101,8 +102,8 @@ export default function GeneralFortuneForm({ config }: Props) {
     );
   }
 
-  // 오늘 이미 이용 + 저장된 결과 있으면 바로 결과 노출
-  if (fortuneStatus?.exhausted && fortuneStatus?.todayReading) {
+  // 오늘 이용 기록 있으면 결과 노출 (새로 받기 버튼으로 폼 전환 가능)
+  if (fortuneStatus?.todayReading && !result && !showForm) {
     return (
       <div className="max-w-xl mx-auto px-4 py-10">
         <div className="text-center mb-8">
@@ -113,6 +114,8 @@ export default function GeneralFortuneForm({ config }: Props) {
         <TodayFortuneCard
           label={`오늘의 ${config.title} 결과`}
           todayReading={fortuneStatus.todayReading}
+          exhausted={fortuneStatus.exhausted}
+          onNewReading={() => setShowForm(true)}
         />
       </div>
     );

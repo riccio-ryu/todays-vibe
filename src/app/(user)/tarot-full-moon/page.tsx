@@ -61,7 +61,7 @@ export default function TarotFullMoonPage() {
       <AnimatePresence mode="wait">
 
         {phase === "input" && (
-          fortuneStatus?.exhausted && fortuneStatus?.todayReading
+          fortuneStatus?.todayReading
             ? <TarotTodayResult todayReading={fortuneStatus.todayReading} onReshuffle={handleStartShuffle} />
             : <TarotInputPhase
                 subtitle="보름달 에너지로 삶의 흐름과 목표를 탐색합니다"

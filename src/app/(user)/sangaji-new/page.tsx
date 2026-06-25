@@ -7,6 +7,7 @@ import { drawSangaji, GRADE_INFO, type SangajiEntry } from "@/data/sangaji";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import FortuneResult from "@/components/fortune/FortuneResult";
+import TodayFortuneCard from "@/components/common/TodayFortuneCard";
 import type { Phase } from "@/components/sangaji/SangajiScene3D";
 
 const SangajiScene3D = dynamic(
@@ -293,6 +294,17 @@ export default function SangajiPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {phase === "idle" && fortuneStatus?.todayReading && (
+        <div className="relative z-20 max-w-sm mx-auto px-4 pb-8">
+          <TodayFortuneCard
+            label="오늘의 산가지 심층 풀이"
+            todayReading={fortuneStatus.todayReading}
+            highlightColor="text-amber-300"
+            exhausted={fortuneStatus.exhausted}
+          />
+        </div>
+      )}
     </div>
   );
 }

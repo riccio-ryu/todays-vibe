@@ -7,6 +7,7 @@ import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 import { getHexagramByLines, HEXAGRAMS } from "@/data/iching";
 import { type YukHyoInput } from "@/types/fortune";
 import FortuneResult from "@/components/fortune/FortuneResult";
+import TodayFortuneCard from "@/components/common/TodayFortuneCard";
 
 // 효 값별 이름
 const LINE_NAMES: Record<number, { ko: string; type: "yang" | "yin"; changing: boolean }> = {
@@ -446,25 +447,13 @@ export default function YukHyoPage() {
         )}
       </form>
 
-      {fortuneStatus?.exhausted && fortuneStatus.todayReading && (
-        <div className="mt-6 space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="flex-1 h-px bg-white/10" />
-            <span className="text-white/30 text-xs">오늘의 육효점 풀이</span>
-            <div className="flex-1 h-px bg-white/10" />
-          </div>
-          <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
-            {fortuneStatus.todayReading.createdAt && (
-              <p className="text-white/30 text-xs mb-3 text-right">
-                {new Date(fortuneStatus.todayReading.createdAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })} 열람
-              </p>
-            )}
-            <div className="text-white/80 text-sm leading-relaxed whitespace-pre-wrap"
-              dangerouslySetInnerHTML={{
-                __html: fortuneStatus.todayReading.result.replace(/\*\*(.*?)\*\*/g, '<strong class="text-amber-300">$1</strong>'),
-              }} />
-          </div>
-        </div>
+      {fortuneStatus?.todayReading && (
+        <TodayFortuneCard
+          label="오늘의 육효점 풀이"
+          todayReading={fortuneStatus.todayReading}
+          highlightColor="text-amber-300"
+          exhausted={fortuneStatus.exhausted}
+        />
       )}
 
       {/* 풀스크린 팝업 */}

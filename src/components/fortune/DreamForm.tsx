@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
+import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 import { DreamInput } from "@/types/fortune";
 import FortuneResult from "./FortuneResult";
+import TodayFortuneCard from "@/components/common/TodayFortuneCard";
 
 const MOOD_OPTIONS = [
   { value: "행복함", label: "😊 행복함" },
@@ -18,7 +20,9 @@ const MOOD_OPTIONS = [
 export default function DreamForm() {
   const [dreamDescription, setDreamDescription] = useState("");
   const [mood, setMood] = useState<string>("");
+  const [showForm, setShowForm] = useState(false);
   const { result, isLoading, error, submit, reset } = useFortuneStream();
+  const { fortuneStatus } = useFortuneStatus("dream");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,6 +53,24 @@ export default function DreamForm() {
         icon="💭"
         fortuneType="dream"
       />
+    );
+  }
+
+  if (fortuneStatus?.todayReading && !showForm) {
+    return (
+      <div className="max-w-xl mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <div className="text-6xl mb-3">💭</div>
+          <h1 className="text-3xl font-bold text-white mb-2">꿈해몽</h1>
+        </div>
+        <TodayFortuneCard
+          label="오늘의 꿈해몽 결과"
+          todayReading={fortuneStatus.todayReading}
+          highlightColor="text-purple-300"
+          exhausted={fortuneStatus.exhausted}
+          onNewReading={() => setShowForm(true)}
+        />
+      </div>
     );
   }
 

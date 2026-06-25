@@ -21,7 +21,7 @@ export default function Tarot3CardsPage() {
     question, setQuestion, phase, spreadCards, selectedIndices, spreadReady,
     drawn, revealed, interpretation, isLoading, fortuneStatus, interpretRef,
     handleStartShuffle, handleSelectCard, handleConfirmSelection, handleReset, interpret,
-  } = useTarotSpread("tarot", 3);
+  } = useTarotSpread("tarot-3cards", 3);
 
   function handleInterpret() {
     interpret("/api/fortune/tarot", {
@@ -37,7 +37,7 @@ export default function Tarot3CardsPage() {
       <AnimatePresence mode="wait">
 
         {phase === "input" && (
-          fortuneStatus?.exhausted && fortuneStatus?.todayReading
+          fortuneStatus?.todayReading
             ? <TarotTodayResult todayReading={fortuneStatus.todayReading} onReshuffle={handleStartShuffle} />
             : <TarotInputPhase
                 subtitle="마음속으로 질문을 생각하며 카드를 뽑아보세요"

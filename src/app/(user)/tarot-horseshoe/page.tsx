@@ -57,7 +57,7 @@ export default function TarotHorseshoePage() {
       <AnimatePresence mode="wait">
 
         {phase === "input" && (
-          fortuneStatus?.exhausted && fortuneStatus?.todayReading
+          fortuneStatus?.todayReading
             ? <TarotTodayResult todayReading={fortuneStatus.todayReading} onReshuffle={handleStartShuffle} />
             : <TarotInputPhase
                 subtitle="현재에서 결과까지, 5장으로 흐름을 읽어드립니다"

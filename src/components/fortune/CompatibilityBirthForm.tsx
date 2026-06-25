@@ -5,6 +5,7 @@ import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 import { type FortuneType, type LoveCompatibilityInput } from "@/types/fortune";
 import FortuneResult from "./FortuneResult";
+import TodayFortuneCard from "@/components/common/TodayFortuneCard";
 
 interface Config {
   type: FortuneType;
@@ -111,6 +112,7 @@ export default function CompatibilityBirthForm({ config }: Props) {
   const [p2Month, setP2Month] = useState("");
   const [p2Day, setP2Day] = useState("");
   const [p2Gender, setP2Gender] = useState<"male" | "female">("female");
+  const [showForm, setShowForm] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -141,8 +143,8 @@ export default function CompatibilityBirthForm({ config }: Props) {
     );
   }
 
-  // 오늘 이미 이용 + 저장된 결과 있으면 바로 결과 노출
-  if (fortuneStatus?.exhausted && fortuneStatus?.todayReading) {
+  // 오늘 이용 기록 있으면 결과 노출 (새로 받기 버튼으로 폼 전환 가능)
+  if (fortuneStatus?.todayReading && !result && !showForm) {
     return (
       <div className="max-w-xl mx-auto px-4 py-10">
         <div className="text-center mb-8">
@@ -150,26 +152,12 @@ export default function CompatibilityBirthForm({ config }: Props) {
           <h1 className="text-white font-bold text-2xl">{config.title}</h1>
           <p className="text-white/50 text-sm mt-2">두 사람의 생년월일로 풀어보는 사주 궁합</p>
         </div>
-        <div className="mt-6 space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="flex-1 h-px bg-white/10" />
-            <span className="text-white/30 text-xs">오늘의 {config.title} 결과</span>
-            <div className="flex-1 h-px bg-white/10" />
-          </div>
-          <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
-            {fortuneStatus.todayReading.createdAt && (
-              <p className="text-white/30 text-xs mb-3 text-right">
-                {new Date(fortuneStatus.todayReading.createdAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })} 열람
-              </p>
-            )}
-            <div
-              className="text-white/80 text-sm leading-relaxed whitespace-pre-wrap"
-              dangerouslySetInnerHTML={{
-                __html: fortuneStatus.todayReading.result.replace(/\*\*(.*?)\*\*/g, '<strong class="text-purple-300">$1</strong>'),
-              }}
-            />
-          </div>
-        </div>
+        <TodayFortuneCard
+          label={`오늘의 ${config.title} 결과`}
+          todayReading={fortuneStatus.todayReading}
+          exhausted={fortuneStatus.exhausted}
+          onNewReading={() => setShowForm(true)}
+        />
       </div>
     );
   }

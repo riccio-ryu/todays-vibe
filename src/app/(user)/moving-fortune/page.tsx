@@ -243,11 +243,12 @@ export default function MovingFortunePage() {
         </button>
       </form>
 
-      {fortuneStatus?.exhausted && fortuneStatus.todayReading && (
+      {fortuneStatus?.todayReading && (
         <TodayFortuneCard
           label="오늘의 분석 결과"
           todayReading={fortuneStatus.todayReading}
           highlightColor="text-teal-300"
+          exhausted={fortuneStatus.exhausted}
         />
       )}
     </div>

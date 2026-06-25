@@ -56,7 +56,7 @@ export default function TarotCelticPage() {
       <AnimatePresence mode="wait">
 
         {phase === "input" && (
-          fortuneStatus?.exhausted && fortuneStatus?.todayReading
+          fortuneStatus?.todayReading
             ? <TarotTodayResult todayReading={fortuneStatus.todayReading} onReshuffle={handleStartShuffle} />
             : <TarotInputPhase
                 subtitle="마음속으로 질문을 생각하며 카드 10장을 뽑아보세요"
