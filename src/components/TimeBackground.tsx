@@ -55,7 +55,7 @@ function getColorForTime(totalMinutes: number): string {
 }
 
 export default function TimeBackground({ children }: { children: React.ReactNode }) {
-  const [bgColor, setBgColor] = useState('#000000')
+  const [bgColor, setBgColor] = useState('#06000d')
 
   useEffect(() => {
     function update() {
@@ -65,15 +65,18 @@ export default function TimeBackground({ children }: { children: React.ReactNode
     }
 
     update()
-    const interval = setInterval(update, 60_000) // 1분마다 갱신
+    const interval = setInterval(update, 60_000)
     return () => clearInterval(interval)
   }, [])
 
   return (
-    <div
-      className="relative min-h-screen transition-colors duration-[3000ms] ease-in-out"
-      style={{ backgroundColor: bgColor }}
-    >
+    <div className="relative min-h-screen">
+      {/* fixed inset-0: 콘텐츠 높이와 무관하게 항상 뷰포트 전체를 배경색으로 채움 */}
+      <div
+        className="fixed inset-0 transition-colors duration-[3000ms] ease-in-out"
+        style={{ backgroundColor: bgColor, zIndex: 0 }}
+        aria-hidden="true"
+      />
       <SkyLayer />
       <div className="relative z-10">
         {children}

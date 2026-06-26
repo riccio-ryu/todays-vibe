@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Home } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
@@ -10,6 +10,8 @@ import { type NumerologyInput } from "@/types/fortune";
 import FortuneResult from "@/components/fortune/FortuneResult";
 import TodayFortuneCard from "@/components/common/TodayFortuneCard";
 import FavoriteButton from "@/components/common/FavoriteButton";
+import { useBirthInfo } from "@/lib/hooks/useBirthInfo";
+import SavedBirthBanner from "@/components/common/SavedBirthBanner";
 
 // ─── 수비학 계산 ──────────────────────────────────────────────────────────────
 
@@ -52,25 +54,45 @@ export default function NumerologyPage() {
   const [month, setMonth] = useState("");
   const [day, setDay] = useState("");
 
+  const { savedInfo, saving, saveStatus, saveBirthInfo } = useBirthInfo();
   const [lifePathNumber, setLifePathNumber] = useState<number | null>(null);
-  const [saveBirth, setSaveBirth] = useState(false);
-  const [savedInfo, setSavedInfo] = useState<{ year: number; month: number; day: number } | null>(null);
-  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
+  const [isOtherMode, setIsOtherMode] = useState(false);
+  const [wantSave, setWantSave] = useState(false);
 
   useEffect(() => {
-    if (!user) return;
-    fetch("/api/user/birth-info")
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.birthInfo) {
-          setSavedInfo(d.birthInfo);
-          setYear(String(d.birthInfo.year));
-          setMonth(String(d.birthInfo.month));
-          setDay(String(d.birthInfo.day));
-        }
-      })
-      .catch(() => {});
-  }, [user]);
+    if (savedInfo && !isOtherMode) {
+      setYear(String(savedInfo.year));
+      setMonth(String(savedInfo.month));
+      setDay(String(savedInfo.day));
+    }
+  }, [savedInfo, isOtherMode]);
+
+  useEffect(() => {
+    setWantSave(!!savedInfo && !isOtherMode);
+  }, [savedInfo, isOtherMode]);
+
+  function handleOtherMode() {
+    setIsOtherMode(true);
+    setYear(""); setMonth(""); setDay("");
+  }
+
+  function handleRestoreMyInfo() {
+    setIsOtherMode(false);
+    if (savedInfo) {
+      setYear(String(savedInfo.year));
+      setMonth(String(savedInfo.month));
+      setDay(String(savedInfo.day));
+    }
+  }
+
+  async function handleToggleSave() {
+    const newVal = !wantSave;
+    setWantSave(newVal);
+    if (newVal) {
+      const yv = parseInt(year), mv = parseInt(month), dv = parseInt(day);
+      if (yv && mv && dv) await saveBirthInfo({ year: yv, month: mv, day: dv, gender: savedInfo?.gender ?? "male" });
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -80,17 +102,6 @@ export default function NumerologyPage() {
     const lp = calcLifePathNumber(y, m, d);
     setLifePathNumber(lp);
 
-    if (saveBirth && user) {
-      setSaveStatus("saving");
-      fetch("/api/user/birth-info", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ year: y, month: m, day: d }),
-      })
-        .then(() => { setSaveStatus("saved"); setSavedInfo({ year: y, month: m, day: d }); })
-        .catch(() => setSaveStatus("idle"));
-    }
-
     const input: NumerologyInput = { birthYear: y, birthMonth: m, birthDay: d };
     await submit("numerology", input);
   }
@@ -98,7 +109,6 @@ export default function NumerologyPage() {
   function handleReset() {
     reset();
     setLifePathNumber(null);
-    setSaveStatus("idle");
   }
 
   // ─── 결과 화면 ──────────────────────────────────────────────────────────────
@@ -106,7 +116,7 @@ export default function NumerologyPage() {
     const info = NUMBER_INFO[lifePathNumber] ?? { keyword: "", color: "from-blue-500 to-cyan-500" };
 
     return (
-      <div className="max-w-xl mx-auto px-4 py-10">
+      <div className="max-w-xl mx-auto px-4 py-6">
         {/* 생명수 카드 */}
         <div className="text-center mb-8">
           <div className={`w-28 h-28 rounded-full bg-gradient-to-br ${info.color} flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-500/20`}>
@@ -139,33 +149,26 @@ export default function NumerologyPage() {
 
   // ─── 입력 폼 ──────────────────────────────────────────────────────────────
   return (
-    <div className="max-w-xl mx-auto px-4 py-10">
-      <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
-        <ArrowLeft className="w-4 h-4" /> 홈
-      </Link>
+    <div className="max-w-xl mx-auto px-4 py-6">
+      <div className="flex items-center justify-between mb-6">
+        <Link href="/" className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-xs transition-all">
+          <ArrowLeft className="w-3.5 h-3.5" /><Home className="w-3.5 h-3.5" />
+        </Link>
+        <FavoriteButton menuId="numerology" />
+      </div>
       {/* 헤더 */}
       <div className="text-center mb-8">
-        <div className="flex items-center justify-center gap-2">
-          <h1 className="text-white font-bold text-2xl">생일 숫자 운세</h1>
-          <FavoriteButton menuId="numerology" />
-        </div>
+        <h1 className="text-white font-bold text-2xl">생일 숫자 운세</h1>
         <p className="text-white/50 text-sm mt-2">생년월일 숫자로 풀어보는 나의 인생 에너지</p>
       </div>
 
-      {/* 저장된 정보 알림 */}
-      {savedInfo && (
-        <div className="mb-4 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-400/20 flex items-center justify-between">
-          <p className="text-amber-300 text-sm">저장된 생년월일 정보가 있습니다</p>
-          <button
-            onClick={() => {
-              setYear(""); setMonth(""); setDay(""); setSavedInfo(null);
-              fetch("/api/user/birth-info", { method: "DELETE" }).catch(() => {});
-            }}
-            className="text-white/40 text-xs hover:text-white/70 transition-colors"
-          >
-            삭제
-          </button>
-        </div>
+      {user && savedInfo && (
+        <SavedBirthBanner
+          savedInfo={savedInfo}
+          isOtherMode={isOtherMode}
+          onOtherMode={handleOtherMode}
+          onRestoreMyInfo={handleRestoreMyInfo}
+        />
       )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
@@ -219,28 +222,32 @@ export default function NumerologyPage() {
             </div>
           </div>
 
-          {/* 출생 정보 저장 토글 */}
-          {user && (
-            <label className="flex items-center gap-3 cursor-pointer">
-              <div
-                onClick={() => setSaveBirth((v) => !v)}
-                className={`w-10 h-5 rounded-full transition-colors relative shrink-0 ${
-                  saveBirth ? "bg-[#5046e4]" : "bg-white/20"
-                }`}
-              >
-                <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${
-                  saveBirth ? "translate-x-5" : "translate-x-0.5"
-                }`} />
-              </div>
-              <div>
-                <p className="text-white/80 text-sm">출생 정보 저장</p>
-                <p className="text-white/40 text-xs">다음에 자동으로 불러옵니다</p>
-              </div>
-            </label>
-          )}
         </div>
 
         {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+
+        {user && !isOtherMode && (
+          <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/5 border border-white/10">
+            <span className="text-sm text-white/60">
+              {saving ? "저장 중..." : wantSave ? "생년월일 저장중" : "생년월일 저장"}
+              {saveStatus === "saved" && <span className="text-[#9382ff] text-xs ml-2">✓</span>}
+            </span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={wantSave}
+              onClick={handleToggleSave}
+              disabled={saving}
+              className={`relative inline-flex w-11 h-6 rounded-full transition-colors duration-200 disabled:opacity-50 shrink-0 focus:outline-none ${
+                wantSave ? "bg-[#5046e4]" : "bg-white/20"
+              }`}
+            >
+              <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200 ${
+                wantSave ? "translate-x-[22px]" : "translate-x-0.5"
+              }`} />
+            </button>
+          </div>
+        )}
 
         <button
           type="submit"

@@ -2,11 +2,13 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Home } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { type TojeongInput } from "@/types/fortune";
 import FortuneResult from "@/components/fortune/FortuneResult";
 import FavoriteButton from "@/components/common/FavoriteButton";
+import { useBirthInfo } from "@/lib/hooks/useBirthInfo";
+import SavedBirthBanner from "@/components/common/SavedBirthBanner";
 
 const STEM_LABELS = ["", "一", "二", "三", "四", "五"];
 const MONTH_LABELS = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"];
@@ -42,21 +44,48 @@ export default function TojeongPage() {
   const [day, setDay] = useState("");
   const [gender, setGender] = useState<"male" | "female">("male");
 
-  // 저장된 생년월일 불러오기
+  const { savedInfo, saving, saveStatus, saveBirthInfo } = useBirthInfo();
+  const [isOtherMode, setIsOtherMode] = useState(false);
+  const [wantSave, setWantSave] = useState(false);
+
   useEffect(() => {
-    if (!user) return;
-    fetch("/api/user/birth-info")
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.birthInfo) {
-          setYear(String(d.birthInfo.year));
-          setMonth(String(d.birthInfo.month));
-          setDay(String(d.birthInfo.day));
-          setGender(d.birthInfo.gender ?? "male");
-        }
-      })
-      .catch(() => {});
-  }, [user]);
+    if (savedInfo && !isOtherMode) {
+      setYear(String(savedInfo.year));
+      setMonth(String(savedInfo.month));
+      setDay(String(savedInfo.day));
+      setGender(savedInfo.gender ?? "male");
+      if (savedInfo.isLunar !== undefined) setIsLunar(savedInfo.isLunar);
+    }
+  }, [savedInfo, isOtherMode]);
+
+  useEffect(() => {
+    setWantSave(!!savedInfo && !isOtherMode);
+  }, [savedInfo, isOtherMode]);
+
+  function handleOtherMode() {
+    setIsOtherMode(true);
+    setYear(""); setMonth(""); setDay(""); setGender("male");
+  }
+
+  function handleRestoreMyInfo() {
+    setIsOtherMode(false);
+    if (savedInfo) {
+      setYear(String(savedInfo.year));
+      setMonth(String(savedInfo.month));
+      setDay(String(savedInfo.day));
+      setGender(savedInfo.gender ?? "male");
+      if (savedInfo.isLunar !== undefined) setIsLunar(savedInfo.isLunar);
+    }
+  }
+
+  async function handleToggleSave() {
+    const newVal = !wantSave;
+    setWantSave(newVal);
+    if (newVal) {
+      const yv = parseInt(year), mv = parseInt(month), dv = parseInt(day);
+      if (yv && mv && dv) await saveBirthInfo({ year: yv, month: mv, day: dv, isLunar, gender });
+    }
+  }
 
   // 연간 캐시 조회
   useEffect(() => {
@@ -131,7 +160,7 @@ export default function TojeongPage() {
   // 스트리밍 중 또는 완료
   if (streamResult || isLoading) {
     return (
-      <div className="max-w-xl mx-auto px-4 py-10">
+      <div className="max-w-xl mx-auto px-4 py-6">
         {nums && <HexBadge nums={nums} />}
         <FortuneResult
           result={streamResult}
@@ -147,12 +176,15 @@ export default function TojeongPage() {
   // 연간 캐시 결과 표시
   if (annualReading) {
     return (
-      <div className="max-w-xl mx-auto px-4 py-10">
-        <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
-          <ArrowLeft className="w-4 h-4" /> 홈
-        </Link>
+      <div className="max-w-xl mx-auto px-4 py-6">
+        <div className="flex items-center justify-between mb-6">
+          <Link href="/" className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-xs transition-all">
+            <ArrowLeft className="w-3.5 h-3.5" /><Home className="w-3.5 h-3.5" />
+          </Link>
+          <FavoriteButton menuId="tojeong" />
+        </div>
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2"><h1 className="text-white font-bold text-2xl">토정비결</h1><FavoriteButton menuId="tojeong" /></div>
+          <h1 className="text-white font-bold text-2xl">토정비결</h1>
           <p className="text-white/50 text-sm mt-2">{currentYear}년 한 해 운세</p>
         </div>
 
@@ -182,17 +214,26 @@ export default function TojeongPage() {
 
   // 입력 폼
   return (
-    <div className="max-w-xl mx-auto px-4 py-10">
-      <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
-        <ArrowLeft className="w-4 h-4" /> 홈
-      </Link>
+    <div className="max-w-xl mx-auto px-4 py-6">
+      <div className="flex items-center justify-between mb-6">
+        <Link href="/" className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-xs transition-all">
+          <ArrowLeft className="w-3.5 h-3.5" /><Home className="w-3.5 h-3.5" />
+        </Link>
+        <FavoriteButton menuId="tojeong" />
+      </div>
       <div className="text-center mb-8">
-        <div className="flex items-center justify-center gap-2">
-          <h1 className="text-white font-bold text-2xl">토정비결</h1>
-          <FavoriteButton menuId="tojeong" />
-        </div>
+        <h1 className="text-white font-bold text-2xl">토정비결</h1>
         <p className="text-white/50 text-sm mt-2">음력 생년월일로 풀어보는 {currentYear}년 한 해 운세</p>
       </div>
+
+      {user && savedInfo && (
+        <SavedBirthBanner
+          savedInfo={savedInfo}
+          isOtherMode={isOtherMode}
+          onOtherMode={handleOtherMode}
+          onRestoreMyInfo={handleRestoreMyInfo}
+        />
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="rounded-2xl bg-white/5 border border-white/10 p-6 space-y-5">
@@ -269,6 +310,29 @@ export default function TojeongPage() {
         </div>
 
         {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+
+        {user && !isOtherMode && (
+          <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/5 border border-white/10">
+            <span className="text-sm text-white/60">
+              {saving ? "저장 중..." : wantSave ? "생년월일 저장중" : "생년월일 저장"}
+              {saveStatus === "saved" && <span className="text-[#9382ff] text-xs ml-2">✓</span>}
+            </span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={wantSave}
+              onClick={handleToggleSave}
+              disabled={saving}
+              className={`relative inline-flex w-11 h-6 rounded-full transition-colors duration-200 disabled:opacity-50 shrink-0 focus:outline-none ${
+                wantSave ? "bg-[#5046e4]" : "bg-white/20"
+              }`}
+            >
+              <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200 ${
+                wantSave ? "translate-x-[22px]" : "translate-x-0.5"
+              }`} />
+            </button>
+          </div>
+        )}
 
         <button type="submit" disabled={!valid}
           className={`w-full py-3 rounded-xl font-bold text-sm transition-opacity ${

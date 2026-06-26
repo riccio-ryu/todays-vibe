@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Home } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { drawSangaji, GRADE_INFO, type SangajiEntry } from "@/data/sangaji";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
@@ -232,15 +232,15 @@ export default function SangajiPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-950 via-stone-900 to-gray-900 text-white px-4 py-8">
       <div className="max-w-sm mx-auto">
-        <Link href="/" className="inline-flex items-center gap-1 text-amber-700/60 hover:text-amber-400/80 text-sm transition-colors mb-6">
-          <ArrowLeft className="w-4 h-4" /> 홈
-        </Link>
+        <div className="flex items-center justify-between mb-6">
+          <Link href="/" className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-amber-900/20 border border-amber-700/30 text-amber-700/60 hover:text-amber-400/80 hover:border-amber-500/40 text-xs transition-all">
+            <ArrowLeft className="w-3.5 h-3.5" /><Home className="w-3.5 h-3.5" />
+          </Link>
+          <FavoriteButton menuId="sangaji" />
+        </div>
         {/* 헤더 */}
         <div className="text-center mb-6">
-          <div className="flex items-center justify-center gap-2">
-            <h1 className="text-2xl font-bold text-amber-200">산가지 점</h1>
-            <FavoriteButton menuId="sangaji" />
-          </div>
+          <h1 className="text-2xl font-bold text-amber-200">산가지 점</h1>
           <p className="text-amber-400/60 text-sm mt-1">마음속 질문을 품고 막대를 흔드세요</p>
         </div>
 

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Home } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
@@ -11,6 +11,7 @@ import FortuneResult from "@/components/fortune/FortuneResult";
 import TodayFortuneCard from "@/components/common/TodayFortuneCard";
 import { ChevronRight } from "lucide-react";
 import FavoriteButton from "@/components/common/FavoriteButton";
+import { useBirthInfo } from "@/lib/hooks/useBirthInfo";
 
 export default function NameFortunePage() {
   const { user } = useAuth();
@@ -23,20 +24,16 @@ export default function NameFortunePage() {
   const [month, setMonth] = useState("");
   const [day, setDay] = useState("");
 
-  // 저장된 생년월일 자동 불러오기
+  const { savedInfo } = useBirthInfo();
+
   useEffect(() => {
-    if (!user) return;
-    fetch("/api/user/birth-info")
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.birthInfo) {
-          setYear(String(d.birthInfo.year));
-          setMonth(String(d.birthInfo.month));
-          setDay(String(d.birthInfo.day));
-        }
-      })
-      .catch(() => {});
-  }, [user]);
+    if (savedInfo) {
+      setYear(String(savedInfo.year));
+      setMonth(String(savedInfo.month));
+      setDay(String(savedInfo.day));
+      setShowBirth(true);
+    }
+  }, [savedInfo]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -67,15 +64,15 @@ export default function NameFortunePage() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <div className="max-w-xl mx-auto px-4 py-10">
-      <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
-        <ArrowLeft className="w-4 h-4" /> 홈
-      </Link>
+    <div className="max-w-xl mx-auto px-4 py-6">
+      <div className="flex items-center justify-between mb-6">
+        <Link href="/" className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-xs transition-all">
+          <ArrowLeft className="w-3.5 h-3.5" /><Home className="w-3.5 h-3.5" />
+        </Link>
+        <FavoriteButton menuId="name-fortune" />
+      </div>
       <div className="text-center mb-8">
-        <div className="flex items-center justify-center gap-2">
-          <h1 className="text-white font-bold text-2xl">성명학</h1>
-          <FavoriteButton menuId="name-fortune" />
-        </div>
+        <h1 className="text-white font-bold text-2xl">성명학</h1>
         <p className="text-white/50 text-sm mt-2">이름 획수와 음양오행으로 풀어보는 나의 운세</p>
       </div>
 

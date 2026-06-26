@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Home } from "lucide-react";
 import chineseData from "@/data/chinese-zodiac.json";
 import SpriteCard from "@/components/common/SpriteCard";
 import FortuneCard from "@/components/common/FortuneCard";
@@ -133,16 +133,19 @@ export default function ChineseZodiacAnimalPage() {
     : null;
 
   return (
-    <div className="min-h-screen px-4 py-10">
+    <div className="min-h-screen px-4 py-6">
       <div className="max-w-xl mx-auto">
 
-        {/* 뒤로가기 */}
-        <Link
-          href="/chinese-zodiac"
-          className="inline-flex items-center gap-1 text-white/40 text-sm hover:text-white/70 mb-6 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" /> 띠 목록
-        </Link>
+        {/* 뒤로가기 + 즐겨찾기 */}
+        <div className="flex items-center justify-between mb-6">
+          <Link
+            href="/chinese-zodiac"
+            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-xs transition-all"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" /> 띠 목록
+          </Link>
+          <FavoriteButton menuId="chinese-zodiac" />
+        </div>
 
         {/* 띠 헤더 카드 */}
         <div className={`rounded-2xl bg-white/5 border ${animalBorder} p-6 mb-6`}>
@@ -155,7 +158,6 @@ export default function ChineseZodiacAnimalPage() {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-white text-2xl font-bold">{animalInfo.name}띠</h1>
-                <FavoriteButton menuId="chinese-zodiac" />
               </div>
               <p className="text-white/40 text-sm mt-1">{animalInfo.nameEn}</p>
               {/* 출생연도 선택 버튼 */}

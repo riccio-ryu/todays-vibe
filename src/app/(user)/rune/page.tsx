@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Home } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
@@ -52,7 +52,7 @@ export default function RunePage() {
 
   if (result || isLoading) {
     return (
-      <div className="max-w-xl mx-auto px-4 py-10">
+      <div className="max-w-xl mx-auto px-4 py-6">
         {/* 뽑힌 룬 표시 */}
         {drawnRunes && (
           <div className="flex items-center justify-center gap-4 mb-8">
@@ -79,16 +79,16 @@ export default function RunePage() {
   }
 
   return (
-    <div className="max-w-xl mx-auto px-4 py-10">
-      <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
-        <ArrowLeft className="w-4 h-4" /> 홈
-      </Link>
+    <div className="max-w-xl mx-auto px-4 py-6">
+      <div className="flex items-center justify-between mb-6">
+        <Link href="/" className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-xs transition-all">
+          <ArrowLeft className="w-3.5 h-3.5" /><Home className="w-3.5 h-3.5" />
+        </Link>
+        <FavoriteButton menuId="rune" />
+      </div>
       <div className="text-center mb-8">
         <span className="text-5xl block mb-3 font-serif">ᚱ</span>
-        <div className="flex items-center justify-center gap-2">
-          <h1 className="text-white font-bold text-2xl">룬 문자</h1>
-          <FavoriteButton menuId="rune" />
-        </div>
+        <h1 className="text-white font-bold text-2xl">룬 문자</h1>
         <p className="text-white/50 text-sm mt-2">북유럽 고대 룬 3개로 과거·현재·미래를 읽습니다</p>
       </div>
 

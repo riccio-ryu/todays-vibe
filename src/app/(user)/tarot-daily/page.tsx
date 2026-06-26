@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { ArrowLeft, Heart, Briefcase, DollarSign } from "lucide-react";
+import { ArrowLeft, Heart, Briefcase, DollarSign, Home } from "lucide-react";
 import TarotCard from "@/components/tarot/TarotCard";
 import { drawCards, getCardMeaning, getSuitLabel, type DrawnCard } from "@/lib/tarot/utils";
 import FavoriteButton from "@/components/common/FavoriteButton";
@@ -28,15 +28,16 @@ export default function TarotDailyPage() {
   const meaning = drawn ? getCardMeaning(drawn.card, drawn.reversed) : null;
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-10">
+    <div className="max-w-lg mx-auto px-4 py-6">
       {/* 헤더 */}
-      <div className="flex items-center gap-3 mb-8">
-        <Link href="/" className="text-white/40 hover:text-white/70 text-sm transition-colors">
-          <ArrowLeft className="w-4 h-4" /> 홈
-        </Link>
-        <span className="text-white/20">|</span>
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-3">
+          <Link href="/" className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-xs transition-all">
+            <ArrowLeft className="w-3.5 h-3.5" /><Home className="w-3.5 h-3.5" />
+          </Link>
+          <FavoriteButton menuId="tarot-daily" />
+        </div>
         <h1 className="text-white font-semibold text-lg">타로 원카드</h1>
-        <FavoriteButton menuId="tarot-daily" />
       </div>
 
       {/* 메인 */}

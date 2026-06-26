@@ -55,7 +55,7 @@ export default function TarotFullMoonPage() {
   }
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-10">
+    <div className="max-w-lg mx-auto px-4 py-6">
       <PageHeader title="보름달 타로" menuId="tarot-full-moon" />
 
       <AnimatePresence mode="wait">
