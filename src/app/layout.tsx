@@ -25,7 +25,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://todays-vibe-ca912.web.app"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.todays-vibe.com"),
   title: "오늘운 | 오늘, 우주가 당신에게 말을 걸어요",
   description:
     "사주, 타로, 꿈해몽 등 33가지 운세로 당신의 오늘을 가장 깊이 읽어드립니다.",
