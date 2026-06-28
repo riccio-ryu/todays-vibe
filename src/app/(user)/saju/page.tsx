@@ -427,6 +427,61 @@ export default function SajuPage() {
         </form>
       )}
 
+      {/* 사주팔자 안내 — 폼이 없을 때만 표시 (SSR에서 항상 렌더링) */}
+      {!result && (
+        <div className="mt-2 border-t border-white/10 pt-10 space-y-8">
+          <div>
+            <h2 className="text-white font-bold text-lg mb-3">사주팔자(四柱八字)란?</h2>
+            <p className="text-white/50 text-sm leading-relaxed">
+              사주팔자는 사람이 태어난 연(年)·월(月)·일(日)·시(時)의 네 기둥(四柱)에서
+              각각 천간(天干)과 지지(地支) 두 글자씩, 총 여덟 글자(八字)로 운명을 분석하는 동양 명리학입니다.
+              중국 당나라 때 이허중이 체계화하고 송나라 서자평이 완성했으며,
+              한국에서는 고려시대부터 왕실과 사대부를 중심으로 깊이 연구되어 왔습니다.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="text-white/70 font-semibold text-sm mb-3">사주의 4기둥과 의미</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {([
+                { pillar: "년주(年柱)", meaning: "조상·사회·환경", desc: "타고난 사회적 환경과 조상의 기운. 첫인상과 외면을 나타냅니다.", color: "text-purple-400 border-purple-400/20 bg-purple-900/10" },
+                { pillar: "월주(月柱)", meaning: "부모·형제·청소년기", desc: "성장 환경과 직업·사회생활의 특성. 내면 성격을 보여줍니다.", color: "text-blue-400 border-blue-400/20 bg-blue-900/10" },
+                { pillar: "일주(日柱)", meaning: "나 자신·배우자", desc: "사주에서 가장 중요한 기둥. 자아와 배우자 인연을 나타냅니다.", color: "text-amber-400 border-amber-400/20 bg-amber-900/10" },
+                { pillar: "시주(時柱)", meaning: "자녀·노년·말년운", desc: "인생 후반과 자녀 인연. 내면의 욕망과 미래 방향을 담습니다.", color: "text-green-400 border-green-400/20 bg-green-900/10" },
+              ] as const).map((item) => (
+                <div key={item.pillar} className={`rounded-xl border px-3 py-3 ${item.color}`}>
+                  <p className="font-bold text-sm mb-0.5">{item.pillar}</p>
+                  <p className="text-xs opacity-60 mb-1">{item.meaning}</p>
+                  <p className="text-white/40 text-[11px] leading-snug">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-white/70 font-semibold text-sm mb-3">오행(五行)과 천간·지지</h3>
+            <p className="text-white/50 text-sm leading-relaxed mb-3">
+              사주의 여덟 글자는 목(木)·화(火)·토(土)·금(金)·수(水) 다섯 기운으로 이루어집니다.
+              천간(天干)은 갑·을·병·정·무·기·경·신·임·계 10글자로 하늘의 기운을,
+              지지(地支)는 자·축·인·묘·진·사·오·미·신·유·술·해 12글자로 땅의 기운을 나타냅니다.
+            </p>
+            <p className="text-white/50 text-sm leading-relaxed">
+              일간(日干), 즉 태어난 날의 천간이 &apos;나&apos;를 나타내며,
+              나머지 일곱 글자가 나와 상생·상극하면서 성격, 건강, 직업, 연애, 재물 등 삶 전반에 영향을 미칩니다.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="text-white/70 font-semibold text-sm mb-2">AI 사주풀이 특징</h3>
+            <p className="text-white/50 text-sm leading-relaxed">
+              오늘운의 AI 사주풀이는 생년월일시를 입력하면 사주 원국을 계산해 오행 균형과 일간의 특성을 분석합니다.
+              궁금한 점(연애운, 직업운, 금전운 등)을 함께 입력하면 더 맞춤화된 풀이를 받을 수 있습니다.
+              출생 시간이 정확할수록 시주가 포함된 더 정밀한 풀이가 가능합니다.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* 결과 */}
       {result && (
         <div className="space-y-6">
