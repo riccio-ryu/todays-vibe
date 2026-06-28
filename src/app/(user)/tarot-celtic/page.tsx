@@ -50,7 +50,7 @@ export default function TarotCelticPage() {
   }
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-10">
+    <div className="max-w-lg mx-auto px-4 py-6">
       <PageHeader title="켈틱 크로스 타로" menuId="tarot-celtic" />
 
       <AnimatePresence mode="wait">

@@ -1,6 +1,17 @@
 # 📋 개발 일지
 ---
 
+## 2026-06-26
+
+- 인증 상태 즉시 반영 버그 수정 (`src/contexts/AuthContext.tsx`, `src/app/auth/complete/page.tsx`) — 관리자 로그인 후 서비스 페이지 이동 시 헤더에 로그인/회원가입이 잠깐 보이는 문제 해결; `AuthContext`에 `refreshAuth` 콜백 추가, 로그인 완료 직후 auth 상태 즉시 재조회
+- 헤더 모바일 회원가입 버튼 숨김 (`src/components/Header.tsx`) — 모바일 sm 미만에서 회원가입 링크 `hidden sm:block` 처리 (로그인 페이지에서 가입 가능)
+- 생년월일 저장 버튼 → 슬라이드 토글로 전환 — 기존 조건부 표시 버튼 제거, 로그인+자신 정보 모드일 때 항상 표시되는 ON/OFF 토글 스위치로 교체; 저장된 정보 있으면 ON 상태, 토글 OFF 시 저장 해제 (`saju/page.tsx`, `GeneralFortuneForm.tsx`, `life-fortune`, `moving-fortune`, `tojeong`, `numerology` 6개 페이지 동일 패턴 적용)
+- 배경 하단 검은 영역 버그 수정 (`src/components/TimeBackground.tsx`) — 콘텐츠가 100vh를 초과할 때 `min-h-screen` div 밖으로 넘쳐 body 배경(검은색)이 노출되던 문제; 배경색 div를 `fixed inset-0 z-0`으로 분리해 스크롤/높이와 무관하게 항상 뷰포트를 채우도록 변경, `document.body.style.backgroundColor` JS 조작 전부 제거
+- `globals.css` body 배경 원복 — 강제로 넣었던 `background: #06000d` → `background: var(--background)` 원복
+- 별·구름 배치 범위 확장 (`src/components/SkyLayer.tsx`) — 별 y좌표 최대 72% → 95%, 구름 top 최대 54% → 84%로 확장해 화면 하단까지 sky 요소가 분포하도록 수정
+
+---
+
 ## 2026-06-24
 
 - 운세 결과 공유하기 버튼 추가 — `navigator.share({ title, text, url })` 적용, 미지원 브라우저는 URL 클립보드 복사 fallback; `FortuneResult.tsx`, `TarotReadingResult.tsx`, `saju`, `zodiac/[sign]`, `chinese-zodiac/[animal]`, `tarot-daily` 페이지에 공유 버튼 추가

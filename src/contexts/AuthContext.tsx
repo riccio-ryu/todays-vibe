@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from "react";
 
 export interface SessionUser {
   uid: string;
@@ -17,9 +17,15 @@ interface AuthContextValue {
   user: SessionUser | null;
   loading: boolean;
   isAdmin: boolean;
+  refreshAuth: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextValue>({ user: null, loading: true, isAdmin: false });
+const AuthContext = createContext<AuthContextValue>({
+  user: null,
+  loading: true,
+  isAdmin: false,
+  refreshAuth: async () => {},
+});
 
 function deriveProviderData(uid: string): { providerId: string }[] {
   if (uid.startsWith("google:")) return [{ providerId: "google.com" }];
@@ -34,35 +40,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  useEffect(() => {
-    fetch("/api/auth/me")
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.loggedIn) {
-          const uid: string = d.uid ?? "";
-          setUser({
-            uid,
-            email: d.email ?? null,
-            displayName: d.displayName ?? null,
-            photoURL: d.photoURL ?? null,
-            providerData: deriveProviderData(uid),
-            metadata: { creationTime: undefined },
-          });
-          setIsAdmin(d.isAdmin === true);
-        } else {
-          setUser(null);
-          setIsAdmin(false);
-        }
-      })
-      .catch(() => {
+  const refreshAuth = useCallback(async () => {
+    try {
+      const r = await fetch("/api/auth/me");
+      const d = await r.json();
+      if (d.loggedIn) {
+        const uid: string = d.uid ?? "";
+        setUser({
+          uid,
+          email: d.email ?? null,
+          displayName: d.displayName ?? null,
+          photoURL: d.photoURL ?? null,
+          providerData: deriveProviderData(uid),
+          metadata: { creationTime: undefined },
+        });
+        setIsAdmin(d.isAdmin === true);
+      } else {
         setUser(null);
         setIsAdmin(false);
-      })
-      .finally(() => setLoading(false));
+      }
+    } catch {
+      setUser(null);
+      setIsAdmin(false);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
+  useEffect(() => {
+    refreshAuth();
+  }, [refreshAuth]);
+
   return (
-    <AuthContext.Provider value={{ user, loading, isAdmin }}>
+    <AuthContext.Provider value={{ user, loading, isAdmin, refreshAuth }}>
       {children}
     </AuthContext.Provider>
   );

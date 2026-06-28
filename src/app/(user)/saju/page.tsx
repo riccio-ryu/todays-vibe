@@ -2,15 +2,17 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Home } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { calculateSaju, HOUR_OPTIONS, type BirthInput, type SajuResult } from "@/lib/saju/calculator";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
+import { useBirthInfo } from "@/lib/hooks/useBirthInfo";
 import AILoadingIndicator from "@/components/common/AILoadingIndicator";
 import AdSlot from "@/components/common/AdSlot";
 import { boldHighlight } from "@/lib/utils/format";
 import TodayFortuneCard from "@/components/common/TodayFortuneCard";
 import FavoriteButton from "@/components/common/FavoriteButton";
+import SavedBirthBanner from "@/components/common/SavedBirthBanner";
 
 // ─── 사주 원국 테이블 ──────────────────────────────────────────────────
 function SajuTable({ result }: { result: SajuResult }) {
@@ -82,20 +84,18 @@ function SajuTable({ result }: { result: SajuResult }) {
 // ─── 메인 페이지 ──────────────────────────────────────────────────────
 export default function SajuPage() {
   const { user } = useAuth();
+  const { savedInfo, saving, saveStatus, saveBirthInfo } = useBirthInfo();
 
   // 입력 상태
-  const [year, setYear]     = useState("");
-  const [month, setMonth]   = useState("");
-  const [day, setDay]       = useState("");
-  const [hour, setHour]     = useState(-1);
+  const [year, setYear]       = useState("");
+  const [month, setMonth]     = useState("");
+  const [day, setDay]         = useState("");
+  const [hour, setHour]       = useState(-1);
   const [isLunar, setIsLunar] = useState(false);
-  const [gender, setGender] = useState<"male" | "female">("male");
+  const [gender, setGender]   = useState<"male" | "female">("male");
   const [question, setQuestion] = useState("");
-
-  // 저장 옵션
-  const [saveBirth, setSaveBirth] = useState(false);
-  const [savedInfo, setSavedInfo] = useState<BirthInput | null>(null);
-  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
+  const [isOtherMode, setIsOtherMode] = useState(false);
+  const [wantSave, setWantSave] = useState(false);
 
   // 결과 상태
   const [result, setResult]         = useState<SajuResult | null>(null);
@@ -106,24 +106,50 @@ export default function SajuPage() {
 
   const { fortuneStatus, refreshFortuneStatus } = useFortuneStatus("saju");
 
-  // 저장된 출생 정보 불러오기
+  // 저장된 출생 정보로 자동 채우기
   useEffect(() => {
-    if (!user) return;
-    fetch("/api/user/birth-info")
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.birthInfo) {
-          setSavedInfo(d.birthInfo);
-          setYear(String(d.birthInfo.year));
-          setMonth(String(d.birthInfo.month));
-          setDay(String(d.birthInfo.day));
-          setHour(d.birthInfo.hour ?? -1);
-          setIsLunar(d.birthInfo.isLunar ?? false);
-          setGender(d.birthInfo.gender ?? "male");
-        }
-      })
-      .catch(() => {});
-  }, [user]);
+    if (savedInfo && !isOtherMode) {
+      setYear(String(savedInfo.year));
+      setMonth(String(savedInfo.month));
+      setDay(String(savedInfo.day));
+      setHour(savedInfo.hour ?? -1);
+      setIsLunar(savedInfo.isLunar ?? false);
+      setGender(savedInfo.gender ?? "male");
+    }
+  }, [savedInfo, isOtherMode]);
+
+  // 토글 상태: savedInfo 있고 내 정보 모드면 ON
+  useEffect(() => {
+    setWantSave(!!savedInfo && !isOtherMode);
+  }, [savedInfo, isOtherMode]);
+
+  function handleOtherMode() {
+    setIsOtherMode(true);
+    setYear(""); setMonth(""); setDay(""); setHour(-1); setIsLunar(false); setGender("male");
+  }
+
+  function handleRestoreMyInfo() {
+    setIsOtherMode(false);
+    if (savedInfo) {
+      setYear(String(savedInfo.year));
+      setMonth(String(savedInfo.month));
+      setDay(String(savedInfo.day));
+      setHour(savedInfo.hour ?? -1);
+      setIsLunar(savedInfo.isLunar ?? false);
+      setGender(savedInfo.gender ?? "male");
+    }
+  }
+
+  async function handleToggleSave() {
+    const newVal = !wantSave;
+    setWantSave(newVal);
+    if (newVal) {
+      const y = parseInt(year), m = parseInt(month), d = parseInt(day);
+      if (y && m && d) {
+        await saveBirthInfo({ year: y, month: m, day: d, hour, isLunar, gender });
+      }
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -148,18 +174,6 @@ export default function SajuPage() {
       return;
     }
     setResult(saju);
-
-    // 저장 처리
-    if (saveBirth && user) {
-      setSaveStatus("saving");
-      fetch("/api/user/birth-info", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(input),
-      })
-        .then(() => { setSaveStatus("saved"); setSavedInfo(input); })
-        .catch(() => setSaveStatus("idle"));
-    }
 
     // AI 해석
     setLoading(true);
@@ -191,14 +205,7 @@ export default function SajuPage() {
   }
 
   function handleReset() {
-    if (savedInfo) {
-      setYear(String(savedInfo.year));
-      setMonth(String(savedInfo.month));
-      setDay(String(savedInfo.day));
-      setHour(savedInfo.hour);
-      setIsLunar(savedInfo.isLunar);
-      setGender(savedInfo.gender);
-    }
+    handleRestoreMyInfo();
     setResult(null);
     setInterp("");
     setError("");
@@ -209,15 +216,15 @@ export default function SajuPage() {
   // 오늘 이용 기록 있으면 결과 노출
   if (fortuneStatus?.todayReading && !result) {
     return (
-      <div className="max-w-xl mx-auto px-4 py-10">
-        <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
-          <ArrowLeft className="w-4 h-4" /> 홈
-        </Link>
+      <div className="max-w-xl mx-auto px-4 py-6">
+        <div className="flex items-center justify-between mb-6">
+          <Link href="/" className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-xs transition-all">
+            <ArrowLeft className="w-3.5 h-3.5" /><Home className="w-3.5 h-3.5" />
+          </Link>
+          <FavoriteButton menuId="saju" />
+        </div>
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2">
-            <h1 className="text-white font-bold text-2xl">사주팔자</h1>
-            <FavoriteButton menuId="saju" />
-          </div>
+          <h1 className="text-white font-bold text-2xl">사주팔자</h1>
           <p className="text-white/50 text-sm mt-2">생년월일시로 풀어보는 나의 운명</p>
         </div>
         <TodayFortuneCard
@@ -232,36 +239,27 @@ export default function SajuPage() {
   }
 
   return (
-    <div className="max-w-xl mx-auto px-4 py-10">
-      <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
-        <ArrowLeft className="w-4 h-4" /> 홈
-      </Link>
+    <div className="max-w-xl mx-auto px-4 py-6">
+      <div className="flex items-center justify-between mb-6">
+        <Link href="/" className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-xs transition-all">
+          <ArrowLeft className="w-3.5 h-3.5" /><Home className="w-3.5 h-3.5" />
+        </Link>
+        <FavoriteButton menuId="saju" />
+      </div>
       {/* 헤더 */}
       <div className="text-center mb-8">
-        <div className="flex items-center justify-center gap-2">
-          <h1 className="text-white font-bold text-2xl">사주팔자</h1>
-          <FavoriteButton menuId="saju" />
-        </div>
+        <h1 className="text-white font-bold text-2xl">사주팔자</h1>
         <p className="text-white/50 text-sm mt-2">생년월일시로 풀어보는 나의 운명</p>
       </div>
 
-      {/* 저장된 정보 알림 */}
-      {savedInfo && !result && (
-        <div className="mb-4 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-400/20 flex items-center justify-between">
-          <p className="text-amber-300 text-sm">
-            저장된 생년월일 정보가 있습니다
-          </p>
-          <button
-            onClick={() => {
-              setYear(""); setMonth(""); setDay(""); setHour(-1);
-              setIsLunar(false); setGender("male"); setSavedInfo(null);
-              fetch("/api/user/birth-info", { method: "DELETE" }).catch(() => {});
-            }}
-            className="text-white/40 text-xs hover:text-white/70 transition-colors"
-          >
-            삭제
-          </button>
-        </div>
+      {/* 저장된 내 정보 배너 */}
+      {user && savedInfo && !result && (
+        <SavedBirthBanner
+          savedInfo={savedInfo}
+          isOtherMode={isOtherMode}
+          onOtherMode={handleOtherMode}
+          onRestoreMyInfo={handleRestoreMyInfo}
+        />
       )}
 
       {/* 입력 폼 */}
@@ -387,28 +385,33 @@ export default function SajuPage() {
               />
             </div>
 
-            {/* 출생 정보 저장 (로그인 시) */}
-            {user && (
-              <label className="flex items-center gap-3 cursor-pointer group">
-                <div
-                  onClick={() => setSaveBirth((v) => !v)}
-                  className={`w-10 h-5 rounded-full transition-colors relative shrink-0 ${
-                    saveBirth ? "bg-[#5046e4]" : "bg-white/20"
-                  }`}
-                >
-                  <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${
-                    saveBirth ? "translate-x-5" : "translate-x-0.5"
-                  }`} />
-                </div>
-                <div>
-                  <p className="text-white/80 text-sm">출생 정보 저장</p>
-                  <p className="text-white/40 text-xs">다음에 자동으로 불러옵니다</p>
-                </div>
-              </label>
-            )}
           </div>
 
           {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+
+          {/* 출생정보 저장 버튼 */}
+          {user && !isOtherMode && (
+            <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/5 border border-white/10">
+              <span className="text-sm text-white/60">
+                {saving ? "저장 중..." : wantSave ? "생년월일 저장중" : "생년월일 저장"}
+                {saveStatus === "saved" && <span className="text-[#9382ff] text-xs ml-2">✓</span>}
+              </span>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={wantSave}
+                onClick={handleToggleSave}
+                disabled={saving}
+                className={`relative inline-flex w-11 h-6 rounded-full transition-colors duration-200 disabled:opacity-50 shrink-0 focus:outline-none ${
+                  wantSave ? "bg-[#5046e4]" : "bg-white/20"
+                }`}
+              >
+                <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200 ${
+                  wantSave ? "translate-x-[22px]" : "translate-x-0.5"
+                }`} />
+              </button>
+            </div>
+          )}
 
           <button
             type="submit"

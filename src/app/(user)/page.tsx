@@ -91,7 +91,7 @@ export default async function Home() {
         .map((item, i) => ({ item, count: 0, rank: i + 1 }));
 
   return (
-    <div className="relative max-w-4xl mx-auto px-4 py-8 sm:py-12">
+    <div className="relative max-w-4xl mx-auto px-4 py-8 sm:py-6">
       {/* 콘텐츠 영역 배경 파티클 */}
       <div className="absolute inset-0 pointer-events-none select-none overflow-hidden" aria-hidden>
         {[

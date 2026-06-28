@@ -121,7 +121,7 @@ export default function Header() {
             </Link>
             <Link
               href="/signup"
-              className="px-3.5 py-1.5 text-sm text-[#f4f0ff] font-medium bg-[#5046e4] rounded-[5px] hover:bg-[#3d36c4] transition-colors"
+              className="hidden sm:block px-3.5 py-1.5 text-sm text-[#f4f0ff] font-medium bg-[#5046e4] rounded-[5px] hover:bg-[#3d36c4] transition-colors"
             >
               회원가입
             </Link>

@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, ChevronRight, ChevronDown, Pencil } from "lucide-react";
+import { ArrowLeft, Home, ChevronRight, ChevronDown, Pencil } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { updateProfile } from "firebase/auth";
@@ -300,15 +300,15 @@ function MyPageInner() {
   }
 
   return (
-    <div className="min-h-screen px-4 py-10">
+    <div className="min-h-screen px-4 py-6">
       <div className="max-w-lg mx-auto space-y-4">
 
         {/* 뒤로가기 */}
         <Link
           href="/"
-          className="inline-flex items-center gap-1 text-white/40 text-sm hover:text-white/70 transition-colors mb-2"
+          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-xs transition-all mb-2"
         >
-          <ArrowLeft className="w-4 h-4" /> 홈
+          <ArrowLeft className="w-3.5 h-3.5" /><Home className="w-3.5 h-3.5" />
         </Link>
 
         {/* ── 프로필 카드 ─────────────────────────────────────── */}
