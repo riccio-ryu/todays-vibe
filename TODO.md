@@ -33,6 +33,13 @@
 
 ---
 
+### 9. 자동로그인 (세션 자동 복원)
+- **내용**: 앱 재방문 시 이전 소셜 로그인 상태를 자동으로 복원. 매번 로그인 버튼을 누르지 않아도 되게 함
+- **목적**: UX 개선 — 로그인 마찰 제거, 재방문 사용자 편의 향상
+- **구현 힌트**: Firebase Auth 세션 persistence 설정 (`setPersistence(browserLocalPersistence)`) / `src/lib/firebase/auth.ts` / `src/contexts/AuthContext.tsx` onAuthStateChanged 타이밍 확인 / 현재 SESSION_COOKIE 기반 서버 세션과의 연계 방식 검토
+
+---
+
 ## ✅ 완료된 항목
 
 | 날짜 | 내용 |
