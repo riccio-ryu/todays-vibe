@@ -1,6 +1,25 @@
 # 📋 개발 일지
 ---
 
+## 2026-07-09
+
+- `TODO.md` 심테(#7) 항목 전면 재작성 — 설계 문서(`docs/superpowers/specs/2026-06-29-psych-world-design.md`, `docs/psych-tests-catalog.md`) 기반으로 서비스명(오늘난), 스와이프 구조, MVP 22개 구성, 라우트, Phase 1~4 구현 순서, 디자인 원칙까지 정확히 반영
+- 오늘난(심리 테스트) Phase 1 구현 — MBTI 진단 전체 플로우 완성
+  - `src/types/psych.ts` 신규 — `PsychTestData`, `PsychQuestion`, `PsychResult`, `MBTIAxis` 타입 정의
+  - `src/data/psych-tests/mbti.json` 신규 — MBTI 20문항(E/I·S/N·T/F·J/P 각 5문항, 4선지) + 16유형 한국어 결과(제목·부제·해석·강점·주의사항)
+  - `src/lib/psych/scoring.ts` 신규 — 가중치 합산 스코어링 엔진 (`scoreMBTI`, `getMBTIAxisScores`, `axisPercent`)
+  - `src/lib/psych/registry.ts` 신규 — slug로 테스트 데이터 조회하는 레지스트리 (JSON 추가만으로 테스트 확장 가능)
+  - `src/app/globals.css` — 낮 테마 CSS 클래스 추가 (`.psych-card`, `.psych-option-btn`, `.psych-progress-fill`, `.psych-axis-bar-fill` 등)
+  - `src/app/(psych)/layout.tsx` 신규 — 낮 테마 레이아웃 (`#ebf5ff` Sky Wash 배경)
+  - `src/app/(psych)/psych/[slug]/page.tsx` 신규 — 테스트 소개 페이지 (출처 뱃지, 문항 수, 시작 버튼)
+  - `src/components/psych/QuizClient.tsx` 신규 — 퀴즈 진행 클라이언트 컴포넌트 (Framer Motion 슬라이드 전환, localStorage 중간 저장, 뒤로가기, 자동 전진)
+  - `src/app/(psych)/psych/[slug]/quiz/page.tsx` 신규 — 퀴즈 서버 래퍼
+  - `src/components/psych/DiagnosticResult.tsx` 신규 — 결과 컴포넌트 (유형 코드·제목, E/I·S/N·T/F·J/P 축 바 차트, 상세 해석, 강점·주의사항, 공유/다시하기 버튼)
+  - `src/app/(psych)/psych/[slug]/result/page.tsx` 신규 — 결과 페이지 (searchParams로 유형 코드·축 점수 수신)
+  - URL: `/psych/mbti` → `/psych/mbti/quiz` → `/psych/mbti/result?type=XXXX&e=N&i=N...`
+
+---
+
 ## 2026-06-26
 
 - 인증 상태 즉시 반영 버그 수정 (`src/contexts/AuthContext.tsx`, `src/app/auth/complete/page.tsx`) — 관리자 로그인 후 서비스 페이지 이동 시 헤더에 로그인/회원가입이 잠깐 보이는 문제 해결; `AuthContext`에 `refreshAuth` 콜백 추가, 로그인 완료 직후 auth 상태 즉시 재조회
