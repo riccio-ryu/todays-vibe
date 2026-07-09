@@ -116,3 +116,61 @@ body {
 .oracle-breathe {
   animation: oracleBreathe 6s ease-in-out infinite;
 }
+
+/* ── 오늘난 (psych) 낮 테마 ──────────────────────────────────────────────── */
+
+.psych-card {
+  background: #fafdff;
+  border: 1px solid rgba(83, 88, 98, 0.15);
+  box-shadow: rgba(4, 69, 144, 0.08) 0px 14px 20px 4px;
+  border-radius: 32px;
+}
+
+.psych-card-snack {
+  background: #cce7ff;
+  border-radius: 32px;
+}
+
+.psych-option-btn {
+  background: #fafdff;
+  border: 1px solid rgba(83, 88, 98, 0.15);
+  box-shadow: rgba(4, 69, 144, 0.05) 0px 4px 12px 0px;
+  border-radius: 20px;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+}
+
+.psych-option-btn:hover {
+  border-color: rgba(79, 190, 255, 0.5);
+  box-shadow: rgba(79, 190, 255, 0.12) 0px 4px 16px 0px;
+}
+
+.psych-option-btn:active {
+  transform: scale(0.98);
+}
+
+.psych-progress-track {
+  background: #cce7ff;
+  border-radius: 9999px;
+  height: 4px;
+}
+
+.psych-progress-fill {
+  background: #4fbeff;
+  border-radius: 9999px;
+  height: 4px;
+  transition: width 0.3s ease;
+}
+
+.psych-axis-bar-track {
+  background: rgba(204, 231, 255, 0.6);
+  border-radius: 9999px;
+  height: 8px;
+  flex: 1;
+}
+
+.psych-axis-bar-fill {
+  background: #181d27;
+  border-radius: 9999px;
+  height: 8px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
