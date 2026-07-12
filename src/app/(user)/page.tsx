@@ -8,7 +8,6 @@ import QuickMenu from "@/components/home/QuickMenu";
 import HeroCard from "@/components/home/HeroCard";
 import PopularSection, { type RankedItem } from "@/components/home/PopularSection";
 import OracleHeader from "@/components/home/OracleHeader";
-import AdSlot from "@/components/common/AdSlot";
 
 async function getMenuItems(): Promise<MenuItem[]> {
   try {
@@ -122,9 +121,6 @@ export default async function Home() {
 
       {/* 오늘 인기 운세 순위 */}
       <PopularSection rankedItems={rankedItems} />
-
-      {/* 광고 — 인기 섹션과 전체 목록 사이 */}
-      <AdSlot slot="1099445352" className="mb-8 rounded-xl" />
 
       {/* 즐겨찾기 + 카테고리 */}
       <HomeInteractive categories={categories} fortunes={fortunes} />

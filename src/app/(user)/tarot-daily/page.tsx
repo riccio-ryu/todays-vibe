@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { ArrowLeft, Heart, Briefcase, DollarSign, Home } from "lucide-react";
 import TarotCard from "@/components/tarot/TarotCard";
-import { drawCards, getCardMeaning, getSuitLabel, type DrawnCard } from "@/lib/tarot/utils";
+import { drawCards, getCardMeaning, getCardSlug, getSuitLabel, type DrawnCard } from "@/lib/tarot/utils";
 import FavoriteButton from "@/components/common/FavoriteButton";
 
 export default function TarotDailyPage() {
@@ -187,6 +187,14 @@ export default function TarotDailyPage() {
                 </p>
               )}
 
+              {/* 카드 사전 링크 */}
+              <Link
+                href={`/tarot-cards/${getCardSlug(drawn.card)}`}
+                className="block text-center text-purple-300/70 hover:text-purple-200 text-xs underline underline-offset-4 transition-colors"
+              >
+                {drawn.card.nameKo} 카드의 상징과 자세한 의미 보기 →
+              </Link>
+
               {/* 다시 뽑기 + 공유하기 */}
               <div className="flex gap-3">
                 <button
@@ -242,6 +250,12 @@ export default function TarotDailyPage() {
             </p>
           </div>
         </div>
+        <Link
+          href="/tarot-cards"
+          className="block rounded-xl bg-purple-900/20 border border-purple-500/20 p-4 text-center text-purple-200 hover:bg-purple-900/30 text-sm font-medium transition-colors"
+        >
+          📖 타로 카드 78장 의미 사전 보러 가기
+        </Link>
       </div>
     </div>
   );
