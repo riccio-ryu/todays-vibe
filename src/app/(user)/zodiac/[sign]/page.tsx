@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Home } from "lucide-react";
 import zodiacData from "@/data/zodiac-signs.json";
+import { zodiacContent } from "@/data/zodiac-content";
 import SpriteCard from "@/components/common/SpriteCard";
 import FortuneCard from "@/components/common/FortuneCard";
 import LuckyBadge from "@/components/common/LuckyBadge";
@@ -340,6 +341,24 @@ export default function ZodiacSignPage() {
             </div>
           )}
         </div>
+
+        {/* 별자리 심층 해설 */}
+        {zodiacContent[signInfo.id] && (
+          <div className="mt-5 rounded-2xl bg-white/5 border border-white/10 p-5 space-y-5">
+            <div>
+              <h2 className="text-white/80 font-semibold text-sm mb-2">{signInfo.name}의 성격</h2>
+              <p className="text-white/55 text-sm leading-relaxed">{zodiacContent[signInfo.id].personality}</p>
+            </div>
+            <div className="border-t border-white/10 pt-4">
+              <h3 className="text-white/70 font-semibold text-xs mb-2">💕 연애 스타일</h3>
+              <p className="text-white/55 text-sm leading-relaxed">{zodiacContent[signInfo.id].love}</p>
+            </div>
+            <div className="border-t border-white/10 pt-4">
+              <h3 className="text-white/70 font-semibold text-xs mb-2">💼 직업과 재능</h3>
+              <p className="text-white/55 text-sm leading-relaxed">{zodiacContent[signInfo.id].career}</p>
+            </div>
+          </div>
+        )}
 
         {/* 다른 별자리 */}
         <div className="mt-8 text-center">

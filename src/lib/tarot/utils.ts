@@ -45,6 +45,19 @@ export function getCardById(id: string): TarotCardData | undefined {
   return getAllCards().find((c) => c.id === id);
 }
 
+// SEO용 URL slug: "The Fool" → "the-fool", "Three of Cups" → "three-of-cups"
+export function getCardSlug(card: TarotCardData): string {
+  return card.name.toLowerCase().replace(/\s+/g, "-");
+}
+
+export function getCardBySlug(slug: string): TarotCardData | undefined {
+  return getAllCards().find((c) => getCardSlug(c) === slug);
+}
+
+export function getCardsBySuit(suit: string): TarotCardData[] {
+  return getAllCards().filter((c) => c.suit === suit);
+}
+
 export function drawCards(count: number): DrawnCard[] {
   const all = getAllCards();
   const shuffled = [...all].sort(() => Math.random() - 0.5);

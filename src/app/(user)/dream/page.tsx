@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import DreamForm from "@/components/fortune/DreamForm";
 
 export const metadata: Metadata = {
@@ -42,6 +43,12 @@ export default function DreamPage() {
                 </div>
               ))}
             </div>
+            <Link
+              href="/dream-dictionary"
+              className="mt-3 block rounded-xl bg-purple-900/20 border border-purple-500/20 p-3.5 text-center text-purple-200 hover:bg-purple-900/30 text-sm font-medium transition-colors"
+            >
+              📖 꿈해몽 사전 — 자주 꾸는 꿈 50가지 풀이 보기
+            </Link>
           </div>
 
           <div>
