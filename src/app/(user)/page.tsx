@@ -1,3 +1,4 @@
+import Link from "next/link";
 import fortunesData from "@/data/fortunes.json";
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import { getDailyRanking } from "@/lib/firebase/daily-rank";
@@ -124,6 +125,66 @@ export default async function Home() {
 
       {/* 즐겨찾기 + 카테고리 */}
       <HomeInteractive categories={categories} fortunes={fortunes} />
+
+      {/* 운세 사전 콘텐츠 */}
+      <section className="mt-12">
+        <h2 className="text-white font-semibold text-lg mb-2">운세 사전 — 읽어보는 운세</h2>
+        <p className="text-white/50 text-sm leading-relaxed mb-5">
+          점을 보기 전에 상징의 의미부터 알아두면 해석이 훨씬 깊어집니다.
+          타로 카드 한 장 한 장의 상징과 정방향·역방향 의미, 자주 꾸는 꿈의 전통 해몽과
+          심리학적 풀이를 사전처럼 찾아볼 수 있도록 정리했습니다.
+        </p>
+        <div className="grid sm:grid-cols-2 gap-3">
+          <Link
+            href="/tarot-cards"
+            className="group rounded-2xl bg-white/5 border border-white/10 p-5 hover:border-purple-400/30 hover:bg-white/[0.08] transition-all"
+          >
+            <span className="text-2xl block mb-2">🎴</span>
+            <p className="text-white/85 group-hover:text-white font-medium text-sm mb-1 transition-colors">
+              타로 카드 78장 의미 사전
+            </p>
+            <p className="text-white/40 text-xs leading-relaxed">
+              메이저 아르카나 22장부터 완드·컵·소드·펜타클 56장까지, 카드별 상징과
+              연애·직업·금전운 해석 총정리
+            </p>
+          </Link>
+          <Link
+            href="/dream-dictionary"
+            className="group rounded-2xl bg-white/5 border border-white/10 p-5 hover:border-purple-400/30 hover:bg-white/[0.08] transition-all"
+          >
+            <span className="text-2xl block mb-2">💭</span>
+            <p className="text-white/85 group-hover:text-white font-medium text-sm mb-1 transition-colors">
+              꿈해몽 사전 — 자주 꾸는 꿈 50가지
+            </p>
+            <p className="text-white/40 text-xs leading-relaxed">
+              뱀꿈, 돼지꿈, 이빨 빠지는 꿈부터 쫓기는 꿈까지, 전통 해몽과 심리학 관점의
+              상황별 풀이
+            </p>
+          </Link>
+        </div>
+      </section>
+
+      {/* 서비스 소개 */}
+      <section className="mt-10 rounded-2xl bg-white/5 border border-white/10 p-6">
+        <h2 className="text-white font-semibold text-base mb-3">오늘운은 이렇게 풀이합니다</h2>
+        <div className="space-y-3 text-white/50 text-sm leading-relaxed">
+          <p>
+            오늘운은 별자리·타로·사주·주역처럼 오랜 시간 다듬어진 전통 운세 체계를 바탕으로,
+            AI가 질문과 상황에 맞춘 해석을 더하는 운세 플랫폼입니다. 생년월일만 있으면 되는
+            간단한 오늘의 운세부터, 카드를 직접 뽑는 타로 스프레드, 꿈 내용을 적어 풀이받는
+            AI 꿈해몽까지 33가지 운세를 한곳에서 볼 수 있습니다.
+          </p>
+          <p>
+            매일의 별자리·띠 운세는 하루 단위로 갱신되고, 타로와 사주 같은 AI 해석은 입력한
+            내용에 따라 매번 새롭게 풀이됩니다. 결과는 저장하고 다시 볼 수 있으며, 마음에 드는
+            운세는 즐겨찾기로 모아둘 수 있습니다.
+          </p>
+          <p className="text-white/35 text-xs">
+            운세 해석은 재미와 자기 성찰의 참고 자료로 활용해 주세요. 중요한 결정은 언제나
+            당신의 몫입니다.
+          </p>
+        </div>
+      </section>
     </div>
   );
 }
