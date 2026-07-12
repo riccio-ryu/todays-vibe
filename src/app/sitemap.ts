@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { getAllCards, getCardSlug } from "@/lib/tarot/utils";
 import { allDreamSymbols } from "@/data/dream-dictionary";
+import zodiacData from "@/data/zodiac-signs.json";
+import chineseData from "@/data/chinese-zodiac.json";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.todays-vibe.com";
 
@@ -58,5 +60,27 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  return [...staticEntries, ...tarotCardEntries, ...dreamEntries];
+  // 별자리 12궁 상세 페이지
+  const zodiacEntries = zodiacData.zodiacSigns.map((s) => ({
+    url: `${BASE_URL}/zodiac/${s.id}`,
+    lastModified: now,
+    changeFrequency: "daily" as const,
+    priority: 0.7,
+  }));
+
+  // 띠 12지 상세 페이지
+  const chineseZodiacEntries = chineseData.animals.map((a) => ({
+    url: `${BASE_URL}/chinese-zodiac/${a.id}`,
+    lastModified: now,
+    changeFrequency: "daily" as const,
+    priority: 0.7,
+  }));
+
+  return [
+    ...staticEntries,
+    ...tarotCardEntries,
+    ...dreamEntries,
+    ...zodiacEntries,
+    ...chineseZodiacEntries,
+  ];
 }

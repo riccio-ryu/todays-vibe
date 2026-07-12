@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Home } from "lucide-react";
 import chineseData from "@/data/chinese-zodiac.json";
+import { chineseZodiacContent } from "@/data/chinese-zodiac-content";
 import SpriteCard from "@/components/common/SpriteCard";
 import FortuneCard from "@/components/common/FortuneCard";
 import LuckyBadge from "@/components/common/LuckyBadge";
@@ -354,6 +355,28 @@ export default function ChineseZodiacAnimalPage() {
               </button>
             </div>
           </>
+        )}
+
+        {/* 띠 심층 해설 */}
+        {chineseZodiacContent[animal] && (
+          <div className="mt-8 rounded-2xl bg-white/5 border border-white/10 p-5 space-y-5">
+            <div>
+              <h2 className="text-white/80 font-semibold text-sm mb-2">{animalInfo.name}띠의 성격</h2>
+              <p className="text-white/55 text-sm leading-relaxed">{chineseZodiacContent[animal].personality}</p>
+            </div>
+            <div className="border-t border-white/10 pt-4">
+              <h3 className="text-white/70 font-semibold text-xs mb-2">💕 연애 스타일</h3>
+              <p className="text-white/55 text-sm leading-relaxed">{chineseZodiacContent[animal].love}</p>
+            </div>
+            <div className="border-t border-white/10 pt-4">
+              <h3 className="text-white/70 font-semibold text-xs mb-2">💼 직업과 재능</h3>
+              <p className="text-white/55 text-sm leading-relaxed">{chineseZodiacContent[animal].career}</p>
+            </div>
+            <div className="border-t border-white/10 pt-4">
+              <h3 className="text-white/70 font-semibold text-xs mb-2">🤝 띠 궁합</h3>
+              <p className="text-white/55 text-sm leading-relaxed">{chineseZodiacContent[animal].compatibility}</p>
+            </div>
+          </div>
         )}
 
         {/* 다른 띠 보기 */}
