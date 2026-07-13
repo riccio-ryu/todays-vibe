@@ -1,6 +1,36 @@
 # 📋 개발 일지
 ---
 
+## 2026-07-13
+
+- 꿈해몽 사전 2차 확장 50개 → 100개 (`src/data/dream-dictionary/`) — 동물 15·자연 8·사람관계 9·신체 6·상황행동 7·재물사물 5 추가, 전 페이지 크롤링 텍스트 900자 이상, 사이트맵 228 URL
+- Search Console 사이트맵 제출·대표 페이지 색인 요청, "가져올 수 없음" 상태 진단 — 사이트 측 정상(200/application/xml/Googlebot 접근 OK), GSC 제출 직후 표시 문제로 판단, 7/16까지 관찰
+- 애드센스 대응 전체 기록 문서 작성 (`docs/google-adsense.md`) — 거절 원인 진단, 조치 내역, 재심사 체크리스트, 검증 방법
+- `TODO.md` 정리 — 애드센스 9번(배포+색인)·10번(꿈해몽 확장) 완료 처리, 11번(재심사, 7/27 이후) 현황 갱신
+- 전체 코드 리팩토링 7건 (41개 파일, +119/−369줄, 동작 변경 없음)
+  - 공유하기 로직 8곳 → `src/lib/utils/share.ts` `shareOrCopyUrl()` 통합
+  - BASE_URL 상수 9곳 → `src/lib/utils/site.ts` 통합
+  - `HeroCardSettings` 타입 3곳 + 기본값 2곳 → `src/types/hero.ts` 통합
+  - 별자리/띠 상세 페이지 공통 로직 → `src/lib/utils/fortune-labels.ts` 상수 + `src/lib/hooks/usePeriodFortune.ts` 훅 (fetch 에러 처리·페이지 전환 잔상 제거 개선 포함)
+  - 뒤로가기 pill 링크 인라인 21곳 + `PageHeader` → `src/components/common/BackHomePill.tsx` 통합
+  - 길몽/흉몽 뱃지 스타일 2곳 → `src/components/dream/SignBadge.tsx` 통합
+  - admin `Period` 타입 4곳 → `src/types/admin.ts` 통합
+  - 부수 정리: 미사용 `Home`/`Link`/`ArrowLeft` import 20여 곳 제거
+
+---
+
+## 2026-07-12
+
+- 애드센스 "저가치 콘텐츠" 거절 대응 착수 — 원인 진단: 기술 설정은 정상이나 크롤러가 볼 정적 콘텐츠 부재 (홈 404자, 도구형 페이지 구조, 사이트맵 24 URL)
+- 타로 카드 78장 의미 사전 신설 (`/tarot-cards`, `/tarot-cards/[slug]`, SSG) — 카드별 상징 해설·정/역방향 상세·연애/직업/금전운·조언 전량 신규 집필 (`src/data/tarot-card-content/`), 메타데이터·JSON-LD·내부 링크 포함
+- 꿈해몽 사전 1차 50개 신설 (`/dream-dictionary`, `/dream-dictionary/[slug]`, SSG) — 6개 카테고리, 전통 해몽 + 심리학 해석 + 상황별 풀이 4종 + 길몽/흉몽 표기 (`src/data/dream-dictionary/`)
+- 별자리 12궁·띠 12지 상세 페이지 보강 — 성격·연애·직업(·띠 궁합) 서술형 해설 (`src/data/zodiac-content.ts`, `src/data/chinese-zodiac-content.ts`), 서버 `layout.tsx` 추가로 `generateMetadata` + SSG 전환
+- 홈 화면 콘텐츠 보강 — 운세 사전 링크 카드 + 서비스 소개 텍스트 (크롤링 텍스트 404자 → 1,052자)
+- 콘텐츠 없는 홈 화면의 `AdSlot` 제거 (애드센스 정책 대응), 사이트맵 24 → 178 URL 확장
+- PR #21 머지·배포, 라이브 검증 (대표 URL 200, 본문 텍스트 서빙 확인)
+
+---
+
 ## 2026-06-26
 
 - 인증 상태 즉시 반영 버그 수정 (`src/contexts/AuthContext.tsx`, `src/app/auth/complete/page.tsx`) — 관리자 로그인 후 서비스 페이지 이동 시 헤더에 로그인/회원가입이 잠깐 보이는 문제 해결; `AuthContext`에 `refreshAuth` 콜백 추가, 로그인 완료 직후 auth 상태 즉시 재조회
