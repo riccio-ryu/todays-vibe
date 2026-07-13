@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-type Period = "today" | "7d" | "30d" | "all";
+import type { StatsPeriod as Period } from "@/types/admin";
 
 interface MenuRankItem {
   id: string;

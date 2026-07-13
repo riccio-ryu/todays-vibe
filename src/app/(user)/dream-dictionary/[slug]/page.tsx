@@ -1,21 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Home } from "lucide-react";
 import {
   allDreamSymbols,
   getDreamBySlug,
   getDreamsByCategory,
 } from "@/data/dream-dictionary";
 import AdSlot from "@/components/common/AdSlot";
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.todays-vibe.com";
-
-const SIGN_STYLE: Record<string, string> = {
-  길몽: "text-emerald-300 bg-emerald-900/20 border-emerald-400/20",
-  흉몽: "text-rose-300 bg-rose-900/20 border-rose-400/20",
-  양면적: "text-amber-300 bg-amber-900/20 border-amber-400/20",
-};
+import { BASE_URL } from "@/lib/utils/site";
+import BackHomePill from "@/components/common/BackHomePill";
+import SignBadge from "@/components/dream/SignBadge";
 
 export function generateStaticParams() {
   return allDreamSymbols.map((d) => ({ slug: d.slug }));
@@ -69,19 +63,8 @@ export default async function DreamDetailPage({
 
       {/* 상단 내비게이션 */}
       <div className="flex items-center justify-between mb-8">
-        <Link
-          href="/dream-dictionary"
-          className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-xs transition-all"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          꿈해몽 사전
-        </Link>
-        <Link
-          href="/"
-          className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-xs transition-all"
-        >
-          <Home className="w-3.5 h-3.5" />
-        </Link>
+        <BackHomePill href="/dream-dictionary" label="꿈해몽 사전" />
+        <BackHomePill arrow={false} />
       </div>
 
       {/* 헤더 */}
@@ -89,11 +72,7 @@ export default async function DreamDetailPage({
         <span className="text-5xl block mb-3">{dream.emoji}</span>
         <div className="flex items-center justify-center gap-2 mb-2">
           <h1 className="text-white font-bold text-2xl">{dream.title}</h1>
-          <span
-            className={`px-2 py-0.5 rounded-full border text-xs ${SIGN_STYLE[dream.sign]}`}
-          >
-            {dream.sign}
-          </span>
+          <SignBadge sign={dream.sign} />
         </div>
         <p className="text-white/55 text-sm leading-relaxed max-w-lg mx-auto">{dream.summary}</p>
       </div>

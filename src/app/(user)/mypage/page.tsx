@@ -2,7 +2,8 @@
 
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, Home, ChevronRight, ChevronDown, Pencil } from "lucide-react";
+import { ChevronRight, ChevronDown, Pencil } from "lucide-react";
+import BackHomePill from "@/components/common/BackHomePill";
 import Image from "next/image";
 import Link from "next/link";
 import { updateProfile } from "firebase/auth";
@@ -304,12 +305,7 @@ function MyPageInner() {
       <div className="max-w-lg mx-auto space-y-4">
 
         {/* 뒤로가기 */}
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-xs transition-all mb-2"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" /><Home className="w-3.5 h-3.5" />
-        </Link>
+        <BackHomePill className="mb-2" />
 
         {/* ── 프로필 카드 ─────────────────────────────────────── */}
         <div className="rounded-2xl bg-white/5 border border-white/10 p-6">

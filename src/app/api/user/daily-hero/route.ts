@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { verifySessionToken, SESSION_COOKIE } from "@/lib/session";
 import { getAdminFirestore } from "@/lib/firebase/admin";
+import { DEFAULT_HERO_SETTINGS, type HeroCardSettings } from "@/types/hero";
 import { todayKST } from "@/lib/utils/date";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -11,16 +12,6 @@ interface HeroData {
   stars: [number, number, number];
   isAI: boolean;
 }
-
-export interface HeroCardSettings {
-  notLoggedInText: string;
-  noBirthInfoText: string;
-}
-
-const DEFAULT_SETTINGS: HeroCardSettings = {
-  notLoggedInText: "로그인하면 오늘의 운세 점수를 확인할 수 있어요",
-  noBirthInfoText: "생년월일을 저장하면 AI가 맞춤 운세를 드려요",
-};
 
 // ─── Seed-based generation ─────────────────────────────────────────────────────
 
@@ -271,11 +262,11 @@ export async function GET(req: NextRequest) {
   const date = todayKST();
 
   // Load settings (always, for all states)
-  let settings: HeroCardSettings = DEFAULT_SETTINGS;
+  let settings: HeroCardSettings = DEFAULT_HERO_SETTINGS;
   try {
     const snap = await db.collection("settings").doc("heroCard").get();
     if (snap.exists) {
-      settings = { ...DEFAULT_SETTINGS, ...(snap.data() as Partial<HeroCardSettings>) };
+      settings = { ...DEFAULT_HERO_SETTINGS, ...(snap.data() as Partial<HeroCardSettings>) };
     }
   } catch {
     // keep defaults

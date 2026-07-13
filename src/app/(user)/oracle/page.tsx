@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { ArrowLeft, Home } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ORACLE_CARDS, type OracleCard } from "@/data/oracle-cards";
 import FavoriteButton from "@/components/common/FavoriteButton";
+import BackHomePill from "@/components/common/BackHomePill";
 
 function drawCard(): OracleCard {
   return ORACLE_CARDS[Math.floor(Math.random() * ORACLE_CARDS.length)];
@@ -29,9 +28,7 @@ export default function OraclePage() {
   return (
     <div className="max-w-lg mx-auto px-4 py-6">
       <div className="flex items-center justify-between mb-6">
-        <Link href="/" className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-xs transition-all">
-          <ArrowLeft className="w-3.5 h-3.5" /><Home className="w-3.5 h-3.5" />
-        </Link>
+        <BackHomePill />
         <FavoriteButton menuId="oracle" />
       </div>
       <div className="text-center mb-10">

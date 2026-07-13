@@ -1,20 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { DREAM_CATEGORIES, getDreamsByCategory } from "@/data/dream-dictionary";
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.todays-vibe.com";
+import { BASE_URL } from "@/lib/utils/site";
+import SignBadge from "@/components/dream/SignBadge";
 
 export const metadata: Metadata = {
   title: "꿈해몽 사전 — 뱀꿈, 돼지꿈, 이빨 빠지는 꿈 의미 총정리 | 오늘운",
   description:
     "자주 꾸는 꿈 50가지의 의미를 전통 해몽과 심리학 관점으로 정리했습니다. 뱀꿈, 돼지꿈, 이빨 빠지는 꿈, 쫓기는 꿈, 물꿈 등 꿈별 길흉과 상황별 풀이를 확인하세요.",
   alternates: { canonical: `${BASE_URL}/dream-dictionary` },
-};
-
-const SIGN_STYLE: Record<string, string> = {
-  길몽: "text-emerald-300 bg-emerald-900/20 border-emerald-400/20",
-  흉몽: "text-rose-300 bg-rose-900/20 border-rose-400/20",
-  양면적: "text-amber-300 bg-amber-900/20 border-amber-400/20",
 };
 
 export default function DreamDictionaryPage() {
@@ -49,11 +43,7 @@ export default function DreamDictionaryPage() {
                       <p className="text-white/85 group-hover:text-white text-sm font-medium transition-colors">
                         {dream.title}
                       </p>
-                      <span
-                        className={`shrink-0 px-1.5 py-0.5 rounded-full border text-[10px] ${SIGN_STYLE[dream.sign]}`}
-                      >
-                        {dream.sign}
-                      </span>
+                      <SignBadge sign={dream.sign} size="sm" className="shrink-0" />
                     </div>
                     <p className="text-white/40 text-xs mt-0.5 truncate">{dream.summary}</p>
                   </div>

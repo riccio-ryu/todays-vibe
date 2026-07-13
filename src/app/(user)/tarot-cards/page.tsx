@@ -7,8 +7,7 @@ import {
   getCardImageUrl,
   type TarotCardData,
 } from "@/lib/tarot/utils";
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.todays-vibe.com";
+import { BASE_URL } from "@/lib/utils/site";
 
 export const metadata: Metadata = {
   title: "타로 카드 78장 의미 사전 — 메이저·마이너 아르카나 총정리 | 오늘운",

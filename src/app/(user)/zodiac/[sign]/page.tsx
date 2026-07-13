@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Home } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import zodiacData from "@/data/zodiac-signs.json";
 import { zodiacContent } from "@/data/zodiac-content";
+import { shareOrCopyUrl } from "@/lib/utils/share";
 import SpriteCard from "@/components/common/SpriteCard";
 import FortuneCard from "@/components/common/FortuneCard";
 import LuckyBadge from "@/components/common/LuckyBadge";
@@ -19,19 +20,15 @@ import {
   getCurrentMonthKey,
   getCurrentYear,
 } from "@/lib/firebase/fortune-reader";
-import type { WeeklyFortune, MonthlyFortune, YearlyFortune } from "@/types/scheduled-fortune";
+import { usePeriodFortune } from "@/lib/hooks/usePeriodFortune";
+import { PERIOD_TABS, DAY_KO, QUARTER_KO, type FortunePeriodTab } from "@/lib/utils/fortune-labels";
+import BackHomePill from "@/components/common/BackHomePill";
 
-// ─── 타입 ─────────────────────────────────────────────────────────
-type Tab = "today" | "weekly" | "monthly" | "yearly";
-
-const DAY_KO: Record<string, string> = {
-  mon: "월요일", tue: "화요일", wed: "수요일",
-  thu: "목요일", fri: "금요일", sat: "토요일", sun: "일요일",
-};
-
-const QUARTER_KO: Record<string, string> = {
-  q1: "1분기 (1~3월)", q2: "2분기 (4~6월)",
-  q3: "3분기 (7~9월)", q4: "4분기 (10~12월)",
+// ─── 상수 ─────────────────────────────────────────────────────────
+const FETCHERS = {
+  weekly: getWeeklyZodiacFortune,
+  monthly: getMonthlyZodiacFortune,
+  yearly: getYearlyZodiacFortune,
 };
 
 const ELEMENT_COLOR: Record<string, string> = {
@@ -50,26 +47,12 @@ export default function ZodiacSignPage() {
   const router = useRouter();
 
   const signInfo = zodiacData.zodiacSigns.find((s) => s.id === sign);
-  const [tab, setTab] = useState<Tab>("today");
-  const [weekly, setWeekly] = useState<WeeklyFortune | null>(null);
-  const [monthly, setMonthly] = useState<MonthlyFortune | null>(null);
-  const [yearly, setYearly] = useState<YearlyFortune | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState<FortunePeriodTab>("today");
+  const { weekly, monthly, yearly, loading } = usePeriodFortune(sign, !!signInfo, FETCHERS);
 
   useEffect(() => {
-    if (!signInfo) { router.push("/zodiac"); return; }
-    setLoading(true);
-    Promise.all([
-      getWeeklyZodiacFortune(sign),
-      getMonthlyZodiacFortune(sign),
-      getYearlyZodiacFortune(sign),
-    ]).then(([w, m, y]) => {
-      setWeekly(w);
-      setMonthly(m);
-      setYearly(y);
-      setLoading(false);
-    });
-  }, [sign, signInfo, router]);
+    if (!signInfo) router.push("/zodiac");
+  }, [signInfo, router]);
 
   if (!signInfo) return null;
 
@@ -82,22 +65,13 @@ export default function ZodiacSignPage() {
     tab === "monthly" ? (monthly?.lucky ?? null) :
     weekly?.lucky ?? null;
 
-  const TABS: { id: Tab; label: string }[] = [
-    { id: "today",   label: "오늘" },
-    { id: "weekly",  label: "이번 주" },
-    { id: "monthly", label: "이번 달" },
-    { id: "yearly",  label: "올해" },
-  ];
-
   return (
     <div className="min-h-screen px-4 py-6">
       <div className="max-w-xl mx-auto">
 
         {/* 뒤로가기 + 즐겨찾기 */}
         <div className="flex items-center justify-between mb-6">
-          <Link href="/zodiac" className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-xs transition-all">
-            <ArrowLeft className="w-3.5 h-3.5" /> 별자리 목록
-          </Link>
+          <BackHomePill href="/zodiac" label="별자리 목록" />
           <FavoriteButton menuId="zodiac" />
         </div>
 
@@ -129,7 +103,7 @@ export default function ZodiacSignPage() {
 
         {/* 탭 */}
         <div className="flex gap-1 bg-white/5 rounded-xl p-1 mb-6">
-          {TABS.map((t) => (
+          {PERIOD_TABS.map((t) => (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
@@ -266,15 +240,7 @@ export default function ZodiacSignPage() {
             {/* 공유하기 */}
             <div className="mt-4 flex justify-center">
               <button
-                onClick={() => {
-                  if (navigator.share) {
-                    navigator.share({ title: `${signInfo.name} 운세 | 오늘운`, url: window.location.href })
-                      .catch((e) => { if (e?.name !== "AbortError") throw e; });
-                  } else {
-                    navigator.clipboard.writeText(window.location.href);
-                    alert("링크가 클립보드에 복사됐어요!");
-                  }
-                }}
+                onClick={() => shareOrCopyUrl(`${signInfo.name} 운세 | 오늘운`)}
                 className="px-6 py-2.5 rounded-[5px] bg-[#5046e4]/30 border border-[#9382ff]/25 text-[#9382ff] text-sm font-medium hover:bg-[#5046e4]/50 transition-colors"
               >
                 📤 공유하기

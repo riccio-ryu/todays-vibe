@@ -1,6 +1,5 @@
-import Link from "next/link";
-import { ArrowLeft, Home } from "lucide-react";
 import FavoriteButton from "@/components/common/FavoriteButton";
+import BackHomePill from "@/components/common/BackHomePill";
 
 interface PageHeaderProps {
   title: string;
@@ -20,13 +19,7 @@ export default function PageHeader({
   return (
     <div className="mb-8">
       <div className="flex items-center justify-between mb-3">
-        <Link
-          href={backHref}
-          className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-xs transition-all"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          {backLabel === "홈" ? <Home className="w-3.5 h-3.5" /> : backLabel}
-        </Link>
+        <BackHomePill href={backHref} label={backLabel === "홈" ? undefined : backLabel} />
         <div className="flex items-center gap-2">
           {menuId && <FavoriteButton menuId={menuId} />}
           {badge && (

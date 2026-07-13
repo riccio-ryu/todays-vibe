@@ -3,6 +3,7 @@ import { Noto_Sans_KR, Roboto } from "next/font/google";
 import { AuthProvider } from "@/contexts/AuthContext";
 import PWARegister from "@/components/common/PWARegister";
 import IOSInstallBanner from "@/components/common/IOSInstallBanner";
+import { BASE_URL } from "@/lib/utils/site";
 import "./globals.css";
 
 const notoSansKR = Noto_Sans_KR({
@@ -25,7 +26,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.todays-vibe.com"),
+  metadataBase: new URL(BASE_URL),
   title: "오늘운 | 오늘, 우주가 당신에게 말을 걸어요",
   description:
     "사주, 타로, 꿈해몽 등 33가지 운세로 당신의 오늘을 가장 깊이 읽어드립니다.",

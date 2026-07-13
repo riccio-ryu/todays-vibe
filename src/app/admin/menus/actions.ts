@@ -2,6 +2,7 @@
 
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import type { MenuItem, Category } from "@/types/menu";
+import { DEFAULT_HERO_SETTINGS, type HeroCardSettings } from "@/types/hero";
 
 const COL = "menus";
 const CAT_COL = "categories";
@@ -70,16 +71,6 @@ export async function saveQuickMenu(menuIds: string[]): Promise<void> {
 }
 
 // ─── Hero Card settings ───────────────────────────────────────────────────────
-
-export interface HeroCardSettings {
-  notLoggedInText: string;
-  noBirthInfoText: string;
-}
-
-const DEFAULT_HERO_SETTINGS: HeroCardSettings = {
-  notLoggedInText: "로그인하면 오늘의 운세 점수를 확인할 수 있어요",
-  noBirthInfoText: "생년월일을 저장하면 AI가 맞춤 운세를 드려요",
-};
 
 export async function getHeroCardSettings(): Promise<HeroCardSettings> {
   try {

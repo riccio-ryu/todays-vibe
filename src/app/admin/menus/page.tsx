@@ -19,8 +19,8 @@ import {
   saveQuickMenu,
   getHeroCardSettings,
   saveHeroCardSettings,
-  type HeroCardSettings,
 } from "./actions";
+import type { HeroCardSettings } from "@/types/hero";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 

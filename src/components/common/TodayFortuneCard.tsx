@@ -1,6 +1,7 @@
 "use client";
 
 import { boldHighlight } from "@/lib/utils/format";
+import { shareOrCopyUrl } from "@/lib/utils/share";
 
 interface Props {
   label: string;
@@ -18,13 +19,7 @@ export default function TodayFortuneCard({
   onNewReading,
 }: Props) {
   function handleShare() {
-    if (navigator.share) {
-      navigator.share({ title: `${label} | 오늘운`, url: window.location.href })
-        .catch((e) => { if (e?.name !== "AbortError") throw e; });
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      alert("링크가 클립보드에 복사됐어요!");
-    }
+    shareOrCopyUrl(`${label} | 오늘운`);
   }
 
   return (

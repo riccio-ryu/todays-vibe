@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import { ArrowLeft, Home } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
@@ -12,6 +10,7 @@ import TodayFortuneCard from "@/components/common/TodayFortuneCard";
 import { ChevronRight } from "lucide-react";
 import FavoriteButton from "@/components/common/FavoriteButton";
 import { useBirthInfo } from "@/lib/hooks/useBirthInfo";
+import BackHomePill from "@/components/common/BackHomePill";
 
 export default function NameFortunePage() {
   const { user } = useAuth();
@@ -66,9 +65,7 @@ export default function NameFortunePage() {
   return (
     <div className="max-w-xl mx-auto px-4 py-6">
       <div className="flex items-center justify-between mb-6">
-        <Link href="/" className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-xs transition-all">
-          <ArrowLeft className="w-3.5 h-3.5" /><Home className="w-3.5 h-3.5" />
-        </Link>
+        <BackHomePill />
         <FavoriteButton menuId="name-fortune" />
       </div>
       <div className="text-center mb-8">

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { shareOrCopyUrl } from "@/lib/utils/share";
 
 type TodayReading = { result: string; createdAt: string | null } | null;
 
@@ -13,13 +14,7 @@ export default function TarotTodayResult({ todayReading, onReshuffle }: Props) {
   if (!todayReading) return null;
 
   function handleShare() {
-    if (navigator.share) {
-      navigator.share({ title: "타로 해석 결과 | 오늘운", url: window.location.href })
-        .catch((e) => { if (e?.name !== "AbortError") throw e; });
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      alert("링크가 클립보드에 복사됐어요!");
-    }
+    shareOrCopyUrl("타로 해석 결과 | 오늘운");
   }
 
   return (
