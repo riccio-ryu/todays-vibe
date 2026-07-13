@@ -4,6 +4,7 @@ import { RefObject } from "react";
 import { motion } from "framer-motion";
 import AILoadingIndicator from "@/components/common/AILoadingIndicator";
 import AdSlot from "@/components/common/AdSlot";
+import { shareOrCopyUrl } from "@/lib/utils/share";
 
 type Props = {
   interpretRef: RefObject<HTMLDivElement | null>;
@@ -47,15 +48,7 @@ export default function TarotReadingResult({ interpretRef, interpretation, isLoa
           </button>
           {interpretation && (
             <button
-              onClick={() => {
-                if (navigator.share) {
-                  navigator.share({ title: "타로 해석 결과 | 오늘운", url: window.location.href })
-                    .catch((e) => { if (e?.name !== "AbortError") throw e; });
-                } else {
-                  navigator.clipboard.writeText(window.location.href);
-                  alert("링크가 클립보드에 복사됐어요!");
-                }
-              }}
+              onClick={() => shareOrCopyUrl("타로 해석 결과 | 오늘운")}
               className="flex-1 py-3 rounded-[5px] bg-[#5046e4]/30 border border-[#9382ff]/25 text-[#9382ff] text-sm font-medium hover:bg-[#5046e4]/50 transition-colors"
             >
               📤 공유하기

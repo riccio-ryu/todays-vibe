@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight, BookOpen, Layers, Star } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import type { HeroCardSettings } from "@/types/hero";
 
 // ─── 달 위상 ──────────────────────────────────────────────────────────────────
 
@@ -105,11 +106,6 @@ function formatDateKo(dateStr: string): string {
 }
 
 // ─── 타입 ─────────────────────────────────────────────────────────────────────
-
-interface HeroCardSettings {
-  notLoggedInText: string;
-  noBirthInfoText: string;
-}
 
 interface DailyHeroData {
   state: "not_logged_in" | "no_birth_info" | "ready";

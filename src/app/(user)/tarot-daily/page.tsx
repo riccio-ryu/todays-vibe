@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { ArrowLeft, Heart, Briefcase, DollarSign, Home } from "lucide-react";
+import { Heart, Briefcase, DollarSign } from "lucide-react";
 import TarotCard from "@/components/tarot/TarotCard";
 import { drawCards, getCardMeaning, getCardSlug, getSuitLabel, type DrawnCard } from "@/lib/tarot/utils";
+import { shareOrCopyUrl } from "@/lib/utils/share";
 import FavoriteButton from "@/components/common/FavoriteButton";
+import BackHomePill from "@/components/common/BackHomePill";
 
 export default function TarotDailyPage() {
   const [drawn, setDrawn] = useState<DrawnCard | null>(null);
@@ -32,9 +34,7 @@ export default function TarotDailyPage() {
       {/* 헤더 */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-3">
-          <Link href="/" className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-xs transition-all">
-            <ArrowLeft className="w-3.5 h-3.5" /><Home className="w-3.5 h-3.5" />
-          </Link>
+          <BackHomePill />
           <FavoriteButton menuId="tarot-daily" />
         </div>
         <h1 className="text-white font-semibold text-lg">타로 원카드</h1>
@@ -204,15 +204,7 @@ export default function TarotDailyPage() {
                   다시 뽑기
                 </button>
                 <button
-                  onClick={() => {
-                    if (navigator.share) {
-                      navigator.share({ title: `${drawn.card.nameKo} 타로 원카드 | 오늘운`, url: window.location.href })
-                        .catch((e) => { if (e?.name !== "AbortError") throw e; });
-                    } else {
-                      navigator.clipboard.writeText(window.location.href);
-                      alert("링크가 클립보드에 복사됐어요!");
-                    }
-                  }}
+                  onClick={() => shareOrCopyUrl(`${drawn.card.nameKo} 타로 원카드 | 오늘운`)}
                   className="flex-1 py-3 rounded-xl bg-[#5046e4]/30 border border-[#9382ff]/25 text-[#9382ff] text-sm font-medium hover:bg-[#5046e4]/50 transition-colors"
                 >
                   📤 공유하기

@@ -3,8 +3,7 @@ import { getAllCards, getCardSlug } from "@/lib/tarot/utils";
 import { allDreamSymbols } from "@/data/dream-dictionary";
 import zodiacData from "@/data/zodiac-signs.json";
 import chineseData from "@/data/chinese-zodiac.json";
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.todays-vibe.com";
+import { BASE_URL } from "@/lib/utils/site";
 
 const staticRoutes = [
   { path: "/", priority: 1.0, changeFrequency: "daily" as const },

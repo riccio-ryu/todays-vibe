@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
-import { ArrowLeft, Home } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { calculateSaju, HOUR_OPTIONS, type BirthInput, type SajuResult } from "@/lib/saju/calculator";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
@@ -10,9 +8,11 @@ import { useBirthInfo } from "@/lib/hooks/useBirthInfo";
 import AILoadingIndicator from "@/components/common/AILoadingIndicator";
 import AdSlot from "@/components/common/AdSlot";
 import { boldHighlight } from "@/lib/utils/format";
+import { shareOrCopyUrl } from "@/lib/utils/share";
 import TodayFortuneCard from "@/components/common/TodayFortuneCard";
 import FavoriteButton from "@/components/common/FavoriteButton";
 import SavedBirthBanner from "@/components/common/SavedBirthBanner";
+import BackHomePill from "@/components/common/BackHomePill";
 
 // ─── 사주 원국 테이블 ──────────────────────────────────────────────────
 function SajuTable({ result }: { result: SajuResult }) {
@@ -218,9 +218,7 @@ export default function SajuPage() {
     return (
       <div className="max-w-xl mx-auto px-4 py-6">
         <div className="flex items-center justify-between mb-6">
-          <Link href="/" className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-xs transition-all">
-            <ArrowLeft className="w-3.5 h-3.5" /><Home className="w-3.5 h-3.5" />
-          </Link>
+          <BackHomePill />
           <FavoriteButton menuId="saju" />
         </div>
         <div className="text-center mb-8">
@@ -241,9 +239,7 @@ export default function SajuPage() {
   return (
     <div className="max-w-xl mx-auto px-4 py-6">
       <div className="flex items-center justify-between mb-6">
-        <Link href="/" className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-xs transition-all">
-          <ArrowLeft className="w-3.5 h-3.5" /><Home className="w-3.5 h-3.5" />
-        </Link>
+        <BackHomePill />
         <FavoriteButton menuId="saju" />
       </div>
       {/* 헤더 */}
@@ -528,15 +524,7 @@ export default function SajuPage() {
           <div className="flex gap-3">
             {!loading && interpretation && (
               <button
-                onClick={() => {
-                  if (navigator.share) {
-                    navigator.share({ title: "사주팔자 풀이 | 오늘운", url: window.location.href })
-                      .catch((e) => { if (e?.name !== "AbortError") throw e; });
-                  } else {
-                    navigator.clipboard.writeText(window.location.href);
-                    alert("링크가 클립보드에 복사됐어요!");
-                  }
-                }}
+                onClick={() => shareOrCopyUrl("사주팔자 풀이 | 오늘운")}
                 className="flex-1 py-2.5 rounded-[5px] bg-[#5046e4]/30 border border-[#9382ff]/25 text-[#9382ff] text-sm font-medium hover:bg-[#5046e4]/50 transition-colors"
               >
                 📤 공유하기

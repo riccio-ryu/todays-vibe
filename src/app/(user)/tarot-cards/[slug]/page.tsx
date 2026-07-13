@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Home } from "lucide-react";
 import {
   getAllCards,
   getCardBySlug,
@@ -14,8 +13,8 @@ import {
 } from "@/lib/tarot/utils";
 import { getCardContent } from "@/data/tarot-card-content";
 import AdSlot from "@/components/common/AdSlot";
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.todays-vibe.com";
+import { BASE_URL } from "@/lib/utils/site";
+import BackHomePill from "@/components/common/BackHomePill";
 
 const ELEMENT_LABEL: Record<string, string> = {
   fire: "불 (열정·행동)",
@@ -99,19 +98,8 @@ export default async function TarotCardDetailPage({
 
       {/* 상단 내비게이션 */}
       <div className="flex items-center justify-between mb-6">
-        <Link
-          href="/tarot-cards"
-          className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-xs transition-all"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          카드 사전
-        </Link>
-        <Link
-          href="/"
-          className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-xs transition-all"
-        >
-          <Home className="w-3.5 h-3.5" />
-        </Link>
+        <BackHomePill href="/tarot-cards" label="카드 사전" />
+        <BackHomePill arrow={false} />
       </div>
 
       {/* 카드 헤더 */}

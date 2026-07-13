@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import type { AiUsageResponse, MenuLimitInfo, UserUsageRow } from "@/app/api/admin/ai-usage/route";
 import type { GcpUsageResult, GcpUsageError } from "@/lib/gcp/monitoring";
 
-type Period = "today" | "7d" | "30d";
+import type { AiUsagePeriod as Period } from "@/types/admin";
 
 const PERIODS: { value: Period; label: string }[] = [
   { value: "today", label: "오늘" },

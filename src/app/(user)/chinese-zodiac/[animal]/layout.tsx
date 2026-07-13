@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import chineseData from "@/data/chinese-zodiac.json";
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.todays-vibe.com";
+import { BASE_URL } from "@/lib/utils/site";
 
 export function generateStaticParams() {
   return chineseData.animals.map((a) => ({ animal: a.id }));
