@@ -31,7 +31,8 @@ export type FortuneType =
   | "moving-fortune"
   | "iching"
   | "sangaji"
-  | "yuk-hyo";
+  | "yuk-hyo"
+  | "psych-test";
 
 // ─── Input Types (fortune별 입력 스키마) ──────────────────────────────────────
 
@@ -166,6 +167,12 @@ export interface YukHyoInput {
   question?: string;
 }
 
+export interface PsychTestInput {
+  testSlug: string;
+  testTitle: string;
+  answers: { question: string; answer: string }[];
+}
+
 export type FortuneInput =
   | DreamInput
   | SajuInput
@@ -183,7 +190,8 @@ export type FortuneInput =
   | MovingFortuneInput
   | IChingInput
   | SangajiInput
-  | YukHyoInput;
+  | YukHyoInput
+  | PsychTestInput;
 
 // ─── API Request / Response ───────────────────────────────────────────────────
 

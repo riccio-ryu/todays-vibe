@@ -21,17 +21,17 @@
 - [x] https://www.todays-vibe.com/saju (2026-07-13 완료)
 - [x] https://www.todays-vibe.com/tarot-3cards (2026-07-13 완료)
 - [x] https://www.todays-vibe.com/love-fortune (2026-07-13 완료)
-- [ ] https://www.todays-vibe.com/career-fortune
-- [ ] https://www.todays-vibe.com/health-fortune
-- [ ] https://www.todays-vibe.com/wealth-fortune
-- [ ] https://www.todays-vibe.com/love-compatibility
-- [ ] https://www.todays-vibe.com/business-compatibility
-- [ ] https://www.todays-vibe.com/name-fortune
-- [ ] https://www.todays-vibe.com/numerology
-- [ ] https://www.todays-vibe.com/rune
-- [ ] https://www.todays-vibe.com/iching
-- [ ] https://www.todays-vibe.com/oracle
-- [ ] https://www.todays-vibe.com/moving-fortune
+- [x] https://www.todays-vibe.com/career-fortune (2026-07-14 완료)
+- [x] https://www.todays-vibe.com/health-fortune (2026-07-14 완료)
+- [x] https://www.todays-vibe.com/wealth-fortune (2026-07-14 완료)
+- [x] https://www.todays-vibe.com/love-compatibility (2026-07-14 완료)
+- [x] https://www.todays-vibe.com/business-compatibility (2026-07-14 완료)
+- [x] https://www.todays-vibe.com/name-fortune (2026-07-14 완료)
+- [x] https://www.todays-vibe.com/numerology (2026-07-14 완료)
+- [x] https://www.todays-vibe.com/rune (2026-07-14 완료)
+- [x] https://www.todays-vibe.com/iching (2026-07-14 완료)
+- [x] https://www.todays-vibe.com/oracle (2026-07-14 완료)
+- [x] https://www.todays-vibe.com/moving-fortune (2026-07-14 완료)
 - [ ] https://www.todays-vibe.com/life-fortune
 - [ ] https://www.todays-vibe.com/chinese-zodiac
 - [ ] https://www.todays-vibe.com/tojeong

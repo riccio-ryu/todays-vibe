@@ -29,6 +29,12 @@
       "name": "관상/신체",
       "icon": "👤",
       "count": 3
+    },
+    {
+      "id": "psych",
+      "name": "심리 테스트",
+      "icon": "🧠",
+      "count": 1
     }
   ],
   "fortunes": [
@@ -590,6 +596,30 @@
         "전통"
       ],
       "color": "from-amber-500 to-yellow-600"
+    },
+    {
+      "id": "psych-test",
+      "nameKo": "심리 테스트",
+      "name": "심리 테스트",
+      "category": "psych",
+      "icon": "🧠",
+      "description": "4지선다로 알아보는 나의 심리 — 에너지·감정·결정·관계 유형 AI 해석",
+      "path": "/psych-test",
+      "difficulty": "easy",
+      "isAI": true,
+      "ready": true,
+      "accessLevel": "member",
+      "usageLimits": {
+        "public": 0,
+        "member": 5,
+        "premium": -1,
+        "admin": -1
+      },
+      "tags": [
+        "신규",
+        "심리"
+      ],
+      "color": "from-fuchsia-500 to-purple-600"
     }
   ]
 }
