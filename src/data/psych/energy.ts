@@ -1,9 +1,10 @@
-import type { PsychTest } from "./types";
+import type { AiTest } from "./types";
 
-export const energyTest: PsychTest = {
+export const energyTest: AiTest = {
   slug: "energy",
   title: "오늘의 에너지 진단",
   icon: "🔋",
+  engine: "ai",
   summary: "지금 내 마음의 배터리는 몇 %일까? 4문항으로 오늘의 에너지 상태와 추천 행동을 진단해요.",
   intro:
     "오늘 하루를 시작하거나 마무리하는 지금, 내 안의 에너지가 어디쯤 와 있는지 살펴볼 시간이에요. 네 가지 질문에 지금 이 순간의 느낌 그대로 답해 주세요. 정답은 없어요. 답을 마치면 지금 당신의 에너지 상태와, 오늘 남은 시간을 어떻게 보내면 좋을지 맞춤 조언을 드릴게요.",

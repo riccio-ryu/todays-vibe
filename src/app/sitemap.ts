@@ -1,10 +1,11 @@
 import type { MetadataRoute } from "next";
 import { getAllCards, getCardSlug } from "@/lib/tarot/utils";
 import { allDreamSymbols } from "@/data/dream-dictionary";
-import { allPsychTests } from "@/data/psych-tests";
+import { allPsychTests } from "@/data/psych";
 import zodiacData from "@/data/zodiac-signs.json";
 import chineseData from "@/data/chinese-zodiac.json";
 import { BASE_URL } from "@/lib/utils/site";
+import { PSYCH_ENABLED } from "@/lib/psych/config";
 
 const staticRoutes = [
   { path: "/", priority: 1.0, changeFrequency: "daily" as const },
@@ -16,7 +17,7 @@ const staticRoutes = [
   { path: "/saju", priority: 0.8, changeFrequency: "weekly" as const },
   { path: "/tarot-3cards", priority: 0.7, changeFrequency: "weekly" as const },
   { path: "/tarot-cards", priority: 0.8, changeFrequency: "monthly" as const },
-  { path: "/psych-test", priority: 0.7, changeFrequency: "weekly" as const },
+  { path: "/psych", priority: 0.7, changeFrequency: "weekly" as const },
   { path: "/love-fortune", priority: 0.7, changeFrequency: "weekly" as const },
   { path: "/career-fortune", priority: 0.7, changeFrequency: "weekly" as const },
   { path: "/health-fortune", priority: 0.7, changeFrequency: "weekly" as const },
@@ -38,12 +39,14 @@ const staticRoutes = [
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
-  const staticEntries = staticRoutes.map(({ path, priority, changeFrequency }) => ({
-    url: `${BASE_URL}${path}`,
-    lastModified: now,
-    changeFrequency,
-    priority,
-  }));
+  const staticEntries = staticRoutes
+    .filter(({ path }) => PSYCH_ENABLED || path !== "/psych")
+    .map(({ path, priority, changeFrequency }) => ({
+      url: `${BASE_URL}${path}`,
+      lastModified: now,
+      changeFrequency,
+      priority,
+    }));
 
   // 타로 카드 사전 78장 상세 페이지
   const tarotCardEntries = getAllCards().map((card) => ({
@@ -61,13 +64,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  // 심리 테스트 상세 페이지
-  const psychEntries = allPsychTests.map((t) => ({
-    url: `${BASE_URL}/psych-test/${t.slug}`,
-    lastModified: now,
-    changeFrequency: "monthly" as const,
-    priority: 0.6,
-  }));
+  // 심리 테스트 상세 페이지 (운영 미노출 시 제외)
+  const psychEntries = PSYCH_ENABLED
+    ? allPsychTests.map((t) => ({
+        url: `${BASE_URL}/psych/${t.slug}`,
+        lastModified: now,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      }))
+    : [];
 
   // 별자리 12궁 상세 페이지
   const zodiacEntries = zodiacData.zodiacSigns.map((s) => ({

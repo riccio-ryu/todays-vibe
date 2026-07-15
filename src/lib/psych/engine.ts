@@ -2,7 +2,7 @@
 // 선택지마다 극(pole)을 부여하고, 축별 다수결로 코드를 조립한다.
 // MBTI 확장 10종(연애/직장/친구 등)이 모두 이 함수 하나를 공유한다.
 
-import type { MbtiPole } from "@/data/psych/types";
+import type { MbtiPole, CategoryTest, CategoryResult } from "@/data/psych/types";
 
 /** 선택된 극 배열 → MBTI 코드 (예: ["E","N","F","P",...] → "ENFP") */
 export function scoreMbti(poles: MbtiPole[]): string {
@@ -18,4 +18,31 @@ export function scoreMbti(poles: MbtiPole[]): string {
     (tally.T >= tally.F ? "T" : "F") +
     (tally.J >= tally.P ? "J" : "P")
   );
+}
+
+/**
+ * 카테고리 투표형 채점: 선택한 보기 인덱스 배열 → 유형별 득표 합산 → 최다 득표 결과.
+ * 동점이면 results 배열 앞쪽 유형을 우선한다.
+ */
+export function scoreCategory(
+  test: CategoryTest,
+  answerIndices: number[]
+): CategoryResult {
+  const votes: Record<string, number> = {};
+  answerIndices.forEach((optIdx, qIdx) => {
+    const option = test.questions[qIdx]?.options[optIdx];
+    if (!option) return;
+    votes[option.type] = (votes[option.type] ?? 0) + 1;
+  });
+
+  let best = test.results[0];
+  let bestVotes = -1;
+  for (const result of test.results) {
+    const v = votes[result.type] ?? 0;
+    if (v > bestVotes) {
+      bestVotes = v;
+      best = result;
+    }
+  }
+  return best;
 }

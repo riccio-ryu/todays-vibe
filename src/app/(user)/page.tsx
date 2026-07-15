@@ -9,6 +9,10 @@ import QuickMenu from "@/components/home/QuickMenu";
 import HeroCard from "@/components/home/HeroCard";
 import PopularSection, { type RankedItem } from "@/components/home/PopularSection";
 import OracleHeader from "@/components/home/OracleHeader";
+import HomeSwipe from "@/components/home/HomeSwipe";
+import PsychHomeBody from "@/components/home/PsychHomeBody";
+import Footer from "@/components/Footer";
+import { PSYCH_ENABLED } from "@/lib/psych/config";
 
 async function getMenuItems(): Promise<MenuItem[]> {
   try {
@@ -48,7 +52,7 @@ export default async function Home() {
   const today = todayKST();
 
   // Firestore 데이터가 없으면 fortunes.json으로 폴백
-  const fortunes: MenuItem[] =
+  const fortunesAll: MenuItem[] =
     items.length > 0
       ? items
       : fortunesData.fortunes.map((f, i) => ({
@@ -70,6 +74,11 @@ export default async function Home() {
           popular: (f as any).popular as boolean | undefined,
         }));
 
+  // 운영에서는 심리 테스트 카드 숨김 (PSYCH_ENABLED — 로컬 dev만 노출)
+  const fortunes = PSYCH_ENABLED
+    ? fortunesAll
+    : fortunesAll.filter((f) => f.id !== "psych-test");
+
   // 실시간 순위 → MenuItem 조인. 데이터 없으면 fortunes.json popular ID로 폴백
   const menuMap = new Map(fortunes.map((f) => [f.id, f]));
   const popularFallbackIds = fortunesData.fortunes
@@ -90,7 +99,7 @@ export default async function Home() {
         .slice(0, 5)
         .map((item, i) => ({ item, count: 0, rank: i + 1 }));
 
-  return (
+  const fortuneContent = (
     <div className="relative max-w-4xl mx-auto px-4 py-8 sm:py-6">
       {/* 콘텐츠 영역 배경 파티클 */}
       <div className="absolute inset-0 pointer-events-none select-none overflow-hidden" aria-hidden>
@@ -186,5 +195,21 @@ export default async function Home() {
         </div>
       </section>
     </div>
+  );
+
+  // 운영: 심테 미노출 → 스와이프 없이 운세 홈만 (레이아웃 FooterGate가 푸터 렌더)
+  if (!PSYCH_ENABLED) return fortuneContent;
+
+  // 로컬 dev: 낮/밤 스와이프 캐러셀 (패널별 자체 푸터)
+  return (
+    <HomeSwipe
+      fortunePanel={
+        <>
+          {fortuneContent}
+          <Footer />
+        </>
+      }
+      psychPanel={<PsychHomeBody />}
+    />
   );
 }

@@ -1,9 +1,10 @@
-import type { PsychTest } from "./types";
+import type { AiTest } from "./types";
 
-export const emotionTest: PsychTest = {
+export const emotionTest: AiTest = {
   slug: "emotion",
   title: "숨겨진 감정 찾기",
   icon: "🎭",
+  engine: "ai",
   summary: "겉으로 드러난 기분 뒤에 진짜 숨어 있는 감정은? 5문항으로 마음속 진심을 들여다봐요.",
   intro:
     "우리는 종종 '괜찮아'라고 말하지만, 그 말 뒤에는 외로움이나 서운함, 두려움 같은 진짜 감정이 숨어 있곤 해요. 이 테스트는 겉으로 느끼는 기분 아래에 어떤 마음이 웅크리고 있는지 찾아보는 시간이에요. 다섯 가지 질문에 솔직하게 답하면, 지금 당신 안에서 조용히 신호를 보내고 있는 숨은 감정을 함께 읽어볼게요.",

@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { allLogicPsychTests, getLogicPsychTestBySlug } from "@/data/psych";
+import { allPsychTests, getPsychTestBySlug } from "@/data/psych";
 import QuizLayout from "@/components/psych/QuizLayout";
+import AiQuizLayout from "@/components/psych/AiQuizLayout";
 import { BASE_URL } from "@/lib/utils/site";
+import { PSYCH_ENABLED } from "@/lib/psych/config";
 
 export function generateStaticParams() {
-  return allLogicPsychTests.map((t) => ({ slug: t.slug }));
+  if (!PSYCH_ENABLED) return [];
+  return allPsychTests.map((t) => ({ slug: t.slug }));
 }
 
 export async function generateMetadata({
@@ -15,7 +18,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const test = getLogicPsychTestBySlug(slug);
+  const test = getPsychTestBySlug(slug);
   if (!test) return {};
   const title = `${test.title} — ${test.questions.length}문항 무료 심리 테스트 | 오늘운`;
   return {
@@ -31,11 +34,12 @@ export default async function PsychTestPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  if (!PSYCH_ENABLED) notFound();
   const { slug } = await params;
-  const test = getLogicPsychTestBySlug(slug);
+  const test = getPsychTestBySlug(slug);
   if (!test) notFound();
 
-  const others = allLogicPsychTests.filter((t) => t.slug !== test.slug);
+  const others = allPsychTests.filter((t) => t.slug !== test.slug);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -57,7 +61,11 @@ export default async function PsychTestPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <QuizLayout test={test} />
+      {test.engine === "ai" ? (
+        <AiQuizLayout test={test} />
+      ) : (
+        <QuizLayout test={test} />
+      )}
 
       <section className="max-w-xl mx-auto px-4 pb-16">
         <div className="border-t border-white/10 pt-10 space-y-8">

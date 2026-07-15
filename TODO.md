@@ -45,19 +45,19 @@
   - 비-AI 결과: `src/data/psych-tests/[slug].json` → 공통 `<QuizLayout />` 렌더링
   - MBTI 확장 10종: 선택지 가중치(`{ E:+1, I:0 }`) 합산 공통 엔진 하나로 처리
   - AI 결과: 기존 `FortuneResult` 스트리밍 재사용 / 저장은 `psych_readings/{id}` (ai_readings와 분리)
-- **MVP 1차 오픈 15개 (카탈로그 "MVP 추천"과 동일 — 이 순서로 구현)**:
-  - [ ] 🔢 기본 MBTI (M-1) — 필수 앵커, 공통 엔진 먼저
-  - [ ] 🔢 연애 스타일 (#24) / 동물 유형 (#67) / 색깔 심리 / 친구들이 보는 나 (#34)
-  - [ ] 🔢 스트레스 지수 (#17) / 번아웃 위험도 (#18) / 소비 성향 (#50) / 여행 스타일 (#51)
-  - [ ] 🔢 사막을 건너는 동물 순서 (#72) / 음식으로 보는 성격 (#59)
-  - [ ] 🤖 AI 고민 분석 (A-1) / AI 감정 일기 분석 (A-2) / AI 카톡 대화 분석 (A-3) / AI 성격 분석 (A-5)
-- **⚠️ 현재 구현이 기준을 벗어남 (재정렬 필요)**: 지금 코드는 이 TODO의 (구)버전을 따라가 카탈로그와 어긋나 있다.
-  - 구현된 4개(`energy`·`emotion`·`decision`·`relationship`)는 **전부 🤖 AI형** — 카탈로그 MVP 15개 중 어디에도 없음(energy=#13, emotion=#14만 카탈로그에 존재하나 MVP 아님)
-  - 라우트가 `/(user)/psych-test/[slug]` — 카탈로그의 `/psych/[slug]` + `(psych)` 그룹과 불일치
-  - 데이터가 `.ts` 파일 — 카탈로그의 `[slug].json`과 불일치
-  - MBTI 공통 엔진·🔢 로직형·낮/밤 스와이프 구조 전부 미착수
-  - **결정 (2026-07-14)**: 기존 4개(`energy`·`emotion`·`decision`·`relationship`)를 **접고**, MVP 15개부터 카탈로그 스펙대로 **새로 구현**한다. → 구 라우트 `src/app/(user)/psych-test/`, 구 데이터 `src/data/psych-tests/*.ts`(energy·emotion·decision·relationship)는 제거 대상.
-  - **구현 순서**: ① 기반(`(psych)` 그룹 + `/psych/[slug]` + `<QuizLayout />` + `[slug].json` 로더 + MBTI 가중치 공통 엔진) → ② MBTI(M-1) 앵커 수직 슬라이스로 동작 검증 → ③ 나머지 🔢 로직형 MVP → ④ 🤖 AI형 4개 → ⑤ 낮/밤 메인 스와이프
+- **✅ 일원화 완료 (2026-07-15)**: 구 `(user)/psych-test` + `src/data/psych-tests/*.ts`를 폐기하고 `(psych)` 정본으로 통합. 현재 `(psych)` 상태:
+  - 라우트 `/psych` + `/psych/[slug]`(`(psych)` 그룹), 데이터 `src/data/psych/*.ts`, 엔진 `src/lib/psych/engine.ts`(`scoreMbti`·`scoreCategory`)
+  - `QuizLayout`(mbti/category) + `AiQuizLayout`(ai) engine별 분기
+  - **구현된 7종**: 🔢 mbti / love-style(#24) / animal(#67) / work-villain(#43) / decision / relationship, 🤖 energy(#13) / emotion(#14)
+  - ⑤ 낮/밤 메인 스와이프 캐러셀 완료 (`src/components/home/HomeSwipe.tsx`)
+- **남은 것 (카탈로그 MVP 15 채우기)**: 🔢 색깔 심리 / 친구들이 보는 나(#34) / 스트레스 지수(#17) / 번아웃(#18) / 소비 성향(#50) / 여행(#51) / 사막 동물 순서(#72) / 음식 성격(#59), 🤖 AI 고민(A-1) / 감정 일기(A-2) / 카톡 분석(A-3) / 성격(A-5) — `src/data/psych/`에 데이터 파일 추가하면 목록·상세·사이트맵·스와이프 자동 연동
+- **MVP 1차 오픈 15개 체크리스트 (카탈로그 "MVP 추천" 순서)**:
+  - [x] 🔢 기본 MBTI (M-1)
+  - [x] 🔢 연애 스타일 (#24) / [x] 동물 유형 (#67) / [ ] 색깔 심리 / [ ] 친구들이 보는 나 (#34)
+  - [ ] 🔢 스트레스 지수 (#17) / [ ] 번아웃 위험도 (#18) / [ ] 소비 성향 (#50) / [ ] 여행 스타일 (#51)
+  - [ ] 🔢 사막을 건너는 동물 순서 (#72) / [ ] 음식으로 보는 성격 (#59)
+  - [ ] 🤖 AI 고민 분석 (A-1) / [ ] AI 감정 일기 분석 (A-2) / [ ] AI 카톡 대화 분석 (A-3) / [ ] AI 성격 분석 (A-5)
+- **🚀 운영 노출(런칭) 방법**: 현재 심테는 **로컬 dev에서만 노출, 운영 미노출** 상태 (스위치 `src/lib/psych/config.ts` `PSYCH_ENABLED`). 운영에 켜려면 둘 중 하나 — ① Vercel 환경변수 `NEXT_PUBLIC_PSYCH_ENABLED=true` 추가 후 재배포(코드 수정 없음, 추천), ② `config.ts` 상수를 `true`로 변경. 켜면 홈 낮/밤 스와이프·`/psych`·홈 메뉴 카드·사이트맵이 일괄 노출됨. **revert 아님 — 토글만 켜면 됨.**
 
 ---
 
