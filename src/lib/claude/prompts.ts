@@ -16,8 +16,10 @@ import {
   IChingInput,
   SangajiInput,
   YukHyoInput,
+  PsychTestInput,
   FortuneInput,
 } from "@/types/fortune";
+import { getPsychTestBySlug } from "@/data/psych-tests";
 
 // ─── 프롬프트 빌더 진입점 ────────────────────────────────────────────────────
 
@@ -63,9 +65,40 @@ export function buildPrompt(type: FortuneType, input: FortuneInput): string {
       return buildGeneralFortunePrompt("career", input as GeneralFortuneInput);
     case "health-fortune":
       return buildGeneralFortunePrompt("health", input as GeneralFortuneInput);
+    case "psych-test":
+      return buildPsychTestPrompt(input as PsychTestInput);
     default:
       throw new Error(`지원하지 않는 운세 타입입니다: ${type}`);
   }
+}
+
+// ─── 심리 테스트 ──────────────────────────────────────────────────────────────
+
+function buildPsychTestPrompt(input: PsychTestInput): string {
+  const test = getPsychTestBySlug(input.testSlug);
+  const persona = test?.promptPersona ?? "당신은 따뜻하고 통찰력 있는 심리 상담사입니다.";
+  const guide = test?.promptGuide ?? "응답을 종합해 사용자의 심리 상태를 공감 어린 톤으로 풀어주세요.";
+
+  const answerLines = input.answers
+    .map((a, i) => `${i + 1}. ${a.question}\n   → 선택: ${a.answer}`)
+    .join("\n");
+
+  return `${persona}
+
+사용자가 '${input.testTitle}' 심리 테스트에 다음과 같이 응답했습니다.
+
+${answerLines}
+
+위 응답을 바탕으로 해석해 주세요.
+
+해석 가이드: ${guide}
+
+작성 형식:
+- '## 소제목' 형태의 마크다운 헤더로 3~4개 섹션을 나눠 주세요.
+- 핵심 결과(유형·상태 등)는 첫 섹션에서 한눈에 알 수 있게 제시해 주세요.
+- 각 섹션은 2~4문장으로 간결하게, 따뜻하고 구체적으로 작성해 주세요.
+- 전체 한국어로, 공감 어린 존댓말 톤을 유지해 주세요.
+- 재미와 자기 이해를 돕는 것이 목적이며 단정적 진단이 아님을 자연스럽게 담아, 부정적으로 몰아가지 말고 건설적으로 마무리해 주세요.`;
 }
 
 // ─── 꿈해몽 ──────────────────────────────────────────────────────────────────
