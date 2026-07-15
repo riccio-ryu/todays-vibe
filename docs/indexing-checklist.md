@@ -5,12 +5,14 @@
 > 전부 수동 요청할 필요는 없습니다 — 사이트맵이 자동으로 처리하므로 수동 요청은 "빨리 색인되게 미는" 부스터입니다. 1~3순위(50개)까지만 해도 충분합니다.
 
 ## 🥇 1순위 — 사전 목록 페이지 2개 (가장 먼저!)
+
 > 이 두 페이지만 색인되면 하위 상세 페이지들은 내부 링크를 타고 자동 발견됨
 
 - [x] https://www.todays-vibe.com/dream-dictionary (2026-07-13 완료)
 - [x] https://www.todays-vibe.com/tarot-cards (2026-07-13 완료)
 
 ## 🥈 2순위 — 주요 서비스 페이지 24개
+
 > 홈·소개·운세 도구 페이지
 
 - [x] https://www.todays-vibe.com/ (2026-07-13 완료)
@@ -32,8 +34,8 @@
 - [x] https://www.todays-vibe.com/iching (2026-07-14 완료)
 - [x] https://www.todays-vibe.com/oracle (2026-07-14 완료)
 - [x] https://www.todays-vibe.com/moving-fortune (2026-07-14 완료)
-- [ ] https://www.todays-vibe.com/life-fortune
-- [ ] https://www.todays-vibe.com/chinese-zodiac
+- [x] https://www.todays-vibe.com/life-fortune
+- [x] https://www.todays-vibe.com/chinese-zodiac
 - [ ] https://www.todays-vibe.com/tojeong
 - [ ] https://www.todays-vibe.com/privacy
 - [ ] https://www.todays-vibe.com/terms
@@ -69,6 +71,7 @@
 - [ ] https://www.todays-vibe.com/chinese-zodiac/pig
 
 ## 4순위 — 타로 카드 상세 78개
+
 > 1순위 목록이 색인되면 자동 발견되므로 수동 요청은 여유 있을 때만
 
 - [ ] https://www.todays-vibe.com/tarot-cards/the-fool
@@ -151,6 +154,7 @@
 - [ ] https://www.todays-vibe.com/tarot-cards/king-of-pentacles
 
 ## 4순위 — 꿈해몽 상세 100개
+
 > 검색 수요 큰 것(뱀·돼지·이빨 등)이 앞쪽에 있음
 
 - [ ] https://www.todays-vibe.com/dream-dictionary/snake

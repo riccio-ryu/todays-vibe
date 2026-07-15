@@ -9,26 +9,37 @@ import FortuneResult from "@/components/fortune/FortuneResult";
 import LoginRequiredModal from "@/components/common/LoginRequiredModal";
 import BackHomePill from "@/components/common/BackHomePill";
 import FavoriteButton from "@/components/common/FavoriteButton";
-import type { PsychTest } from "@/data/psych-tests";
+import type { AiTest } from "@/data/psych";
 
 const MENU_ID = "psych-test";
 
 interface Props {
-  test: PsychTest;
+  test: AiTest;
 }
 
-export default function PsychTestQuiz({ test }: Props) {
+/**
+ * AI 해석형 심리 테스트 레이아웃.
+ * 4지선다 답변을 /api/fortune("psych-test")로 보내 Claude 스트리밍 해석. 회원 전용.
+ */
+export default function AiQuizLayout({ test }: Props) {
   const { user, loading } = useAuth();
   const { result, isLoading, error, submit, reset } = useFortuneStream();
   const { fortuneStatus } = useFortuneStatus(MENU_ID);
 
   const [started, setStarted] = useState(false);
   const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState<string[]>([]);
+  const [answers, setAnswers] = useState<number[]>([]);
   const [showLogin, setShowLogin] = useState(false);
 
   const total = test.questions.length;
   const exhausted = fortuneStatus?.exhausted === true;
+
+  function restart() {
+    setStarted(false);
+    setStep(0);
+    setAnswers([]);
+    reset();
+  }
 
   // 결과/로딩/에러 → 기존 FortuneResult 재사용
   if (result || isLoading || error) {
@@ -37,12 +48,7 @@ export default function PsychTestQuiz({ test }: Props) {
         result={result}
         isLoading={isLoading}
         error={error}
-        onReset={() => {
-          reset();
-          setStarted(false);
-          setStep(0);
-          setAnswers([]);
-        }}
+        onReset={restart}
         title={`${test.title} 결과`}
         icon={test.icon}
       />
@@ -58,25 +64,21 @@ export default function PsychTestQuiz({ test }: Props) {
     setStarted(true);
   }
 
-  async function handleSelect(option: string) {
-    const nextAnswers = [...answers, option];
-    setAnswers(nextAnswers);
-
+  async function handleSelect(optionIndex: number) {
+    const next = [...answers, optionIndex];
+    setAnswers(next);
     if (step < total - 1) {
       setStep(step + 1);
       return;
     }
-
-    // 마지막 문항 → 제출
-    const payload = {
+    await submit(MENU_ID, {
       testSlug: test.slug,
       testTitle: test.title,
       answers: test.questions.map((q, i) => ({
         question: q.q,
-        answer: nextAnswers[i],
+        answer: q.options[next[i]],
       })),
-    };
-    await submit(MENU_ID, payload);
+    });
   }
 
   return (
@@ -84,15 +86,14 @@ export default function PsychTestQuiz({ test }: Props) {
       <LoginRequiredModal
         isOpen={showLogin}
         onClose={() => setShowLogin(false)}
-        redirectPath={`/psych-test/${test.slug}`}
+        redirectPath={`/psych/${test.slug}`}
       />
 
       <div className="flex items-center justify-between mb-6">
-        <BackHomePill href="/psych-test" label="심리 테스트" />
+        <BackHomePill href="/psych" label="심리 테스트" />
         <FavoriteButton menuId={MENU_ID} />
       </div>
 
-      {/* 시작 화면 */}
       {!started ? (
         <div className="text-center">
           <span className="text-5xl block mb-3">{test.icon}</span>
@@ -112,7 +113,7 @@ export default function PsychTestQuiz({ test }: Props) {
 
           {exhausted ? (
             <div className="w-full py-3 rounded-[5px] bg-white/8 text-[#a8a6b7]/50 text-sm font-medium">
-              오늘 심리 테스트를 이미 이용했어요
+              오늘 AI 심리 테스트를 이미 이용했어요
             </div>
           ) : (
             <button
@@ -123,13 +124,11 @@ export default function PsychTestQuiz({ test }: Props) {
             </button>
           )}
           {!user && !loading && (
-            <p className="text-white/35 text-xs mt-3">로그인하면 이용할 수 있어요</p>
+            <p className="text-white/35 text-xs mt-3">AI 해석은 로그인하면 이용할 수 있어요</p>
           )}
         </div>
       ) : (
-        /* 문항 화면 */
         <div>
-          {/* 진행 바 */}
           <div className="mb-6">
             <div className="flex justify-between items-center mb-2">
               <span className="text-white/40 text-xs">
@@ -159,10 +158,10 @@ export default function PsychTestQuiz({ test }: Props) {
                 {test.questions[step].q}
               </h2>
               <div className="space-y-3">
-                {test.questions[step].options.map((opt) => (
+                {test.questions[step].options.map((opt, i) => (
                   <button
-                    key={opt}
-                    onClick={() => handleSelect(opt)}
+                    key={i}
+                    onClick={() => handleSelect(i)}
                     className="w-full text-left px-4 py-3.5 rounded-[5px] bg-white/5 border border-white/10 text-[#f4f0ff]/85 text-sm hover:bg-[#9382ff]/10 hover:border-[#9382ff]/40 transition-colors"
                   >
                     {opt}

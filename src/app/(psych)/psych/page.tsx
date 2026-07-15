@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { allLogicPsychTests } from "@/data/psych";
+import { notFound } from "next/navigation";
+import { allPsychTests } from "@/data/psych";
 import { BASE_URL } from "@/lib/utils/site";
+import { PSYCH_ENABLED } from "@/lib/psych/config";
 
 export const metadata: Metadata = {
   title: "심리 테스트 — MBTI·성격·연애 무료 테스트 | 오늘운",
@@ -11,6 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default function PsychListPage() {
+  if (!PSYCH_ENABLED) notFound();
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
       <header className="text-center mb-8">
@@ -21,7 +24,7 @@ export default function PsychListPage() {
       </header>
 
       <div className="grid grid-cols-1 gap-3">
-        {allLogicPsychTests.map((t) => (
+        {allPsychTests.map((t) => (
           <Link
             key={t.slug}
             href={`/psych/${t.slug}`}
@@ -29,7 +32,14 @@ export default function PsychListPage() {
           >
             <span className="text-3xl">{t.icon}</span>
             <div className="min-w-0">
-              <p className="text-white font-semibold text-sm">{t.title}</p>
+              <p className="text-white font-semibold text-sm">
+                {t.title}
+                {t.engine === "ai" && (
+                  <span className="ml-2 text-[10px] font-medium text-[#9382ff] bg-[#9382ff]/10 px-1.5 py-0.5 rounded-full align-middle">
+                    ✦ AI
+                  </span>
+                )}
+              </p>
               <p className="text-white/45 text-xs mt-0.5">{t.summary}</p>
             </div>
           </Link>

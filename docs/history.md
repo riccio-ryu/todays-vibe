@@ -1,6 +1,31 @@
 # 📋 개발 일지
 ---
 
+## 2026-07-15
+
+- 심리 테스트를 카탈로그 정본 `(psych)` 구조로 **일원화** — 지난 세션의 `(user)/psych-test` + `src/data/psych-tests/*.ts`(중복 구현) 폐기, 테스트 7종을 `src/data/psych/`로 이관·통합 (`docs/psych-tests-catalog.md` SSOT 준수)
+- 로직 엔진에 `category`(4지선다 투표형) 추가 — 기존 MBTI(`mbti`) 엔진과 함께 `QuizLayout`이 engine별 분기, `src/lib/psych/engine.ts` `scoreCategory` 신설. 로직 5종(연애 스타일·동물·직장 빌런·결정·관계)을 이 방식으로 이관
+- AI 해석형 2종(에너지·감정)은 `AiQuizLayout`(스트리밍·회원 전용)으로 `(psych)`에 편입, `/psych/[slug]`가 engine으로 로직/AI 분기. 홈 메뉴 카드 path·사이트맵을 `/psych`로 갱신, `buildPsychTestPrompt`를 `@/data/psych`로 연결
+- **낮/밤 스와이프 캐러셀** 신설 (`src/components/home/HomeSwipe.tsx`) — 메인에서 좌우 드래그로 운세(밤)↔심테(낮) 전환, 상단 토글·도트 지원 (`PsychHomeBody` 낮 패널 신규, `src/app/(user)/page.tsx`를 캐러셀로 래핑)
+- 스와이프 배경을 콘텐츠와 분리된 별도 `fixed` 레이어로 구현하고 콘텐츠 트랙과 같은 x로 이동 — 심테(낮)에서 세로로 스크롤하면 고정 야간 배경이 새어 나오던 문제 해결 (transform 트랙 안의 `fixed`가 뷰포트 기준으로 동작 안 하는 이슈 우회, 왼쪽=투명·오른쪽=불투명 낮 그라데이션)
+- 캐러셀 컨테이너 높이를 활성 패널 실제 콘텐츠 높이에 맞춰 동적 지정(`ResizeObserver`) — 짧은 심테 패널이 긴 운세 패널만큼 늘어나던 문제 해결
+- 패널별 낮/밤 푸터 — `Footer`에 `variant`(day/night) 추가, 홈에서만 레이아웃 공유 푸터를 숨기는 `FooterGate` 신설(운세=밤·심테=낮 푸터를 각 패널이 자체 노출)
+- 심리 테스트 노출 토글 신설 (`src/lib/psych/config.ts` `PSYCH_ENABLED`) — 로컬 dev만 노출·운영 미노출(환경변수 `NEXT_PUBLIC_PSYCH_ENABLED=true`로 운영 노출 가능). 홈 스와이프·심테 메뉴 카드(`src/app/(user)/page.tsx`)·`/psych`·`/psych/[slug]`(`notFound` + `generateStaticParams` 빈 배열)·`FooterGate`·`sitemap.ts`를 이 스위치 하나로 일괄 게이팅 (운영 빌드에서 `/psych/[slug]` 미생성·`/psych` 404 확인)
+- 문서 갱신 — `README.md`(심리 테스트 7종·낮/밤 스와이프), `docs/psych-tests-catalog.md`(구현 현황·MVP 상태표·기술 메모를 실구현 기준으로 반영), `TODO.md`(일원화 완료·MVP 체크리스트·운영 노출(런칭) 방법)
+
+---
+
+## 2026-07-14
+
+> ⚠️ 이날 만든 `(user)/psych-test` 경로·`src/data/psych-tests/` 구조는 카탈로그 SSOT와 어긋나, **7/15에 `(psych)` 정본으로 일원화되며 폐기됨**. 아래는 당시 기록.
+
+- 심리 테스트(심테) 카테고리 신설 (TODO 2번) — 기존 운세 인프라(`/api/fortune` 스트리밍·사용량 체크·결과 저장) 재사용, `/psych-test` 목록 + `/psych-test/[slug]` 상세 SSG, 정적 카탈로그(`src/data/psych-tests/`) 구조 설계
+- 심테 MVP 4종 신설 — 오늘의 에너지 진단·숨겨진 감정 찾기·결정 스타일·관계 유형 (4지선다 3~5문항 → Claude 스트리밍 해석), 각 테스트 SEO 소개 콘텐츠 3블록 집필 (애드센스 대응)
+- `psych-test` 타입·프롬프트 연동 (`src/types/fortune.ts`, `src/lib/claude/prompts.ts` `buildPsychTestPrompt`), 퀴즈 컴포넌트(`src/components/psych/PsychTestQuiz.tsx`, 진행바 + Framer Motion 전환), 홈 메뉴 카드·`psych` 카테고리 추가(`src/data/fortunes.json`), 사이트맵 연동(`src/app/sitemap.ts`)
+- Search Console 색인 요청 2순위 진행 — 주요 서비스 페이지 11개(취업·건강·재물운, 연애·사업 궁합, 성명학·수비학·룬·주역·오라클·이사 방위) 완료 처리 (`docs/indexing-checklist.md`)
+
+---
+
 ## 2026-07-13
 
 - 꿈해몽 사전 2차 확장 50개 → 100개 (`src/data/dream-dictionary/`) — 동물 15·자연 8·사람관계 9·신체 6·상황행동 7·재물사물 5 추가, 전 페이지 크롤링 텍스트 900자 이상, 사이트맵 228 URL
