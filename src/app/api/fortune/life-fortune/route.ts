@@ -4,6 +4,7 @@ import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import { buildPrompt } from "@/lib/claude/prompts";
 import { generateStreamWithRetry, DEFAULT_MODEL } from "@/lib/gemini/client";
+import { checkUsage, denyResponse } from "@/lib/usage-check";
 import { todayKST } from "@/lib/utils/date";
 import { type LifeFortuneInput } from "@/types/fortune";
 
@@ -78,20 +79,10 @@ export async function POST(req: NextRequest) {
     return new Response(stream, { headers: STREAM_HEADERS });
   }
 
-  // 다른 생년월일 → 오늘 이미 생성한 평생운세가 있으면 거부
+  // 신규 생성(캐시 없는 생년월일) → 별 소모
   const today = todayKST();
-  const todaySnap = await db.collection("lifetime_readings")
-    .where("userId", "==", uid)
-    .where("date", "==", today)
-    .limit(1)
-    .get();
-
-  if (!todaySnap.empty) {
-    return NextResponse.json(
-      { error: "오늘은 이미 평생운세를 생성하셨습니다. 내일 다시 시도해 주세요." },
-      { status: 429 }
-    );
-  }
+  const check = await checkUsage(req, "life-fortune");
+  if (!check.allowed) return denyResponse(check.reason);
 
   // 신규 생성
   const prompt = buildPrompt("life-fortune", input);
@@ -121,6 +112,7 @@ export async function POST(req: NextRequest) {
         });
       } catch (err) {
         console.error("[life-fortune stream error]", err);
+        if (check.rollback) await check.rollback().catch(() => {});
       }
       controller.close();
     },

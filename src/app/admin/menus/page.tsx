@@ -19,8 +19,11 @@ import {
   saveQuickMenu,
   getHeroCardSettings,
   saveHeroCardSettings,
+  getCreditGrants,
+  saveCreditGrants,
 } from "./actions";
 import type { HeroCardSettings } from "@/types/hero";
+import { DEFAULT_GRANTS } from "@/lib/credits/config";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -500,11 +503,25 @@ function FortuneModal({
             />
           </Field>
 
-          {/* 횟수 제한 */}
+          {/* 별 소모량 (크레딧) */}
+          <Field label="별 소모량 (⭐ 크레딧)">
+            <input
+              type="number"
+              min={0}
+              value={form.cost ?? ""}
+              onChange={(e) =>
+                set("cost", e.target.value === "" ? undefined : Math.max(0, parseInt(e.target.value) || 0))
+              }
+              placeholder="비우면 기본값 (프리미엄 3 / AI 2 / 일반 1) · 0 = 무료"
+              className={CLS_INPUT}
+            />
+          </Field>
+
+          {/* 횟수 제한 (구 방식 — 현재 별 크레딧으로 대체, 참고용) */}
           <div>
             <p className="text-white/40 text-xs mb-2">
               횟수 제한
-              <span className="ml-1.5 text-white/20">(하루 기준, 자정 초기화)</span>
+              <span className="ml-1.5 text-white/20">(구 방식 · 현재 별 크레딧으로 대체됨)</span>
             </p>
             <div className="rounded-lg border border-white/10 overflow-hidden divide-y divide-white/5">
               {(["public", "member", "premium", "admin"] as const).map((role) => {
@@ -828,6 +845,77 @@ function HeroCardModal({
   );
 }
 
+// ─── Credits modal (별 지급량 설정) ────────────────────────────────────────────
+
+function CreditsModal({
+  initial,
+  onSave,
+  onClose,
+}: {
+  initial: Record<AccessLevel, number>;
+  onSave: (grants: Record<AccessLevel, number>) => void;
+  onClose: () => void;
+}) {
+  const [form, setForm] = useState<Record<AccessLevel, number>>(initial);
+  const ROLES: { key: AccessLevel; label: string }[] = [
+    { key: "public", label: "비회원" },
+    { key: "member", label: "회원" },
+    { key: "premium", label: "프리미엄" },
+    { key: "admin", label: "관리자" },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div className="bg-gray-900 border border-white/10 rounded-2xl w-full max-w-md shadow-2xl flex flex-col">
+        <div className="px-6 pt-6 pb-4 border-b border-white/10 flex items-center justify-between shrink-0">
+          <div>
+            <h3 className="text-white font-semibold flex items-center gap-1.5">⭐ 크레딧 설정</h3>
+            <p className="text-white/40 text-xs mt-0.5">권한별 하루 지급 별. 매일 자정 충전 · -1 = 무제한</p>
+          </div>
+          <button onClick={onClose} className="text-white/40 hover:text-white text-xl">✕</button>
+        </div>
+
+        <div className="px-6 py-5 space-y-3">
+          {ROLES.map(({ key, label }) => (
+            <div key={key} className="flex items-center gap-3">
+              <span className="text-white/60 text-sm w-20 shrink-0">{label}</span>
+              <input
+                type="number"
+                value={form[key]}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, [key]: parseInt(e.target.value) || 0 }))
+                }
+                className={CLS_INPUT + " flex-1"}
+              />
+              <span className="text-white/20 text-xs w-16 shrink-0">
+                {form[key] === -1 ? "∞ 무제한" : `⭐ ${form[key]}`}
+              </span>
+            </div>
+          ))}
+          <p className="text-white/30 text-[11px] leading-relaxed pt-1">
+            항목별 소모량(cost)은 각 메뉴 편집에서 설정합니다. 로직 심리 테스트는 API를 타지 않아 항상 무료입니다.
+          </p>
+        </div>
+
+        <div className="px-6 pb-6 pt-2 flex gap-2 justify-end">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 rounded-lg text-sm text-white/60 border border-white/10 hover:bg-white/5 transition-colors"
+          >
+            취소
+          </button>
+          <button
+            onClick={() => onSave(form)}
+            className="px-4 py-2 rounded-lg text-sm bg-purple-600 text-white font-semibold hover:bg-purple-500 transition-colors"
+          >
+            저장
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Reorder modal ────────────────────────────────────────────────────────────
 
 const CAT_TAB = "__categories__";
@@ -1093,6 +1181,8 @@ export default function AdminMenusPage() {
     notLoggedInText: "로그인하면 오늘의 운세 점수를 확인할 수 있어요",
     noBirthInfoText: "생년월일을 저장하면 AI가 맞춤 운세를 드려요",
   });
+  const [showCreditsModal, setShowCreditsModal] = useState(false);
+  const [creditGrants, setCreditGrants] = useState<Record<AccessLevel, number>>(DEFAULT_GRANTS);
   const [bulkCategory, setBulkCategory] = useState("");
 
   // 카테고리: JSON 기본값 + Firestore 추가분 병합
@@ -1109,7 +1199,8 @@ export default function AdminMenusPage() {
       getExtraCategories(),
       getQuickMenu(),
       getHeroCardSettings(),
-    ]).then(([menusResult, extraResult, quickResult, heroResult]) => {
+      getCreditGrants(),
+    ]).then(([menusResult, extraResult, quickResult, heroResult, creditsResult]) => {
       if (menusResult.status === "fulfilled") {
         setRows(menusResult.value);
       } else {
@@ -1117,6 +1208,7 @@ export default function AdminMenusPage() {
       }
       if (quickResult.status === "fulfilled") setQuickMenuIds(quickResult.value);
       if (heroResult.status === "fulfilled") setHeroCardSettings(heroResult.value);
+      if (creditsResult.status === "fulfilled") setCreditGrants(creditsResult.value);
       if (extraResult.status === "fulfilled" && extraResult.value.length > 0) {
         setCategories((prev) => {
           const firestoreMap = new Map(extraResult.value.map((c) => [c.id, c]));
@@ -1359,6 +1451,13 @@ export default function AdminMenusPage() {
           className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-purple-300 border border-purple-800/60 hover:bg-purple-900/20 transition-colors"
         >
           <Sparkles className="w-3 h-3" /> Hero 설정
+        </button>
+
+        <button
+          onClick={() => setShowCreditsModal(true)}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-amber-300 border border-amber-700/60 hover:bg-amber-900/20 transition-colors"
+        >
+          ⭐ 크레딧
         </button>
 
         {hasSelection && (
@@ -1633,6 +1732,23 @@ export default function AdminMenusPage() {
             });
           }}
           onClose={() => setShowHeroCardModal(false)}
+        />
+      )}
+      {showCreditsModal && (
+        <CreditsModal
+          initial={creditGrants}
+          onSave={(grants) => {
+            setCreditGrants(grants);
+            setShowCreditsModal(false);
+            startTransition(async () => {
+              try {
+                await saveCreditGrants(grants);
+              } catch {
+                setError("크레딧 설정 저장에 실패했습니다.");
+              }
+            });
+          }}
+          onClose={() => setShowCreditsModal(false)}
         />
       )}
     </div>

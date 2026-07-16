@@ -7,9 +7,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { signOut } from "@/lib/firebase/auth";
 import { User, Settings } from "lucide-react";
 import PWAInstallButton from "@/components/common/PWAInstallButton";
+import { useCredits } from "@/components/credits/CreditsProvider";
 
 export default function Header() {
   const { user, loading, isAdmin } = useAuth();
+  const { remaining, grant, loading: creditsLoading } = useCredits();
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -49,6 +51,17 @@ export default function Header() {
           <div className="w-7 h-7 rounded-full bg-white/8 animate-pulse" />
         ) : user ? (
           <div ref={menuRef} className="relative flex items-center gap-2">
+            {/* 오늘의 별 잔량 */}
+            <Link
+              href="/mypage"
+              title="오늘의 별 (매일 자정 충전)"
+              className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/8 border border-white/10 text-[#f4f0ff] text-xs font-medium hover:bg-white/12 transition-colors"
+            >
+              <span className="text-[#ffd968]">⭐</span>
+              <span className="tabular-nums">
+                {grant === -1 ? "∞" : creditsLoading ? "…" : remaining ?? 0}
+              </span>
+            </Link>
             <PWAInstallButton />
             {/* 아바타 버튼 */}
             <button

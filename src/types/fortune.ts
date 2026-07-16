@@ -1,9 +1,12 @@
 // ─── Fortune Status (오늘 사용 현황 API 응답) ────────────────────────────────
 
 export interface FortuneStatus {
-  used: number;
-  limit: number | null;
+  /** 이 항목 1회 소모 별 */
+  cost: number;
+  /** 별 부족(전역 잔여 < cost) — 기존 exhausted 의미 재정의 */
   exhausted: boolean;
+  /** 전역 잔여 별 (null = 무제한) */
+  remaining: number | null;
   todayReading: { id: string; result: string; createdAt: string | null } | null;
 }
 

@@ -2,8 +2,10 @@ import { NextRequest } from "next/server";
 import { verifySessionToken, SESSION_COOKIE } from "@/lib/session";
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import { todayKST } from "@/lib/utils/date";
+import { getMenuCost, getGrants, creditDocId } from "@/lib/credits/config";
+import type { AccessLevel } from "@/types/menu";
 
-function planToRole(payload: { isAdmin: boolean; plan: string }): string {
+function planToRole(payload: { isAdmin: boolean; plan: string }): AccessLevel {
   if (payload.isAdmin) return "admin";
   if (payload.plan === "premium") return "premium";
   return "member";
@@ -24,22 +26,25 @@ export async function GET(req: NextRequest) {
     const today = todayKST();
     const role = planToRole(session);
 
-    // 메뉴 제한 조회
-    const menuSnap = await db.collection("menus").doc(menuId).get();
-    const limits = menuSnap.data()?.usageLimits as Record<string, number> | undefined;
-    const limit: number | null = limits ? (limits[role] ?? -1) : null;
-    // limit null = 제한 없음(메뉴 미설정), -1 = 무제한, 0 = 차단, 1+ = 횟수 제한
+    // 항목 소모 별(cost) + 전역 크레딧 잔량 기준으로 exhausted 계산
+    const [menuSnap, grants, creditSnap, usageSnap] = await Promise.all([
+      db.collection("menus").doc(menuId).get(),
+      getGrants(db),
+      db.collection("daily_credits").doc(creditDocId(session.uid)).get(),
+      db.collection("daily_usage").doc(`${today}_${session.uid}_${menuId}`).get(),
+    ]);
 
-    // 오늘 사용 횟수
-    const usageSnap = await db
-      .collection("daily_usage")
-      .doc(`${today}_${session.uid}_${menuId}`)
-      .get();
+    const cost = getMenuCost(menuSnap.data());
+    const grant = grants[role] ?? 0;
+    const spent: number = creditSnap.exists ? (creditSnap.data()?.spent ?? 0) : 0;
+    const remaining: number | null = grant === -1 ? null : Math.max(0, grant - spent);
+    // 별 부족 = 무제한 아님 && 잔여 < cost (cost 0이면 항상 이용 가능)
+    const exhausted = remaining !== null && cost > 0 && remaining < cost;
+
+    // todayReading 트리거용 오늘 사용 횟수
     const used: number = usageSnap.exists ? (usageSnap.data()?.count ?? 0) : 0;
 
-    const exhausted = limit !== null && limit !== -1 && used >= limit;
-
-    // 오늘 기록 조회 — 사용 이력이 있으면 항상 시도 (exhausted 여부 무관)
+    // 오늘 기록 조회 — 사용 이력이 있으면 항상 시도
     let todayReading = null;
     if (used > 0) {
       try {
@@ -65,7 +70,7 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    return Response.json({ used, limit, exhausted, todayReading });
+    return Response.json({ cost, exhausted, remaining, todayReading });
   } catch (err) {
     console.error("[fortune-status]", err);
     return Response.json({ error: String(err) }, { status: 500 });

@@ -1,8 +1,9 @@
 "use server";
 
 import { getAdminFirestore } from "@/lib/firebase/admin";
-import type { MenuItem, Category } from "@/types/menu";
+import type { MenuItem, Category, AccessLevel } from "@/types/menu";
 import { DEFAULT_HERO_SETTINGS, type HeroCardSettings } from "@/types/hero";
+import { DEFAULT_GRANTS } from "@/lib/credits/config";
 
 const COL = "menus";
 const CAT_COL = "categories";
@@ -83,6 +84,25 @@ export async function getHeroCardSettings(): Promise<HeroCardSettings> {
 
 export async function saveHeroCardSettings(settings: HeroCardSettings): Promise<void> {
   await db().collection("settings").doc("heroCard").set({ ...settings, updatedAt: new Date() });
+}
+
+// ─── Credit grants (별 지급량) ─────────────────────────────────────────────────
+
+export async function getCreditGrants(): Promise<Record<AccessLevel, number>> {
+  try {
+    const snap = await db().collection("settings").doc("credits").get();
+    const grants = snap.data()?.grants as Partial<Record<AccessLevel, number>> | undefined;
+    return { ...DEFAULT_GRANTS, ...(grants ?? {}) };
+  } catch {
+    return DEFAULT_GRANTS;
+  }
+}
+
+export async function saveCreditGrants(grants: Record<AccessLevel, number>): Promise<void> {
+  await db()
+    .collection("settings")
+    .doc("credits")
+    .set({ grants, updatedAt: new Date() }, { merge: true });
 }
 
 // ─── Batch order update ───────────────────────────────────────────────────────

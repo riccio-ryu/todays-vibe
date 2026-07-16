@@ -2,17 +2,22 @@ import { NextRequest } from "next/server";
 import { verifySessionToken, SESSION_COOKIE } from "@/lib/session";
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import { todayKST } from "@/lib/utils/date";
+import { getMenuCost, getGrants, creditDocId } from "@/lib/credits/config";
+import type { AccessLevel } from "@/types/menu";
 
-function planToRole(payload: { isAdmin: boolean; plan: string }): string {
+function planToRole(payload: { isAdmin: boolean; plan: string }): AccessLevel {
   if (payload.isAdmin) return "admin";
   if (payload.plan === "premium") return "premium";
   return "member";
 }
 
 export interface BulkFortuneStatus {
-  used: number;
-  limit: number | null;
+  /** 이 항목 1회 소모 별 */
+  cost: number;
+  /** 별 부족(전역 잔여 < cost) */
   exhausted: boolean;
+  /** 오늘 이미 본 적 있음(다시보기 가능) */
+  doneToday: boolean;
 }
 
 export async function POST(req: NextRequest) {
@@ -31,30 +36,29 @@ export async function POST(req: NextRequest) {
     const today = todayKST();
     const role = planToRole(session);
 
-    // 메뉴 제한 일괄 조회
-    const menuSnaps = await Promise.all(
-      menuIds.map((id) => db.collection("menus").doc(id).get())
-    );
-    const limitMap: Record<string, number | null> = {};
-    menuSnaps.forEach((snap, i) => {
-      const limits = snap.data()?.usageLimits as Record<string, number> | undefined;
-      limitMap[menuIds[i]] = limits ? (limits[role] ?? -1) : null;
-    });
+    // 전역 크레딧(권한별 지급 + 오늘 소모)은 1회만 조회
+    const [grants, creditSnap, menuSnaps, usageSnaps] = await Promise.all([
+      getGrants(db),
+      db.collection("daily_credits").doc(creditDocId(session.uid)).get(),
+      Promise.all(menuIds.map((id) => db.collection("menus").doc(id).get())),
+      Promise.all(
+        menuIds.map((id) =>
+          db.collection("daily_usage").doc(`${today}_${session.uid}_${id}`).get()
+        )
+      ),
+    ]);
 
-    // 오늘 사용 횟수 일괄 조회
-    const usageSnaps = await Promise.all(
-      menuIds.map((id) =>
-        db.collection("daily_usage").doc(`${today}_${session.uid}_${id}`).get()
-      )
-    );
+    const grant = grants[role] ?? 0;
+    const spent: number = creditSnap.exists ? (creditSnap.data()?.spent ?? 0) : 0;
+    const remaining: number | null = grant === -1 ? null : Math.max(0, grant - spent);
 
     const result: Record<string, BulkFortuneStatus> = {};
-    usageSnaps.forEach((snap, i) => {
+    menuSnaps.forEach((snap, i) => {
       const id = menuIds[i];
-      const used: number = snap.exists ? (snap.data()?.count ?? 0) : 0;
-      const limit = limitMap[id];
-      const exhausted = limit !== null && limit !== -1 && used >= limit;
-      result[id] = { used, limit, exhausted };
+      const cost = getMenuCost(snap.data());
+      const exhausted = remaining !== null && cost > 0 && remaining < cost;
+      const doneToday = (usageSnaps[i].data()?.count ?? 0) > 0;
+      result[id] = { cost, exhausted, doneToday };
     });
 
     return Response.json(result);

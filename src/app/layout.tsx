@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Noto_Sans_KR, Roboto } from "next/font/google";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { CreditsProvider } from "@/components/credits/CreditsProvider";
 import PWARegister from "@/components/common/PWARegister";
 import IOSInstallBanner from "@/components/common/IOSInstallBanner";
 import { BASE_URL } from "@/lib/utils/site";
@@ -64,7 +65,9 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <PWARegister />
         <IOSInstallBanner />
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <CreditsProvider>{children}</CreditsProvider>
+        </AuthProvider>
       </body>
     </html>
   );
