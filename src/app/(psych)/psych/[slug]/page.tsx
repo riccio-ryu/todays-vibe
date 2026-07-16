@@ -6,6 +6,7 @@ import QuizLayout from "@/components/psych/QuizLayout";
 import AiQuizLayout from "@/components/psych/AiQuizLayout";
 import { BASE_URL } from "@/lib/utils/site";
 import { PSYCH_ENABLED } from "@/lib/psych/config";
+import { isPsychTestEnabled, getVisiblePsychTests } from "@/lib/psych/settings";
 
 export function generateStaticParams() {
   if (!PSYCH_ENABLED) return [];
@@ -38,8 +39,9 @@ export default async function PsychTestPage({
   const { slug } = await params;
   const test = getPsychTestBySlug(slug);
   if (!test) notFound();
+  if (!(await isPsychTestEnabled(slug))) notFound(); // admin 비활성 시 숨김
 
-  const others = allPsychTests.filter((t) => t.slug !== test.slug);
+  const others = (await getVisiblePsychTests()).filter((t) => t.slug !== test.slug);
 
   const jsonLd = {
     "@context": "https://schema.org",
