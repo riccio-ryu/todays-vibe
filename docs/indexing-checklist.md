@@ -50,14 +50,14 @@
 - [x] https://www.todays-vibe.com/zodiac/virgo
 - [x] https://www.todays-vibe.com/zodiac/libra
 - [x] https://www.todays-vibe.com/zodiac/scorpio
-- [ ] https://www.todays-vibe.com/zodiac/sagittarius
-- [ ] https://www.todays-vibe.com/zodiac/capricorn
-- [ ] https://www.todays-vibe.com/zodiac/aquarius
-- [ ] https://www.todays-vibe.com/zodiac/pisces
+- [x] https://www.todays-vibe.com/zodiac/sagittarius
+- [x] https://www.todays-vibe.com/zodiac/capricorn
+- [x] https://www.todays-vibe.com/zodiac/aquarius
+- [x] https://www.todays-vibe.com/zodiac/pisces
 
 ## 🥉 3순위 — 띠 12개
 
-- [ ] https://www.todays-vibe.com/chinese-zodiac/rat
+- [x] https://www.todays-vibe.com/chinese-zodiac/rat
 - [ ] https://www.todays-vibe.com/chinese-zodiac/ox
 - [ ] https://www.todays-vibe.com/chinese-zodiac/tiger
 - [ ] https://www.todays-vibe.com/chinese-zodiac/rabbit

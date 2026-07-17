@@ -10,6 +10,8 @@ import { spendingTest } from "./spending";
 import { travelTest } from "./travel";
 import { friendImageTest } from "./friend-image";
 import { foodTest } from "./food";
+import { stressTest } from "./stress";
+import { burnoutTest } from "./burnout";
 import { energyTest } from "./energy";
 import { emotionTest } from "./emotion";
 
@@ -21,6 +23,9 @@ export type {
   CategoryTest,
   CategoryResult,
   CategoryQuestion,
+  ScoreTest,
+  ScoreBand,
+  ScoreAxis,
   AiTest,
   AiQuestion,
   PsychTest,
@@ -36,6 +41,8 @@ export const allLogicPsychTests: LogicPsychTest[] = [
   travelTest,
   friendImageTest,
   foodTest,
+  stressTest,
+  burnoutTest,
   workVillainTest,
   decisionTest,
   relationshipTest,

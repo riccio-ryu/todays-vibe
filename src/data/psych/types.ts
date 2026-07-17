@@ -104,8 +104,59 @@ export interface CategoryTest {
   seoContent: { heading: string; body: string }[];
 }
 
+// ─── 점수 척도형 (score 엔진) ─────────────────────────────────────────────────
+// 리커트 척도(각 보기에 점수)를 합산 → 총점 구간(band)으로 결과. (스트레스 PSS·번아웃 MBI 등)
+// 다축 지원: 문항마다 axis를 지정하면 축별 점수도 계산해 결과에 함께 표시한다.
+// 역채점 문항은 데이터에서 value를 뒤집어 넣는다(항상 "높을수록 강함"으로 통일).
+
+export interface ScoreAxis {
+  /** 축 key (문항 axis와 매칭) */
+  key: string;
+  /** 축 이름 (예: "소진") */
+  label: string;
+}
+
+export interface ScoreOption {
+  label: string;
+  /** 이 보기의 점수 */
+  value: number;
+}
+
+export interface ScoreQuestion {
+  q: string;
+  /** 축 key (단일축 테스트는 생략 가능 → "total") */
+  axis?: string;
+  options: ScoreOption[];
+}
+
+export interface ScoreBand {
+  /** 총점 구간 [min, max] (양끝 포함) */
+  min: number;
+  max: number;
+  title: string;
+  emoji: string;
+  headline: string;
+  description: string;
+  advice: string;
+}
+
+export interface ScoreTest {
+  engine: "score";
+  slug: string;
+  title: string;
+  icon: string;
+  summary: string;
+  intro: string;
+  /** 다축이면 나열(축별 점수 표시). 단일축이면 생략 */
+  axes?: ScoreAxis[];
+  questions: ScoreQuestion[];
+  /** 총점 기준 결과 구간 (겹치지 않게, 오름차순) */
+  bands: ScoreBand[];
+  seoContent: { heading: string; body: string }[];
+}
+
 /** 로직 계산형 테스트 유니온 */
-export type LogicPsychTest = MbtiTest | CategoryTest;
+export type LogicPsychTest = MbtiTest | CategoryTest | ScoreTest;
 
 // ─── AI 해석형 (ai 엔진) ──────────────────────────────────────────────────────
 // 답변을 /api/fortune("psych-test")로 보내 Claude 스트리밍 해석. 회원 전용.
