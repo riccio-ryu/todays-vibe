@@ -7,6 +7,14 @@ import { allPsychTests } from "@/data/psych";
 import { getPsychConfig, savePsychConfig } from "./actions";
 import { PSYCH_ENABLED } from "@/lib/psych/config";
 
+const ENGINE_LABEL: Record<string, string> = {
+  mbti: "🔢 MBTI 엔진",
+  category: "🔢 카테고리",
+  score: "🔢 점수 척도",
+  ranking: "🔢 순위 매기기",
+  ai: "🤖 AI 해석 (회원)",
+};
+
 export default function AdminPsychPage() {
   // 정렬된 slug 목록 + 활성 맵
   const [list, setList] = useState<string[]>(allPsychTests.map((t) => t.slug));
@@ -90,7 +98,7 @@ export default function AdminPsychPage() {
                   <div className="min-w-0 flex-1">
                     <p className={`text-sm font-medium ${on ? "text-white/85" : "text-white/35"}`}>{t.title}</p>
                     <p className="text-white/25 text-[11px]">
-                      {t.engine === "ai" ? "🤖 AI 해석 (회원)" : t.engine === "mbti" ? "🔢 MBTI 엔진" : "🔢 카테고리"} · {slug}
+                      {ENGINE_LABEL[t.engine]} · {slug}
                     </p>
                   </div>
                   <div className="flex flex-col">

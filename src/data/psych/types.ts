@@ -155,8 +155,39 @@ export interface ScoreTest {
   seoContent: { heading: string; body: string }[];
 }
 
+// ─── 순위 매기기형 (ranking 엔진) ─────────────────────────────────────────────
+// 항목들을 소중한 순서대로 선택 → 순위 자체가 결과. (사막 동물 등)
+// 각 항목은 상징(가치)을 지니며, 1순위(끝까지 지킴)·꼴찌(먼저 포기)를 반전 있게 해석한다.
+
+export interface RankingItem {
+  key: string;
+  emoji: string;
+  /** 항목 이름 (예: "사자") */
+  label: string;
+  /** 상징하는 가치 (예: "자존심·명예") */
+  symbol: string;
+  /** 1순위(끝까지 지킴)일 때 해석 */
+  keptDesc: string;
+  /** 꼴찌(가장 먼저 포기)일 때 해석 */
+  droppedDesc: string;
+}
+
+export interface RankingTest {
+  engine: "ranking";
+  slug: string;
+  title: string;
+  icon: string;
+  summary: string;
+  intro: string;
+  /** 순위 선택 화면의 시나리오·지시문 */
+  scenario: string;
+  /** 소중한 순서대로 고를 항목들 (보통 5개) */
+  items: RankingItem[];
+  seoContent: { heading: string; body: string }[];
+}
+
 /** 로직 계산형 테스트 유니온 */
-export type LogicPsychTest = MbtiTest | CategoryTest | ScoreTest;
+export type LogicPsychTest = MbtiTest | CategoryTest | ScoreTest | RankingTest;
 
 // ─── AI 해석형 (ai 엔진) ──────────────────────────────────────────────────────
 // 답변을 /api/fortune("psych-test")로 보내 Claude 스트리밍 해석. 회원 전용.

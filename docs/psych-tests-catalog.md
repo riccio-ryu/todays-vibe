@@ -6,17 +6,18 @@
 
 ---
 
-## ✅ 구현 현황 (2026-07-17)
+## ✅ 구현 현황 (2026-07-17) — **MVP 15개 전부 완료** 🎉
 
-`(psych)` 그룹 · `/psych` · `/psych/[slug]` (SSG) · 엔진 `src/lib/psych/engine.ts`(`scoreMbti`·`scoreCategory`·`scoreScale`) · 데이터 `src/data/psych/*.ts` · `QuizLayout`(mbti·category·score) + `AiQuizLayout`(ai: quiz·text)
+`(psych)` 그룹 · `/psych` · `/psych/[slug]` (SSG) · 엔진 `src/lib/psych/engine.ts`(`scoreMbti`·`scoreCategory`·`scoreScale`) · 데이터 `src/data/psych/*.ts` · `QuizLayout`(mbti·category·score) + `RankingLayout`(ranking) + `AiQuizLayout`(ai: quiz·text)
 
-**구현 완료 19종 (로직 13 + AI 6)**
+**구현 완료 20종 (로직 14 + AI 6)**
 - 🔢 mbti(M-1) · love-style(#24) · animal(#67) · color · friend-image(#34) · spending(#50) · travel(#51) · food(#59) · work-villain(#43) · decision · relationship
 - 🔢 stress(#17, PSS score) · burnout(#18, MBI 3축 score) — `score` 엔진(총점 밴드 + 축별 점수)
+- 🔢 desert(#72) — `ranking` 엔진(순서대로 탭 → 순위, 1순위 지킴·꼴찌 포기 반전)
 - 🤖 energy(#13) · emotion(#14) — 4지선다형, 회원 전용 스트리밍
 - 🤖 ai-worry(A-1) · ai-diary(A-2) · ai-chat(A-3) · ai-personality(A-5) — 자유텍스트 입력형, `/api/fortune("psych-test")` 스트리밍
 
-**엔진:** 로직 3종 `mbti`(2지선다→16코드) · `category`(4지선다 투표) · `score`(리커트 합산→밴드/축). AI 2모드 `quiz`(4지선다) · `text`(자유텍스트, `AiTextField`). 데이터 파일만 추가하면 목록·상세·사이트맵·스와이프 자동 연동.
+**엔진 4종 + AI 2모드:** 로직 `mbti`(2지선다→16코드) · `category`(4지선다 투표) · `score`(리커트 합산→밴드/축) · `ranking`(순위 매기기). AI `quiz`(4지선다) · `text`(자유텍스트, `AiTextField`). 데이터 파일만 추가하면 목록·상세·사이트맵·스와이프 자동 연동.
 
 **메인 낮/밤 스와이프 캐러셀 완료** — `src/components/home/HomeSwipe.tsx`. 홈 `/`는 `FooterGate`로 공유 푸터 숨김.
 
@@ -217,7 +218,7 @@
 | ✅ | 🔢 | 번아웃 위험도 (18) | score 엔진 · MBI 3축 15문항 |
 | ✅ | 🔢 | 소비 성향 (50) | 유머형 공유 |
 | ✅ | 🔢 | 여행 스타일 (51) | 계절별 재방문 유도 |
-| ⬜ | 🔢 | 사막을 건너는 동물 순서 (72) | 클래식 바이럴 · ranking 엔진 신규 |
+| ✅ | 🔢 | 사막을 건너는 동물 순서 (72) | ranking 엔진 · 순서대로 탭 |
 | ✅ | 🔢 | 음식으로 보는 성격 (59) | 공감도 최고 |
 | ✅ | 🤖 | AI 고민 분석 (A-1) | 자유텍스트 입력형 |
 | ✅ | 🤖 | AI 감정 일기 분석 (A-2) | 자유텍스트 입력형 |
@@ -235,7 +236,9 @@
 로직 엔진     src/lib/psych/engine.ts
               - mbti:     선택지 극(pole) 축별 다수결 → scoreMbti() → 16코드
               - category: 선택지 유형 투표 합산 → scoreCategory() → 최다 득표
-공통 UI       QuizLayout(mbti·category 즉시결과) / AiQuizLayout(ai 스트리밍)
+              - score:    리커트 점수 합산 → scoreScale() → 총점 밴드 + 축별 점수
+              - ranking:  소중한 순서대로 탭 → 순위 자체가 결과 (엔진 함수 없이 순서 해석)
+공통 UI       QuizLayout(mbti·category·score) / RankingLayout(ranking) / AiQuizLayout(ai: quiz·text)
 AI 결과       기존 FortuneResult 재사용, /api/fortune("psych-test") 스트리밍
 저장          AI형만 ai_readings (변경: 별도 psych_readings 안 씀, menuId psych-test 재사용)
               로직형은 무저장 (API·비용 없음)
@@ -263,4 +266,4 @@ URL           /psych/[slug]  (예: /psych/mbti, /psych/animal)
 ---
 
 _최초 작성: 2026-06-19 / 전면 개정: 2026-06-29 / 구현 현황 갱신: 2026-07-15_  
-_구현 현황 갱신: 2026-07-17 — **MVP 15 중 14종 완료** (AI 4종 포함). 유일한 미구현: 🔢 사막 동물 순서(#72, 순위 매기기 `ranking` 엔진 신규 필요). 이후는 섹션1~8 확장(총 97종) — 기존 4엔진(mbti·category·score·ai) 재사용 가능한 항목부터 데이터만 추가_
+_구현 현황 갱신: 2026-07-17 — **MVP 15개 전부 완료** 🎉 (총 20종, 로직 14 + AI 6). 다음 단계: 섹션1~8 확장(총 97종) — 4엔진(mbti·category·score·ranking) + AI 2모드(quiz·text)로 대부분 데이터 추가만으로 커버. 우선순위는 공유율(★) 높은 항목부터_

@@ -12,6 +12,7 @@ import { friendImageTest } from "./friend-image";
 import { foodTest } from "./food";
 import { stressTest } from "./stress";
 import { burnoutTest } from "./burnout";
+import { desertTest } from "./desert";
 import { energyTest } from "./energy";
 import { emotionTest } from "./emotion";
 import { aiWorryTest } from "./ai-worry";
@@ -30,6 +31,8 @@ export type {
   ScoreTest,
   ScoreBand,
   ScoreAxis,
+  RankingTest,
+  RankingItem,
   AiTest,
   AiQuizTest,
   AiTextTest,
@@ -50,6 +53,7 @@ export const allLogicPsychTests: LogicPsychTest[] = [
   foodTest,
   stressTest,
   burnoutTest,
+  desertTest,
   workVillainTest,
   decisionTest,
   relationshipTest,

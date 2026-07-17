@@ -8,7 +8,6 @@ import AdSlot from "@/components/common/AdSlot";
 import { shareOrCopyUrl } from "@/lib/utils/share";
 import { scoreMbti, scoreCategory, scoreScale, type ScoreOutcome } from "@/lib/psych/engine";
 import type {
-  LogicPsychTest,
   MbtiTest,
   MbtiPole,
   MbtiResult,
@@ -17,8 +16,9 @@ import type {
   ScoreTest,
 } from "@/data/psych/types";
 
+// ranking은 별도 RankingLayout에서 처리 → 여기선 mbti·category·score만
 interface Props {
-  test: LogicPsychTest;
+  test: MbtiTest | CategoryTest | ScoreTest;
 }
 
 /**
