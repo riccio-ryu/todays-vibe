@@ -1,6 +1,25 @@
 # 📋 개발 일지
 ---
 
+## 2026-07-17
+
+- 심테 `score` 엔진 신설 (`src/lib/psych/engine.ts` `scoreScale`) — 리커트 점수 합산 → 총점 밴드 + 축별 점수. 스트레스 지수(#17, PSS 10문항)·번아웃 위험도(#18, MBI 3축 15문항) 2종 추가, `QuizLayout`에 score 결과 뷰(게이지·축별 바)
+- AI 자유텍스트 심테 4종 추가 — 고민 상담(A-1)·감정 일기(A-2)·카톡 호감도(A-3)·성격 분석(A-5). `AiTest`를 `AiQuizTest`(4지선다) \| `AiTextTest`(자유텍스트) 유니온으로 확장(`AiTextField`), `AiQuizLayout`에 텍스트 입력 분기(최소 글자 검증). 기존 `answers` 형식 재사용해 프롬프트 빌더 무변경
+- 심테 `ranking` 엔진 + 사막 동물(#72) — 5동물을 소중한 순서대로 탭 → 순위, 1순위(지킴)·꼴찌(포기) 반전 해석. `RankingLayout` 신규, `[slug]` 3-way 분기(ai/ranking/quiz)
+- **🎉 카탈로그 MVP 15개 전부 완료** — 심테 총 20종(로직 14 + AI 6), 엔진 4종(mbti·category·score·ranking) + AI 2모드(quiz·text). `docs/psych-tests-catalog.md`·`TODO.md` 갱신
+
+---
+
+## 2026-07-16
+
+- 별(⭐) 크레딧 시스템 신설 — 항목별 "하루 N회"를 권한별 일일 별 지급(회원 10·프리미엄 30·admin 무제한)으로 전환, 운세·AI 심테 공용 소모·항목별 cost 차등·자정 충전. `src/lib/credits/config.ts`, `usage-check.ts` 재작성(`daily_credits` 풀 원자 차감, `daily_usage` 카운트는 순위·통계용 유지), `/api/user/credits`, `CreditsProvider`+헤더 ⭐잔량, 카드·폼 cost 게이팅
+- 로직 심테 무료(별 0)·AI만 소모, 재열람 무료·새로 뽑기만 소모(tojeong·life-fortune 캐시 히트 무과금) 정책 반영
+- admin 크레딧 설정 (`/admin/menus`) — 권한별 지급량(`settings/credits`) + 메뉴별 소모 별(`MenuItem.cost`) 편집 모달
+- admin 심리 테스트 관리 (`/admin/psych`, `settings/psych`) — 노출 on/off·순서 조정, 목록·상세·스와이프가 설정 반영. AI 심테 프롬프트 편집·본문 CRUD는 후속
+- category 심테 5종 추가 — 색깔 심리·소비 성향·여행 스타일·친구들이 보는 나·음식으로 보는 성격 (기존 `category` 엔진 재사용, 데이터 파일만 추가)
+
+---
+
 ## 2026-07-15
 
 - 심리 테스트를 카탈로그 정본 `(psych)` 구조로 **일원화** — 지난 세션의 `(user)/psych-test` + `src/data/psych-tests/*.ts`(중복 구현) 폐기, 테스트 7종을 `src/data/psych/`로 이관·통합 (`docs/psych-tests-catalog.md` SSOT 준수)
