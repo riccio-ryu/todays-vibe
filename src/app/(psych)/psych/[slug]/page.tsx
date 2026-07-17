@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { allPsychTests, getPsychTestBySlug } from "@/data/psych";
 import QuizLayout from "@/components/psych/QuizLayout";
 import AiQuizLayout from "@/components/psych/AiQuizLayout";
+import RankingLayout from "@/components/psych/RankingLayout";
 import { BASE_URL } from "@/lib/utils/site";
 import { PSYCH_ENABLED } from "@/lib/psych/config";
 import { isPsychTestEnabled, getVisiblePsychTests } from "@/lib/psych/settings";
@@ -21,7 +22,12 @@ export async function generateMetadata({
   const { slug } = await params;
   const test = getPsychTestBySlug(slug);
   if (!test) return {};
-  const title = `${test.title} — ${test.questions.length}문항 무료 심리 테스트 | 오늘운`;
+  const title =
+    test.engine === "ranking"
+      ? `${test.title} — ${test.items.length}가지 순위 심리 테스트 | 오늘운`
+      : test.engine === "ai" && "fields" in test && test.fields
+        ? `${test.title} — ${test.fields.length}입력 무료 심리 테스트 | 오늘운`
+        : `${test.title} — ${"questions" in test ? test.questions?.length ?? 0 : 0}문항 무료 심리 테스트 | 오늘운`;
   return {
     title,
     description: test.summary,
@@ -65,6 +71,8 @@ export default async function PsychTestPage({
 
       {test.engine === "ai" ? (
         <AiQuizLayout test={test} />
+      ) : test.engine === "ranking" ? (
+        <RankingLayout test={test} />
       ) : (
         <QuizLayout test={test} />
       )}

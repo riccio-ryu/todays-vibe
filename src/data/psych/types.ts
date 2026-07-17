@@ -104,8 +104,90 @@ export interface CategoryTest {
   seoContent: { heading: string; body: string }[];
 }
 
+// ─── 점수 척도형 (score 엔진) ─────────────────────────────────────────────────
+// 리커트 척도(각 보기에 점수)를 합산 → 총점 구간(band)으로 결과. (스트레스 PSS·번아웃 MBI 등)
+// 다축 지원: 문항마다 axis를 지정하면 축별 점수도 계산해 결과에 함께 표시한다.
+// 역채점 문항은 데이터에서 value를 뒤집어 넣는다(항상 "높을수록 강함"으로 통일).
+
+export interface ScoreAxis {
+  /** 축 key (문항 axis와 매칭) */
+  key: string;
+  /** 축 이름 (예: "소진") */
+  label: string;
+}
+
+export interface ScoreOption {
+  label: string;
+  /** 이 보기의 점수 */
+  value: number;
+}
+
+export interface ScoreQuestion {
+  q: string;
+  /** 축 key (단일축 테스트는 생략 가능 → "total") */
+  axis?: string;
+  options: ScoreOption[];
+}
+
+export interface ScoreBand {
+  /** 총점 구간 [min, max] (양끝 포함) */
+  min: number;
+  max: number;
+  title: string;
+  emoji: string;
+  headline: string;
+  description: string;
+  advice: string;
+}
+
+export interface ScoreTest {
+  engine: "score";
+  slug: string;
+  title: string;
+  icon: string;
+  summary: string;
+  intro: string;
+  /** 다축이면 나열(축별 점수 표시). 단일축이면 생략 */
+  axes?: ScoreAxis[];
+  questions: ScoreQuestion[];
+  /** 총점 기준 결과 구간 (겹치지 않게, 오름차순) */
+  bands: ScoreBand[];
+  seoContent: { heading: string; body: string }[];
+}
+
+// ─── 순위 매기기형 (ranking 엔진) ─────────────────────────────────────────────
+// 항목들을 소중한 순서대로 선택 → 순위 자체가 결과. (사막 동물 등)
+// 각 항목은 상징(가치)을 지니며, 1순위(끝까지 지킴)·꼴찌(먼저 포기)를 반전 있게 해석한다.
+
+export interface RankingItem {
+  key: string;
+  emoji: string;
+  /** 항목 이름 (예: "사자") */
+  label: string;
+  /** 상징하는 가치 (예: "자존심·명예") */
+  symbol: string;
+  /** 1순위(끝까지 지킴)일 때 해석 */
+  keptDesc: string;
+  /** 꼴찌(가장 먼저 포기)일 때 해석 */
+  droppedDesc: string;
+}
+
+export interface RankingTest {
+  engine: "ranking";
+  slug: string;
+  title: string;
+  icon: string;
+  summary: string;
+  intro: string;
+  /** 순위 선택 화면의 시나리오·지시문 */
+  scenario: string;
+  /** 소중한 순서대로 고를 항목들 (보통 5개) */
+  items: RankingItem[];
+  seoContent: { heading: string; body: string }[];
+}
+
 /** 로직 계산형 테스트 유니온 */
-export type LogicPsychTest = MbtiTest | CategoryTest;
+export type LogicPsychTest = MbtiTest | CategoryTest | ScoreTest | RankingTest;
 
 // ─── AI 해석형 (ai 엔진) ──────────────────────────────────────────────────────
 // 답변을 /api/fortune("psych-test")로 보내 Claude 스트리밍 해석. 회원 전용.
@@ -115,20 +197,46 @@ export interface AiQuestion {
   options: string[];
 }
 
-export interface AiTest {
+/** 자유 텍스트 입력 필드 (text 모드) */
+export interface AiTextField {
+  /** 내부 key */
+  key: string;
+  /** 입력 라벨 (프롬프트의 question으로도 쓰임) */
+  label: string;
+  placeholder: string;
+  /** 최소 글자 수 (미달 시 제출 불가) */
+  minLength?: number;
+  /** textarea 줄 수 */
+  rows?: number;
+}
+
+interface AiTestBase {
   engine: "ai";
   slug: string;
   title: string;
   icon: string;
   summary: string;
   intro: string;
-  questions: AiQuestion[];
   /** AI 해석 시 심리 상담사 페르소나 */
   promptPersona: string;
   /** AI 해석 시 결과 구성 가이드 */
   promptGuide: string;
   seoContent: { heading: string; body: string }[];
 }
+
+/** 4지선다형 AI 테스트 (energy·emotion) */
+export interface AiQuizTest extends AiTestBase {
+  questions: AiQuestion[];
+  fields?: never;
+}
+
+/** 자유 텍스트 입력형 AI 테스트 (고민·감정일기·카톡·성격) */
+export interface AiTextTest extends AiTestBase {
+  fields: AiTextField[];
+  questions?: never;
+}
+
+export type AiTest = AiQuizTest | AiTextTest;
 
 /** 전체 심리 테스트 유니온 (로직 + AI) */
 export type PsychTest = LogicPsychTest | AiTest;

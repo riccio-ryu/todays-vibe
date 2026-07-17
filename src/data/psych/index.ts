@@ -10,8 +10,15 @@ import { spendingTest } from "./spending";
 import { travelTest } from "./travel";
 import { friendImageTest } from "./friend-image";
 import { foodTest } from "./food";
+import { stressTest } from "./stress";
+import { burnoutTest } from "./burnout";
+import { desertTest } from "./desert";
 import { energyTest } from "./energy";
 import { emotionTest } from "./emotion";
+import { aiWorryTest } from "./ai-worry";
+import { aiDiaryTest } from "./ai-diary";
+import { aiChatTest } from "./ai-chat";
+import { aiPersonalityTest } from "./ai-personality";
 
 export type {
   LogicPsychTest,
@@ -21,8 +28,16 @@ export type {
   CategoryTest,
   CategoryResult,
   CategoryQuestion,
+  ScoreTest,
+  ScoreBand,
+  ScoreAxis,
+  RankingTest,
+  RankingItem,
   AiTest,
+  AiQuizTest,
+  AiTextTest,
   AiQuestion,
+  AiTextField,
   PsychTest,
 } from "./types";
 
@@ -36,13 +51,23 @@ export const allLogicPsychTests: LogicPsychTest[] = [
   travelTest,
   friendImageTest,
   foodTest,
+  stressTest,
+  burnoutTest,
+  desertTest,
   workVillainTest,
   decisionTest,
   relationshipTest,
 ];
 
-/** AI 해석형 (회원 전용) */
-export const allAiPsychTests: AiTest[] = [energyTest, emotionTest];
+/** AI 해석형 (회원 전용) — 4지선다(energy·emotion) + 자유텍스트(고민·일기·카톡·성격) */
+export const allAiPsychTests: AiTest[] = [
+  energyTest,
+  emotionTest,
+  aiWorryTest,
+  aiDiaryTest,
+  aiChatTest,
+  aiPersonalityTest,
+];
 
 /** 전체 심리 테스트 (목록·라우트 params용) */
 export const allPsychTests: PsychTest[] = [...allLogicPsychTests, ...allAiPsychTests];
