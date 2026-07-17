@@ -166,20 +166,46 @@ export interface AiQuestion {
   options: string[];
 }
 
-export interface AiTest {
+/** 자유 텍스트 입력 필드 (text 모드) */
+export interface AiTextField {
+  /** 내부 key */
+  key: string;
+  /** 입력 라벨 (프롬프트의 question으로도 쓰임) */
+  label: string;
+  placeholder: string;
+  /** 최소 글자 수 (미달 시 제출 불가) */
+  minLength?: number;
+  /** textarea 줄 수 */
+  rows?: number;
+}
+
+interface AiTestBase {
   engine: "ai";
   slug: string;
   title: string;
   icon: string;
   summary: string;
   intro: string;
-  questions: AiQuestion[];
   /** AI 해석 시 심리 상담사 페르소나 */
   promptPersona: string;
   /** AI 해석 시 결과 구성 가이드 */
   promptGuide: string;
   seoContent: { heading: string; body: string }[];
 }
+
+/** 4지선다형 AI 테스트 (energy·emotion) */
+export interface AiQuizTest extends AiTestBase {
+  questions: AiQuestion[];
+  fields?: never;
+}
+
+/** 자유 텍스트 입력형 AI 테스트 (고민·감정일기·카톡·성격) */
+export interface AiTextTest extends AiTestBase {
+  fields: AiTextField[];
+  questions?: never;
+}
+
+export type AiTest = AiQuizTest | AiTextTest;
 
 /** 전체 심리 테스트 유니온 (로직 + AI) */
 export type PsychTest = LogicPsychTest | AiTest;

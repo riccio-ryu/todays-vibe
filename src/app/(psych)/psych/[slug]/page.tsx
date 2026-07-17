@@ -21,7 +21,9 @@ export async function generateMetadata({
   const { slug } = await params;
   const test = getPsychTestBySlug(slug);
   if (!test) return {};
-  const title = `${test.title} — ${test.questions.length}문항 무료 심리 테스트 | 오늘운`;
+  const isText = test.engine === "ai" && "fields" in test && test.fields;
+  const count = isText ? test.fields.length : "questions" in test ? test.questions?.length ?? 0 : 0;
+  const title = `${test.title} — ${count}${isText ? "입력" : "문항"} 무료 심리 테스트 | 오늘운`;
   return {
     title,
     description: test.summary,

@@ -6,15 +6,23 @@
 
 ---
 
-## ✅ 구현 현황 (2026-07-15)
+## ✅ 구현 현황 (2026-07-17)
 
-`(psych)` 그룹 · `/psych` · `/psych/[slug]` (SSG) · 엔진 `src/lib/psych/engine.ts`(`scoreMbti`·`scoreCategory`) · 데이터 `src/data/psych/*.ts` · `QuizLayout`(mbti·category) + `AiQuizLayout`(ai)
+`(psych)` 그룹 · `/psych` · `/psych/[slug]` (SSG) · 엔진 `src/lib/psych/engine.ts`(`scoreMbti`·`scoreCategory`·`scoreScale`) · 데이터 `src/data/psych/*.ts` · `QuizLayout`(mbti·category·score) + `AiQuizLayout`(ai: quiz·text)
 
-**구현 완료 7종**
-- 🔢 mbti(M-1) · love-style(#24) · animal(#67) · work-villain(#43) · decision · relationship
-- 🤖 energy(#13) · emotion(#14) — 회원 전용, `/api/fortune("psych-test")` 스트리밍
+**구현 완료 19종 (로직 13 + AI 6)**
+- 🔢 mbti(M-1) · love-style(#24) · animal(#67) · color · friend-image(#34) · spending(#50) · travel(#51) · food(#59) · work-villain(#43) · decision · relationship
+- 🔢 stress(#17, PSS score) · burnout(#18, MBI 3축 score) — `score` 엔진(총점 밴드 + 축별 점수)
+- 🤖 energy(#13) · emotion(#14) — 4지선다형, 회원 전용 스트리밍
+- 🤖 ai-worry(A-1) · ai-diary(A-2) · ai-chat(A-3) · ai-personality(A-5) — 자유텍스트 입력형, `/api/fortune("psych-test")` 스트리밍
 
-**메인 낮/밤 스와이프 캐러셀 완료** — `src/components/home/HomeSwipe.tsx` (드래그·도트·배경 낮/밤 전환·패널별 낮/밤 푸터). 홈 `/`는 `FooterGate`로 레이아웃 공유 푸터 숨김.
+**엔진:** 로직 3종 `mbti`(2지선다→16코드) · `category`(4지선다 투표) · `score`(리커트 합산→밴드/축). AI 2모드 `quiz`(4지선다) · `text`(자유텍스트, `AiTextField`). 데이터 파일만 추가하면 목록·상세·사이트맵·스와이프 자동 연동.
+
+**메인 낮/밤 스와이프 캐러셀 완료** — `src/components/home/HomeSwipe.tsx`. 홈 `/`는 `FooterGate`로 공유 푸터 숨김.
+
+**admin 관리 완료** — 노출/순서(`/admin/psych`, `settings/psych`) · 별 크레딧 지급량·항목 cost(`/admin/menus`).
+
+**운영 노출:** 현재 미노출(로컬 dev만). `PSYCH_ENABLED`(`src/lib/psych/config.ts`) — 운영 켜려면 env `NEXT_PUBLIC_PSYCH_ENABLED=true`.
 
 > 구현 시 스펙 조정: 데이터는 `[slug].json` 대신 타입 안전한 `.ts` / AI 결과 저장은 별도 `psych_readings` 대신 기존 `ai_readings`(menuId `psych-test`) 재사용.
 
@@ -203,18 +211,18 @@
 | ✅ | 🔢 | 기본 MBTI (M-1) | 필수 앵커 콘텐츠 |
 | ✅ | 🔢 | 연애 스타일 (24) | 공유율 최고 카테고리 |
 | ✅ | 🔢 | 동물 유형 (67) | 비주얼 공유 최적화 |
-| ⬜ | 🔢 | 색깔 심리 (→ 색채 기반) | 진입 장벽 최저 |
-| ⬜ | 🔢 | 친구들이 보는 나 (34) | 친구 공유 유도 |
-| ⬜ | 🔢 | 스트레스 지수 (17) | 일상 연결, 공감도 높음 |
-| ⬜ | 🔢 | 번아웃 위험도 (18) | 직장인 타겟 |
-| ⬜ | 🔢 | 소비 성향 (50) | 유머형 공유 |
-| ⬜ | 🔢 | 여행 스타일 (51) | 계절별 재방문 유도 |
-| ⬜ | 🔢 | 사막을 건너는 동물 순서 (72) | 클래식 바이럴 |
-| ⬜ | 🔢 | 음식으로 보는 성격 (59) | 공감도 최고 |
-| ⬜ | 🤖 | AI 고민 분석 (A-1) | 차별화 핵심 |
-| ⬜ | 🤖 | AI 감정 일기 분석 (A-2) | 일일 재방문 유도 |
-| ⬜ | 🤖 | AI 카톡 대화 분석 (A-3) | 화제성 최고 |
-| ⬜ | 🤖 | AI 성격 분석 (A-5) | AI 체험 입문 |
+| ✅ | 🔢 | 색깔 심리 (→ 색채 기반) | 진입 장벽 최저 |
+| ✅ | 🔢 | 친구들이 보는 나 (34) | 친구 공유 유도 |
+| ✅ | 🔢 | 스트레스 지수 (17) | score 엔진 · PSS-10 10문항 |
+| ✅ | 🔢 | 번아웃 위험도 (18) | score 엔진 · MBI 3축 15문항 |
+| ✅ | 🔢 | 소비 성향 (50) | 유머형 공유 |
+| ✅ | 🔢 | 여행 스타일 (51) | 계절별 재방문 유도 |
+| ⬜ | 🔢 | 사막을 건너는 동물 순서 (72) | 클래식 바이럴 · ranking 엔진 신규 |
+| ✅ | 🔢 | 음식으로 보는 성격 (59) | 공감도 최고 |
+| ✅ | 🤖 | AI 고민 분석 (A-1) | 자유텍스트 입력형 |
+| ✅ | 🤖 | AI 감정 일기 분석 (A-2) | 자유텍스트 입력형 |
+| ✅ | 🤖 | AI 카톡 대화 분석 (A-3) | 자유텍스트 입력형 |
+| ✅ | 🤖 | AI 성격 분석 (A-5) | 자유텍스트 입력형 |
 
 ---
 
@@ -255,4 +263,4 @@ URL           /psych/[slug]  (예: /psych/mbti, /psych/animal)
 ---
 
 _최초 작성: 2026-06-19 / 전면 개정: 2026-06-29 / 구현 현황 갱신: 2026-07-15_  
-_다음 단계: MVP 15 나머지 8종 채우기 — 🔢 색깔 심리·친구가 보는 나(#34)·스트레스(#17)·번아웃(#18)·소비(#50)·여행(#51)·사막 동물(#72)·음식 성격(#59), 🤖 AI 고민(A-1)·감정 일기(A-2)·카톡(A-3)·성격(A-5). 데이터 파일만 추가하면 자동 연동_
+_구현 현황 갱신: 2026-07-17 — **MVP 15 중 14종 완료** (AI 4종 포함). 유일한 미구현: 🔢 사막 동물 순서(#72, 순위 매기기 `ranking` 엔진 신규 필요). 이후는 섹션1~8 확장(총 97종) — 기존 4엔진(mbti·category·score·ai) 재사용 가능한 항목부터 데이터만 추가_
