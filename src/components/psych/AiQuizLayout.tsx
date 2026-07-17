@@ -9,6 +9,7 @@ import FortuneResult from "@/components/fortune/FortuneResult";
 import LoginRequiredModal from "@/components/common/LoginRequiredModal";
 import BackHomePill from "@/components/common/BackHomePill";
 import FavoriteButton from "@/components/common/FavoriteButton";
+import { useCredits } from "@/components/credits/CreditsProvider";
 import type { AiTest } from "@/data/psych";
 
 const MENU_ID = "psych-test";
@@ -25,6 +26,7 @@ export default function AiQuizLayout({ test }: Props) {
   const { user, loading } = useAuth();
   const { result, isLoading, error, submit, reset } = useFortuneStream();
   const { fortuneStatus } = useFortuneStatus(MENU_ID);
+  const { refresh: refreshCredits } = useCredits();
 
   const [started, setStarted] = useState(false);
   const [step, setStep] = useState(0);
@@ -79,6 +81,7 @@ export default function AiQuizLayout({ test }: Props) {
         answer: q.options[next[i]],
       })),
     });
+    refreshCredits(); // 별 소모 후 헤더 잔량 갱신
   }
 
   return (
@@ -107,13 +110,13 @@ export default function AiQuizLayout({ test }: Props) {
             <div className="flex items-center gap-4 text-sm text-white/70">
               <span>📝 {total}문항</span>
               <span>⚡ 1분 이내</span>
-              <span>✦ AI 해석</span>
+              <span>✦ AI 해석{fortuneStatus?.cost ? ` ⭐${fortuneStatus.cost}` : ""}</span>
             </div>
           </div>
 
           {exhausted ? (
             <div className="w-full py-3 rounded-[5px] bg-white/8 text-[#a8a6b7]/50 text-sm font-medium">
-              오늘 AI 심리 테스트를 이미 이용했어요
+              오늘의 별이 부족해요
             </div>
           ) : (
             <button

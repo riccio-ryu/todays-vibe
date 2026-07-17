@@ -36,20 +36,20 @@
 - [x] https://www.todays-vibe.com/moving-fortune (2026-07-14 완료)
 - [x] https://www.todays-vibe.com/life-fortune
 - [x] https://www.todays-vibe.com/chinese-zodiac
-- [ ] https://www.todays-vibe.com/tojeong
-- [ ] https://www.todays-vibe.com/privacy
-- [ ] https://www.todays-vibe.com/terms
+- [x] https://www.todays-vibe.com/tojeong
+- [x] https://www.todays-vibe.com/privacy
+- [x] https://www.todays-vibe.com/terms
 
 ## 🥉 3순위 — 별자리 12개
 
-- [ ] https://www.todays-vibe.com/zodiac/aries
-- [ ] https://www.todays-vibe.com/zodiac/taurus
-- [ ] https://www.todays-vibe.com/zodiac/gemini
-- [ ] https://www.todays-vibe.com/zodiac/cancer
-- [ ] https://www.todays-vibe.com/zodiac/leo
-- [ ] https://www.todays-vibe.com/zodiac/virgo
-- [ ] https://www.todays-vibe.com/zodiac/libra
-- [ ] https://www.todays-vibe.com/zodiac/scorpio
+- [x] https://www.todays-vibe.com/zodiac/aries
+- [x] https://www.todays-vibe.com/zodiac/taurus
+- [x] https://www.todays-vibe.com/zodiac/gemini
+- [x] https://www.todays-vibe.com/zodiac/cancer
+- [x] https://www.todays-vibe.com/zodiac/leo
+- [x] https://www.todays-vibe.com/zodiac/virgo
+- [x] https://www.todays-vibe.com/zodiac/libra
+- [x] https://www.todays-vibe.com/zodiac/scorpio
 - [ ] https://www.todays-vibe.com/zodiac/sagittarius
 - [ ] https://www.todays-vibe.com/zodiac/capricorn
 - [ ] https://www.todays-vibe.com/zodiac/aquarius

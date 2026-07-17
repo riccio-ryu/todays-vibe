@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { allPsychTests } from "@/data/psych";
 import { BASE_URL } from "@/lib/utils/site";
 import { PSYCH_ENABLED } from "@/lib/psych/config";
+import { getVisiblePsychTests } from "@/lib/psych/settings";
 
 export const metadata: Metadata = {
   title: "심리 테스트 — MBTI·성격·연애 무료 테스트 | 오늘운",
@@ -12,8 +12,9 @@ export const metadata: Metadata = {
   alternates: { canonical: `${BASE_URL}/psych` },
 };
 
-export default function PsychListPage() {
+export default async function PsychListPage() {
   if (!PSYCH_ENABLED) notFound();
+  const tests = await getVisiblePsychTests();
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
       <header className="text-center mb-8">
@@ -24,7 +25,7 @@ export default function PsychListPage() {
       </header>
 
       <div className="grid grid-cols-1 gap-3">
-        {allPsychTests.map((t) => (
+        {tests.map((t) => (
           <Link
             key={t.slug}
             href={`/psych/${t.slug}`}

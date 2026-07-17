@@ -203,10 +203,8 @@ export default function FortuneGrid({ categories, fortunes, favorites = [], onFa
                           const needsAuth = fortune.accessLevel !== "public";
 
                           const status = statusMap[fortune.id];
-                          const isExhausted = !!status?.exhausted;
-                          const hasLimit = status && status.limit !== null && status.limit !== -1;
-                          const used = status?.used ?? 0;
-                          const limit = status?.limit ?? null;
+                          const isExhausted = !!status?.exhausted; // 별 부족
+                          const cost = status?.cost ?? null;
 
                           const isFav = favorites.includes(fortune.id);
 
@@ -224,10 +222,10 @@ export default function FortuneGrid({ categories, fortunes, favorites = [], onFa
                               {isReady && (
                                 <div className={`absolute inset-0 bg-gradient-to-br ${cardColor(fortune.id)} opacity-[0.13] pointer-events-none`} />
                               )}
-                              {/* 오늘 완료 뱃지 */}
+                              {/* 별 부족 뱃지 */}
                               {isExhausted && (
                                 <span className="absolute top-2 right-2 text-[10px] font-medium text-[#a8a6b7]/70 bg-white/8 px-1.5 py-0.5 rounded-[32px]">
-                                  오늘완료
+                                  ⭐ 부족
                                 </span>
                               )}
                               {/* Premium 뱃지 */}
@@ -282,8 +280,10 @@ export default function FortuneGrid({ categories, fortunes, favorites = [], onFa
                                       ? "text-[#a8a6b7]/40"
                                       : "text-[#a8a6b7]/50 group-hover:text-[#9382ff]"
                                   }`}>
-                                    {hasLimit
-                                      ? `${used}/${limit}회 사용하기`
+                                    {cost !== null
+                                      ? cost > 0
+                                        ? `⭐${cost}`
+                                        : "무료"
                                       : "사용하기"}
                                     {!isExhausted && <ArrowRight className="w-3 h-3" />}
                                   </span>

@@ -5,6 +5,11 @@ import { animalTest } from "./animal";
 import { workVillainTest } from "./work-villain";
 import { decisionTest } from "./decision";
 import { relationshipTest } from "./relationship";
+import { colorTest } from "./color";
+import { spendingTest } from "./spending";
+import { travelTest } from "./travel";
+import { friendImageTest } from "./friend-image";
+import { foodTest } from "./food";
 import { energyTest } from "./energy";
 import { emotionTest } from "./emotion";
 
@@ -26,6 +31,11 @@ export const allLogicPsychTests: LogicPsychTest[] = [
   mbtiTest,
   loveStyleTest,
   animalTest,
+  colorTest,
+  spendingTest,
+  travelTest,
+  friendImageTest,
+  foodTest,
   workVillainTest,
   decisionTest,
   relationshipTest,

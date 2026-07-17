@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { allPsychTests } from "@/data/psych";
 import Footer from "@/components/Footer";
+import { getVisiblePsychTests } from "@/lib/psych/settings";
 
 // 낮/해 테마 심리 테스트 홈 패널 (스와이프 캐러셀의 오른쪽 패널).
 // 배경(밝은 낮 그라데이션)은 HomeSwipe의 fixed 배경 레이어가 담당하므로 여기선 투명.
-export default function PsychHomeBody() {
+export default async function PsychHomeBody() {
+  const tests = await getVisiblePsychTests();
   return (
     <div>
       <div className="max-w-4xl mx-auto px-4 py-8 sm:py-6">
@@ -20,7 +21,7 @@ export default function PsychHomeBody() {
 
         {/* 테스트 카드 */}
         <div className="grid sm:grid-cols-2 gap-3">
-          {allPsychTests.map((t) => (
+          {tests.map((t) => (
             <Link
               key={t.slug}
               href={`/psych/${t.slug}`}

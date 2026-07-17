@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
+import { useCredits } from "@/components/credits/CreditsProvider";
 import { useBirthInfo } from "@/lib/hooks/useBirthInfo";
 import { type FortuneType, type GeneralFortuneInput } from "@/types/fortune";
 import FortuneResult from "./FortuneResult";
@@ -28,6 +29,7 @@ export default function GeneralFortuneForm({ config }: Props) {
   const { user } = useAuth();
   const { result, isLoading, error, submit, reset } = useFortuneStream();
   const { fortuneStatus } = useFortuneStatus(config.type);
+  const { refresh: refreshCredits } = useCredits();
   const { savedInfo, saving, saveStatus, saveBirthInfo } = useBirthInfo();
 
   const [year, setYear] = useState("");
@@ -82,6 +84,7 @@ export default function GeneralFortuneForm({ config }: Props) {
     };
 
     await submit(config.type, input);
+    refreshCredits(); // 별 소모 후 헤더 잔량 갱신
   }
 
   async function handleToggleSave() {
@@ -276,8 +279,8 @@ export default function GeneralFortuneForm({ config }: Props) {
           }`}
         >
           {fortuneStatus?.exhausted
-            ? `오늘 ${config.title}을 이미 이용했어요`
-            : `${config.icon} ${config.title} 보기`}
+            ? "오늘의 별이 부족해요"
+            : `${config.icon} ${config.title} 보기${fortuneStatus?.cost ? ` (⭐${fortuneStatus.cost})` : ""}`}
         </button>
       </form>
     </div>

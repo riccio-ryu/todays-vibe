@@ -298,13 +298,11 @@ export default function SangajiPage() {
                   style={{ background: "linear-gradient(to right, #7c2d0a, #c05008)" }}
                 >
                   심층 풀이 보기
-                  {fortuneStatus &&
-                    fortuneStatus.limit !== null &&
-                    fortuneStatus.limit !== -1 && (
-                      <span className="ml-2 text-amber-300/60 text-xs">
-                        ({fortuneStatus.used}/{fortuneStatus.limit})
-                      </span>
-                    )}
+                  {fortuneStatus && fortuneStatus.cost > 0 && (
+                    <span className="ml-2 text-amber-300/60 text-xs">
+                      (⭐{fortuneStatus.cost})
+                    </span>
+                  )}
                 </motion.button>
               )}
             </div>
