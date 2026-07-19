@@ -51,17 +51,26 @@ export default function Header() {
           <div className="w-7 h-7 rounded-full bg-white/8 animate-pulse" />
         ) : user ? (
           <div ref={menuRef} className="relative flex items-center gap-2">
-            {/* 오늘의 별 잔량 */}
-            <Link
-              href="/mypage"
-              title="오늘의 별 (매일 자정 충전)"
-              className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/8 border border-white/10 text-[#f4f0ff] text-xs font-medium hover:bg-white/12 transition-colors"
-            >
-              <span className="text-[#ffd968]">⭐</span>
-              <span className="tabular-nums">
-                {grant === -1 ? "∞" : creditsLoading ? "…" : remaining ?? 0}
-              </span>
-            </Link>
+            {/* 오늘의 별 잔량 (0이면 강조) */}
+            {(() => {
+              const empty = grant !== -1 && !creditsLoading && (remaining ?? 0) <= 0;
+              return (
+                <Link
+                  href="/mypage"
+                  title="오늘의 별 (매일 자정 충전)"
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded-full border text-xs font-medium transition-colors ${
+                    empty
+                      ? "bg-amber-500/15 border-amber-400/30 text-amber-200 hover:bg-amber-500/25"
+                      : "bg-white/8 border-white/10 text-[#f4f0ff] hover:bg-white/12"
+                  }`}
+                >
+                  <span className={empty ? "opacity-60" : "text-[#ffd968]"}>⭐</span>
+                  <span className="tabular-nums">
+                    {grant === -1 ? "∞" : creditsLoading ? "…" : remaining ?? 0}
+                  </span>
+                </Link>
+              );
+            })()}
             <PWAInstallButton />
             {/* 아바타 버튼 */}
             <button

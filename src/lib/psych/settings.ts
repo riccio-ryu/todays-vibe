@@ -8,6 +8,11 @@ import { allPsychTests, type PsychTest } from "@/data/psych";
 export interface PsychTestConfig {
   enabled: boolean;
   order: number;
+  /** 소모 별 override (미설정 시 코드 기본 — AI 심테만 유효, 로직 심테는 API 미호출로 무료) */
+  cost?: number;
+  /** AI 심테 프롬프트 override (미설정 시 코드 카탈로그 값) */
+  promptPersona?: string;
+  promptGuide?: string;
 }
 
 export interface PsychSettings {
@@ -41,4 +46,27 @@ export async function getVisiblePsychTests(): Promise<PsychTest[]> {
 export async function isPsychTestEnabled(slug: string): Promise<boolean> {
   const settings = await getPsychSettings();
   return settings.tests[slug]?.enabled !== false;
+}
+
+/** AI 심테 기본 소모 별 (override 없을 때). 운세 AI와 동일하게 1. */
+export const DEFAULT_PSYCH_COST = 1;
+
+/**
+ * 심테 소모 별. settings override 우선, 없으면 AI 심테 기본 1.
+ * (로직 심테는 API를 안 타므로 여기 값과 무관하게 무료)
+ */
+export async function getPsychCost(slug: string): Promise<number> {
+  const settings = await getPsychSettings();
+  return settings.tests[slug]?.cost ?? DEFAULT_PSYCH_COST;
+}
+
+/** AI 심테 프롬프트 override (settings 우선). 없으면 null → 호출부에서 코드 카탈로그 폴백 */
+export async function getPsychPromptOverride(
+  slug: string
+): Promise<{ promptPersona?: string; promptGuide?: string } | null> {
+  const settings = await getPsychSettings();
+  const cfg = settings.tests[slug];
+  if (!cfg) return null;
+  if (!cfg.promptPersona && !cfg.promptGuide) return null;
+  return { promptPersona: cfg.promptPersona, promptGuide: cfg.promptGuide };
 }

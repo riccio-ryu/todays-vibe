@@ -64,7 +64,7 @@ export default function TodayFortuneCard({
 
       {exhausted && (
         <p className="text-center text-white/30 text-xs">
-          오늘 해석을 모두 이용했어요 · 내일 자정에 초기화됩니다
+          ⭐ 오늘의 별이 부족해요 · 내일 자정에 충전됩니다
         </p>
       )}
     </div>

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import type { FortuneStatus } from "@/types/fortune";
+import { useCredits } from "@/components/credits/CreditsProvider";
 
 interface Props {
   subtitle: string;
@@ -20,6 +21,7 @@ export default function TarotInputPhase({
   fortuneStatus,
   handleStartShuffle,
 }: Props) {
+  const { openInsufficient } = useCredits();
   return (
     <motion.div
       key="input"
@@ -42,15 +44,14 @@ export default function TarotInputPhase({
         />
       </div>
       <button
-        onClick={!fortuneStatus?.exhausted ? handleStartShuffle : undefined}
-        disabled={fortuneStatus?.exhausted === true}
+        onClick={fortuneStatus?.exhausted ? openInsufficient : handleStartShuffle}
         className={`px-8 py-3 rounded-[5px] font-medium text-sm transition-colors ${
           fortuneStatus?.exhausted
-            ? "bg-white/8 text-[#a8a6b7]/40 cursor-not-allowed"
+            ? "bg-amber-500/15 border border-amber-400/30 text-amber-200 hover:bg-amber-500/25"
             : "bg-[#5046e4] hover:bg-[#3d36c4] text-[#f4f0ff]"
         }`}
       >
-        {fortuneStatus?.exhausted ? "오늘 타로를 이미 이용했어요" : "🃏 카드 섞기"}
+        {fortuneStatus?.exhausted ? "⭐ 별이 부족해요 · 자세히" : "🃏 카드 섞기"}
       </button>
     </motion.div>
   );

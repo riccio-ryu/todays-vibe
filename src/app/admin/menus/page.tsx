@@ -23,7 +23,7 @@ import {
   saveCreditGrants,
 } from "./actions";
 import type { HeroCardSettings } from "@/types/hero";
-import { DEFAULT_GRANTS } from "@/lib/credits/config";
+import { DEFAULT_GRANTS, getMenuCost } from "@/lib/credits/config";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -71,6 +71,7 @@ const COL_DEFS: ColDef[] = [
   { key: "ready",       label: "노출",     sortKey: "ready",       defaultVisible: true },
   { key: "isAI",        label: "AI",       sortKey: "isAI",        defaultVisible: true },
   { key: "accessLevel", label: "회원등급", sortKey: "accessLevel", defaultVisible: true },
+  { key: "cost",        label: "⭐크레딧",                         defaultVisible: true },
   { key: "difficulty",  label: "난이도",   sortKey: "difficulty",  defaultVisible: false },
   { key: "tags",        label: "태그",                             defaultVisible: false },
   { key: "path",        label: "경로",                             defaultVisible: false },
@@ -512,7 +513,7 @@ function FortuneModal({
               onChange={(e) =>
                 set("cost", e.target.value === "" ? undefined : Math.max(0, parseInt(e.target.value) || 0))
               }
-              placeholder="비우면 기본값 (프리미엄 3 / AI 2 / 일반 1) · 0 = 무료"
+              placeholder="비우면 기본값 (프리미엄 2 / 그 외 1) · 0 = 무료"
               className={CLS_INPUT}
             />
           </Field>
@@ -1626,6 +1627,18 @@ export default function AdminMenusPage() {
                       <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${ACCESS_COLOR[row.accessLevel]}`}>
                         {ACCESS_LABEL[row.accessLevel]}
                       </span>
+                    </td>
+                  )}
+                  {visibleCols.has("cost") && (
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      {getMenuCost(row) === 0 ? (
+                        <span className="text-[10px] text-white/40">무료</span>
+                      ) : (
+                        <span className="text-xs text-amber-300 tabular-nums">
+                          ⭐{getMenuCost(row)}
+                          {row.cost === undefined && <span className="text-white/30 text-[10px] ml-0.5">(기본)</span>}
+                        </span>
+                      )}
                     </td>
                   )}
                   {visibleCols.has("difficulty") && (

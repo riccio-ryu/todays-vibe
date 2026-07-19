@@ -42,7 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshAuth = useCallback(async () => {
     try {
-      const r = await fetch("/api/auth/me");
+      const r = await fetch("/api/auth/me", { cache: "no-store" });
       const d = await r.json();
       if (d.loggedIn) {
         const uid: string = d.uid ?? "";

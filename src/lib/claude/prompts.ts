@@ -74,11 +74,16 @@ export function buildPrompt(type: FortuneType, input: FortuneInput): string {
 
 // ─── 심리 테스트 ──────────────────────────────────────────────────────────────
 
-function buildPsychTestPrompt(input: PsychTestInput): string {
+export function buildPsychTestPrompt(
+  input: PsychTestInput,
+  override?: { promptPersona?: string; promptGuide?: string } | null
+): string {
   const test = getPsychTestBySlug(input.testSlug);
   const aiTest = test?.engine === "ai" ? test : undefined;
-  const persona = aiTest?.promptPersona ?? "당신은 따뜻하고 통찰력 있는 심리 상담사입니다.";
-  const guide = aiTest?.promptGuide ?? "응답을 종합해 사용자의 심리 상태를 공감 어린 톤으로 풀어주세요.";
+  const persona =
+    override?.promptPersona ?? aiTest?.promptPersona ?? "당신은 따뜻하고 통찰력 있는 심리 상담사입니다.";
+  const guide =
+    override?.promptGuide ?? aiTest?.promptGuide ?? "응답을 종합해 사용자의 심리 상태를 공감 어린 톤으로 풀어주세요.";
 
   const answerLines = input.answers
     .map((a, i) => `${i + 1}. ${a.question}\n   → 선택: ${a.answer}`)

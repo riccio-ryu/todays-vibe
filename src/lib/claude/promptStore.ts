@@ -1,6 +1,7 @@
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import { PROMPT_META, interpolate, prepareVars } from "./promptTemplates";
-import { buildPrompt } from "./prompts";
+import { buildPrompt, buildPsychTestPrompt } from "./prompts";
+import { getPsychPromptOverride } from "@/lib/psych/settings";
 import type { FortuneType, FortuneInput } from "@/types/fortune";
 
 const COLLECTION = "ai_prompts";
@@ -74,6 +75,15 @@ export async function seedAllTemplates(): Promise<void> {
 // ─── 프롬프트 빌드 (DB 우선, 폴백은 기존 코드) ───────────────────────────────
 
 export async function buildPromptFromDB(type: FortuneType, input: FortuneInput): Promise<string> {
+  // 심테는 ai_prompts가 아니라 settings/psych의 프롬프트 override를 우선 반영
+  if (type === "psych-test") {
+    const psychInput = input as { testSlug?: string };
+    const override = psychInput.testSlug
+      ? await getPsychPromptOverride(psychInput.testSlug)
+      : null;
+    return buildPsychTestPrompt(input as never, override);
+  }
+
   const stored = await getStoredTemplate(type);
   if (stored) {
     const vars = prepareVars(type, input);

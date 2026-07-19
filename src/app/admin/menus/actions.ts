@@ -15,11 +15,14 @@ function db() {
 export async function getMenus(): Promise<MenuItem[]> {
   try {
     const snap = await db().collection(COL).orderBy("order").get();
-    return snap.docs.map((d) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { createdAt, updatedAt, ...data } = d.data();
-      return { id: d.id, ...data } as MenuItem;
-    });
+    return snap.docs
+      // 심리 테스트는 운세 메뉴가 아니므로 제외 (관리는 /admin/psych) — Firestore 잔재 방어
+      .filter((d) => d.id !== "psych-test")
+      .map((d) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { createdAt, updatedAt, ...data } = d.data();
+        return { id: d.id, ...data } as MenuItem;
+      });
   } catch {
     return [];
   }

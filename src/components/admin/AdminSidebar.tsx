@@ -12,6 +12,7 @@ import {
   BarChart2,
   Bot,
   FileCode2,
+  Brain,
   ChevronLeft,
   ChevronRight,
   ArrowLeft,
@@ -19,15 +20,32 @@ import {
   X,
 } from "lucide-react";
 
-const NAV = [
-  { href: "/admin",           label: "대시보드",    icon: LayoutDashboard },
-  { href: "/admin/batch",     label: "운세 배치",   icon: Zap },
-  { href: "/admin/users",     label: "회원 관리",   icon: Users },
-  { href: "/admin/menus",     label: "메뉴 관리",   icon: LayoutList },
-  { href: "/admin/readings",  label: "운세 기록",   icon: BookOpen },
-  { href: "/admin/stats",     label: "사용 통계",   icon: BarChart2 },
-  { href: "/admin/ai-usage",  label: "AI 사용량",   icon: Bot },
-  { href: "/admin/prompts",   label: "AI 프롬프트", icon: FileCode2 },
+// 도메인별 그룹: 공통 / 운세 / 심리
+const NAV_GROUPS = [
+  {
+    label: "공통",
+    items: [
+      { href: "/admin",          label: "대시보드",   icon: LayoutDashboard },
+      { href: "/admin/users",    label: "회원 관리",  icon: Users },
+      { href: "/admin/ai-usage", label: "AI 사용량",  icon: Bot },
+    ],
+  },
+  {
+    label: "운세",
+    items: [
+      { href: "/admin/batch",    label: "운세 배치",   icon: Zap },
+      { href: "/admin/menus",    label: "메뉴 관리",   icon: LayoutList },
+      { href: "/admin/readings", label: "운세 기록",   icon: BookOpen },
+      { href: "/admin/stats",    label: "사용 통계",   icon: BarChart2 },
+      { href: "/admin/prompts",  label: "AI 프롬프트", icon: FileCode2 },
+    ],
+  },
+  {
+    label: "심리",
+    items: [
+      { href: "/admin/psych",    label: "메뉴 관리", icon: Brain },
+    ],
+  },
 ];
 
 export default function AdminSidebar() {
@@ -56,26 +74,38 @@ export default function AdminSidebar() {
         <h1 className="text-white font-bold text-base">{collapsed ? "A" : "관리자"}</h1>
       </div>
 
-      {/* 네비게이션 */}
-      <nav className="flex-1 py-3 px-2 space-y-0.5">
-        {NAV.map((item) => {
-          const isActive = pathname === item.href;
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onNav}
-              title={collapsed ? item.label : undefined}
-              className={`flex items-center rounded-[5px] transition-all duration-150 text-sm
-                ${collapsed ? "justify-center px-0 py-2.5" : "gap-3 px-3 py-2.5"}
-                ${isActive ? "bg-[#5046e4]/25 text-[#9382ff]" : "text-[#a8a6b7]/60 hover:text-[#f4f0ff] hover:bg-white/8"}`}
-            >
-              <Icon className="w-4 h-4 shrink-0" />
-              {!collapsed && <span>{item.label}</span>}
-            </Link>
-          );
-        })}
+      {/* 네비게이션 (공통 / 운세 / 심리 그룹) */}
+      <nav className="flex-1 py-3 px-2 space-y-3 overflow-y-auto">
+        {NAV_GROUPS.map((group) => (
+          <div key={group.label} className="space-y-0.5">
+            {/* 그룹 헤더 (collapsed면 구분선만) */}
+            {collapsed ? (
+              <div className="mx-2 my-1.5 border-t border-white/10" />
+            ) : (
+              <p className="px-3 pt-1 pb-1 text-[10px] font-semibold uppercase tracking-wider text-[#54525f]">
+                {group.label}
+              </p>
+            )}
+            {group.items.map((item) => {
+              const isActive = pathname === item.href;
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={onNav}
+                  title={collapsed ? item.label : undefined}
+                  className={`flex items-center rounded-[5px] transition-all duration-150 text-sm
+                    ${collapsed ? "justify-center px-0 py-2.5" : "gap-3 px-3 py-2.5"}
+                    ${isActive ? "bg-[#5046e4]/25 text-[#9382ff]" : "text-[#a8a6b7]/60 hover:text-[#f4f0ff] hover:bg-white/8"}`}
+                >
+                  <Icon className="w-4 h-4 shrink-0" />
+                  {!collapsed && <span>{item.label}</span>}
+                </Link>
+              );
+            })}
+          </div>
+        ))}
       </nav>
 
       {/* 접기 토글 (데스크탑만) */}

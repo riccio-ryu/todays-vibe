@@ -29,12 +29,6 @@
       "name": "관상/신체",
       "icon": "👤",
       "count": 3
-    },
-    {
-      "id": "psych",
-      "name": "심리 테스트",
-      "icon": "🧠",
-      "count": 1
     }
   ],
   "fortunes": [
@@ -596,30 +590,6 @@
         "전통"
       ],
       "color": "from-amber-500 to-yellow-600"
-    },
-    {
-      "id": "psych-test",
-      "nameKo": "심리 테스트",
-      "name": "심리 테스트",
-      "category": "psych",
-      "icon": "🧠",
-      "description": "MBTI·연애·동물·직장 유형까지 — 4지선다로 즉시 확인하는 심리 테스트",
-      "path": "/psych",
-      "difficulty": "easy",
-      "isAI": true,
-      "ready": true,
-      "accessLevel": "member",
-      "usageLimits": {
-        "public": 0,
-        "member": 5,
-        "premium": -1,
-        "admin": -1
-      },
-      "tags": [
-        "신규",
-        "심리"
-      ],
-      "color": "from-fuchsia-500 to-purple-600"
     }
   ]
 }
