@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
+import { useCredits } from "@/components/credits/CreditsProvider";
 import { type FortuneType, type LoveCompatibilityInput } from "@/types/fortune";
 import FortuneResult from "./FortuneResult";
 import TodayFortuneCard from "@/components/common/TodayFortuneCard";
@@ -105,6 +106,7 @@ function BirthInputGroup({
 export default function CompatibilityBirthForm({ config }: Props) {
   const { result, isLoading, error, submit, reset } = useFortuneStream();
   const { fortuneStatus } = useFortuneStatus(config.type);
+  const { openInsufficient } = useCredits();
 
   const [p1Year, setP1Year] = useState("");
   const [p1Month, setP1Month] = useState("");
@@ -210,19 +212,22 @@ export default function CompatibilityBirthForm({ config }: Props) {
 
         {error && <p className="text-red-400 text-sm text-center">{error}</p>}
 
-        <button
-          type="submit"
-          disabled={fortuneStatus?.exhausted === true}
-          className={`w-full py-3 rounded-xl font-bold text-sm transition-opacity ${
-            fortuneStatus?.exhausted
-              ? "bg-white/10 text-white/30 cursor-not-allowed"
-              : `bg-gradient-to-r ${config.gradient} text-white hover:opacity-90`
-          }`}
-        >
-          {fortuneStatus?.exhausted
-            ? `오늘 ${config.title}을 이미 이용했어요`
-            : `${config.icon} ${config.title} 보기`}
-        </button>
+        {fortuneStatus?.exhausted ? (
+          <button
+            type="button"
+            onClick={openInsufficient}
+            className="w-full py-3 rounded-xl font-bold text-sm bg-amber-500/15 border border-amber-400/30 text-amber-200 hover:bg-amber-500/25 transition-colors"
+          >
+            ⭐ 오늘의 별이 부족해요 · 자세히
+          </button>
+        ) : (
+          <button
+            type="submit"
+            className={`w-full py-3 rounded-xl font-bold text-sm transition-opacity bg-gradient-to-r ${config.gradient} text-white hover:opacity-90`}
+          >
+            {config.icon} {config.title} 보기
+          </button>
+        )}
       </form>
 
     </div>

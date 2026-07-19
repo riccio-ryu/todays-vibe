@@ -19,7 +19,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const usage = await checkUsage(request, type);
+    // psych-test는 심테 slug별 cost 적용 위해 subKey 전달
+    const subKey =
+      type === "psych-test"
+        ? (input as { testSlug?: string })?.testSlug
+        : undefined;
+    const usage = await checkUsage(request, type, subKey);
     if (!usage.allowed) return denyResponse(usage.reason);
 
     const prompt = await buildPromptFromDB(type, input);

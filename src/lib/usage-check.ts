@@ -5,6 +5,7 @@ import type { AccessLevel } from "@/types/menu";
 import type { NextRequest } from "next/server";
 import { todayKST } from "@/lib/utils/date";
 import { getMenuCost, getGrants, creditDocId } from "@/lib/credits/config";
+import { getPsychCost } from "@/lib/psych/settings";
 
 const ROLE_RANK: Record<AccessLevel, number> = {
   public: 0,
@@ -52,7 +53,9 @@ async function bumpDailyUsage(userId: string | null, menuId: string) {
  */
 export async function checkUsage(
   request: NextRequest,
-  menuId: string
+  menuId: string,
+  /** psych-test처럼 한 menuId 아래 항목별 cost가 다를 때의 하위 키(심테 slug) */
+  subKey?: string
 ): Promise<CheckResult> {
   const token = request.cookies.get(SESSION_COOKIE)?.value;
   const payload = token ? await verifySessionToken(token) : null;
@@ -63,8 +66,9 @@ export async function checkUsage(
   const menuSnap = await db.collection("menus").doc(menuId).get();
   const menu = menuSnap.data();
 
-  // accessLevel 체크
-  const requiredLevel: AccessLevel = (menu?.accessLevel as AccessLevel) ?? "public";
+  // accessLevel 체크 — psych-test(AI 심테)는 운세 menus와 분리되어 회원 전용 고정
+  const requiredLevel: AccessLevel =
+    menuId === "psych-test" ? "member" : ((menu?.accessLevel as AccessLevel) ?? "public");
   if (ROLE_RANK[role] < ROLE_RANK[requiredLevel]) {
     return {
       allowed: false,
@@ -72,7 +76,9 @@ export async function checkUsage(
     };
   }
 
-  const cost = getMenuCost(menu);
+  // psych-test는 심테 slug별 cost override 우선 (없으면 기본), 그 외는 메뉴 cost
+  const cost =
+    menuId === "psych-test" && subKey ? await getPsychCost(subKey) : getMenuCost(menu);
   const grants = await getGrants(db);
   const grant = grants[role] ?? 0;
 

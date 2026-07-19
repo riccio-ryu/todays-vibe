@@ -3,6 +3,7 @@ import { verifySessionToken, SESSION_COOKIE } from "@/lib/session";
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import { todayKST } from "@/lib/utils/date";
 import { getMenuCost, getGrants, creditDocId } from "@/lib/credits/config";
+import { getPsychCost } from "@/lib/psych/settings";
 import type { AccessLevel } from "@/types/menu";
 
 function planToRole(payload: { isAdmin: boolean; plan: string }): AccessLevel {
@@ -18,7 +19,9 @@ export async function GET(req: NextRequest) {
   const session = await verifySessionToken(cookie);
   if (!session) return Response.json({ error: "로그인이 필요합니다." }, { status: 401 });
 
-  const menuId = new URL(req.url).searchParams.get("menuId");
+  const url = new URL(req.url);
+  const menuId = url.searchParams.get("menuId");
+  const slug = url.searchParams.get("slug"); // psych-test 심테 slug (선택)
   if (!menuId) return Response.json({ error: "menuId가 필요합니다." }, { status: 400 });
 
   try {
@@ -34,7 +37,9 @@ export async function GET(req: NextRequest) {
       db.collection("daily_usage").doc(`${today}_${session.uid}_${menuId}`).get(),
     ]);
 
-    const cost = getMenuCost(menuSnap.data());
+    // psych-test는 심테 slug별 cost override 우선
+    const cost =
+      menuId === "psych-test" && slug ? await getPsychCost(slug) : getMenuCost(menuSnap.data());
     const grant = grants[role] ?? 0;
     const spent: number = creditSnap.exists ? (creditSnap.data()?.spent ?? 0) : 0;
     const remaining: number | null = grant === -1 ? null : Math.max(0, grant - spent);

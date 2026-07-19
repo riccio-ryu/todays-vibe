@@ -33,8 +33,8 @@ export default function AiQuizLayout({ test }: Props) {
 function AiQuizInner({ test }: { test: Extract<AiTest, { questions: unknown[] }> }) {
   const { user, loading } = useAuth();
   const { result, isLoading, error, submit, reset } = useFortuneStream();
-  const { fortuneStatus } = useFortuneStatus(MENU_ID);
-  const { refresh: refreshCredits } = useCredits();
+  const { fortuneStatus } = useFortuneStatus(MENU_ID, test.slug);
+  const { refresh: refreshCredits, openInsufficient } = useCredits();
 
   const [started, setStarted] = useState(false);
   const [step, setStep] = useState(0);
@@ -123,9 +123,12 @@ function AiQuizInner({ test }: { test: Extract<AiTest, { questions: unknown[] }>
           </div>
 
           {exhausted ? (
-            <div className="w-full py-3 rounded-[5px] bg-white/8 text-[#a8a6b7]/50 text-sm font-medium">
-              오늘의 별이 부족해요
-            </div>
+            <button
+              onClick={openInsufficient}
+              className="w-full py-3 rounded-[5px] bg-amber-500/15 border border-amber-400/30 text-amber-200 text-sm font-medium hover:bg-amber-500/25 transition-colors"
+            >
+              ⭐ 오늘의 별이 부족해요 · 자세히
+            </button>
           ) : (
             <button
               onClick={handleStart}
@@ -191,8 +194,8 @@ function AiQuizInner({ test }: { test: Extract<AiTest, { questions: unknown[] }>
 function AiTextLayout({ test }: { test: Extract<AiTest, { fields: unknown[] }> }) {
   const { user, loading } = useAuth();
   const { result, isLoading, error, submit, reset } = useFortuneStream();
-  const { fortuneStatus } = useFortuneStatus(MENU_ID);
-  const { refresh: refreshCredits } = useCredits();
+  const { fortuneStatus } = useFortuneStatus(MENU_ID, test.slug);
+  const { refresh: refreshCredits, openInsufficient } = useCredits();
 
   const [values, setValues] = useState<Record<string, string>>({});
   const [showLogin, setShowLogin] = useState(false);
@@ -273,9 +276,12 @@ function AiTextLayout({ test }: { test: Extract<AiTest, { fields: unknown[] }> }
         })}
 
         {exhausted ? (
-          <div className="w-full py-3 rounded-[5px] bg-white/8 text-[#a8a6b7]/50 text-sm font-medium text-center">
-            오늘의 별이 부족해요
-          </div>
+          <button
+            onClick={openInsufficient}
+            className="w-full py-3 rounded-[5px] bg-amber-500/15 border border-amber-400/30 text-amber-200 text-sm font-medium hover:bg-amber-500/25 transition-colors"
+          >
+            ⭐ 오늘의 별이 부족해요 · 자세히
+          </button>
         ) : (
           <button
             onClick={handleSubmit}

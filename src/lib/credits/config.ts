@@ -22,14 +22,13 @@ interface MenuCostFields {
 }
 
 /**
- * 항목 1회 소모 별.
- * menu.cost가 있으면 사용, 없으면 기본값: 프리미엄 3 / AI 2 / 일반 1.
- * (로직 심테는 API를 타지 않으므로 애초에 checkUsage를 거치지 않음 = 무료)
+ * 항목 1회 소모 별 (0~2 3단계).
+ * menu.cost가 있으면 그 값 사용, 없으면 기본값: 프리미엄 2 / 그 외 1.
+ * 무료(0)로 하려면 admin에서 cost=0 명시. (로직 심테는 API를 안 타므로 애초에 checkUsage 미거침 = 무료)
  */
 export function getMenuCost(menu: MenuCostFields | undefined): number {
   if (menu?.cost !== undefined && menu.cost !== null) return menu.cost;
-  if (menu?.accessLevel === "premium") return 3;
-  if (menu?.isAI) return 2;
+  if (menu?.accessLevel === "premium") return 2;
   return 1;
 }
 

@@ -58,13 +58,13 @@
 ## 🥉 3순위 — 띠 12개
 
 - [x] https://www.todays-vibe.com/chinese-zodiac/rat
-- [ ] https://www.todays-vibe.com/chinese-zodiac/ox
-- [ ] https://www.todays-vibe.com/chinese-zodiac/tiger
-- [ ] https://www.todays-vibe.com/chinese-zodiac/rabbit
-- [ ] https://www.todays-vibe.com/chinese-zodiac/dragon
-- [ ] https://www.todays-vibe.com/chinese-zodiac/snake
-- [ ] https://www.todays-vibe.com/chinese-zodiac/horse
-- [ ] https://www.todays-vibe.com/chinese-zodiac/goat
+- [x] https://www.todays-vibe.com/chinese-zodiac/ox
+- [x] https://www.todays-vibe.com/chinese-zodiac/tiger
+- [x] https://www.todays-vibe.com/chinese-zodiac/rabbit
+- [x] https://www.todays-vibe.com/chinese-zodiac/dragon
+- [x] https://www.todays-vibe.com/chinese-zodiac/snake
+- [x] https://www.todays-vibe.com/chinese-zodiac/horse
+- [x] https://www.todays-vibe.com/chinese-zodiac/goat
 - [ ] https://www.todays-vibe.com/chinese-zodiac/monkey
 - [ ] https://www.todays-vibe.com/chinese-zodiac/rooster
 - [ ] https://www.todays-vibe.com/chinese-zodiac/dog

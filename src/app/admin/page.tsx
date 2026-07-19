@@ -100,15 +100,30 @@ function trend(today: number, yesterday: number) {
 
 // ─── 빠른 이동 ────────────────────────────────────────────────────────────────
 
-const NAV_CARDS = [
-  { href: "/admin/users",    icon: "👥", label: "회원 관리",     color: "border-blue-400/20 hover:border-blue-400/50" },
-  { href: "/admin/menus",    icon: "📋", label: "메뉴 관리",     color: "border-purple-400/20 hover:border-purple-400/50" },
-  { href: "/admin/stats",    icon: "📈", label: "사용 통계",     color: "border-green-400/20 hover:border-green-400/50" },
-  { href: "/admin/ai-usage", icon: "🤖", label: "AI 사용량",     color: "border-amber-400/20 hover:border-amber-400/50" },
-  { href: "/admin/readings", icon: "📖", label: "운세 기록",     color: "border-indigo-400/20 hover:border-indigo-400/50" },
-  { href: "/admin/batch",    icon: "⚡", label: "배치 관리",     color: "border-teal-400/20 hover:border-teal-400/50" },
-  { href: "/admin/prompts",  icon: "🔍", label: "AI 프롬프트",   color: "border-violet-400/20 hover:border-violet-400/50" },
-  { href: "/admin/psych",    icon: "🧠", label: "심리 테스트",   color: "border-fuchsia-400/20 hover:border-fuchsia-400/50" },
+const NAV_GROUPS = [
+  {
+    label: "공통",
+    cards: [
+      { href: "/admin/users",    icon: "👥", label: "회원 관리",   color: "border-blue-400/20 hover:border-blue-400/50" },
+      { href: "/admin/ai-usage", icon: "🤖", label: "AI 사용량",   color: "border-amber-400/20 hover:border-amber-400/50" },
+    ],
+  },
+  {
+    label: "운세",
+    cards: [
+      { href: "/admin/batch",    icon: "⚡", label: "운세 배치",   color: "border-teal-400/20 hover:border-teal-400/50" },
+      { href: "/admin/menus",    icon: "📋", label: "메뉴 관리",   color: "border-purple-400/20 hover:border-purple-400/50" },
+      { href: "/admin/readings", icon: "📖", label: "운세 기록",   color: "border-indigo-400/20 hover:border-indigo-400/50" },
+      { href: "/admin/stats",    icon: "📈", label: "사용 통계",   color: "border-green-400/20 hover:border-green-400/50" },
+      { href: "/admin/prompts",  icon: "🔍", label: "AI 프롬프트", color: "border-violet-400/20 hover:border-violet-400/50" },
+    ],
+  },
+  {
+    label: "심리",
+    cards: [
+      { href: "/admin/psych",    icon: "🧠", label: "메뉴 관리", color: "border-fuchsia-400/20 hover:border-fuchsia-400/50" },
+    ],
+  },
 ];
 
 // ─── 컴포넌트 ─────────────────────────────────────────────────────────────────
@@ -248,19 +263,23 @@ export default async function AdminDashboard() {
         )}
       </div>
 
-      {/* ── 빠른 이동 ──────────────────────────────────────────── */}
-      <div>
-        <h3 className="text-white/40 text-xs font-medium mb-3">빠른 이동</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-2 sm:gap-3">
-          {NAV_CARDS.map((card) => (
-            <Link key={card.href} href={card.href}>
-              <div className={`rounded-xl bg-white/5 border ${card.color} p-3 sm:p-4 transition-all duration-150 flex flex-col items-center gap-1.5`}>
-                <span className="text-xl sm:text-2xl">{card.icon}</span>
-                <span className="text-white/60 text-xs font-medium text-center leading-tight">{card.label}</span>
-              </div>
-            </Link>
-          ))}
-        </div>
+      {/* ── 빠른 이동 (공통 / 운세 / 심리) ──────────────────────── */}
+      <div className="space-y-5">
+        {NAV_GROUPS.map((group) => (
+          <div key={group.label}>
+            <h3 className="text-white/40 text-xs font-medium mb-3">{group.label}</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-2 sm:gap-3">
+              {group.cards.map((card) => (
+                <Link key={card.href} href={card.href}>
+                  <div className={`rounded-xl bg-white/5 border ${card.color} p-3 sm:p-4 transition-all duration-150 flex flex-col items-center gap-1.5`}>
+                    <span className="text-xl sm:text-2xl">{card.icon}</span>
+                    <span className="text-white/60 text-xs font-medium text-center leading-tight">{card.label}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
 
     </div>

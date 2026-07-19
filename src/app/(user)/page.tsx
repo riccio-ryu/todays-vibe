@@ -74,10 +74,8 @@ export default async function Home() {
           popular: (f as any).popular as boolean | undefined,
         }));
 
-  // 운영에서는 심리 테스트 카드 숨김 (PSYCH_ENABLED — 로컬 dev만 노출)
-  const fortunes = PSYCH_ENABLED
-    ? fortunesAll
-    : fortunesAll.filter((f) => f.id !== "psych-test");
+  // 운세 그리드에선 심리 테스트 제외 (심테는 낮/밤 스와이프의 낮 패널이 담당)
+  const fortunes = fortunesAll.filter((f) => f.id !== "psych-test");
 
   // 실시간 순위 → MenuItem 조인. 데이터 없으면 fortunes.json popular ID로 폴백
   const menuMap = new Map(fortunes.map((f) => [f.id, f]));

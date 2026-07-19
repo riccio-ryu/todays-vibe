@@ -29,7 +29,7 @@ export default function GeneralFortuneForm({ config }: Props) {
   const { user } = useAuth();
   const { result, isLoading, error, submit, reset } = useFortuneStream();
   const { fortuneStatus } = useFortuneStatus(config.type);
-  const { refresh: refreshCredits } = useCredits();
+  const { refresh: refreshCredits, openInsufficient } = useCredits();
   const { savedInfo, saving, saveStatus, saveBirthInfo } = useBirthInfo();
 
   const [year, setYear] = useState("");
@@ -269,19 +269,22 @@ export default function GeneralFortuneForm({ config }: Props) {
           </div>
         )}
 
-        <button
-          type="submit"
-          disabled={fortuneStatus?.exhausted === true}
-          className={`w-full py-3 rounded-[5px] font-medium text-sm transition-colors ${
-            fortuneStatus?.exhausted
-              ? "bg-white/8 text-[#a8a6b7]/40 cursor-not-allowed"
-              : "bg-[#5046e4] text-[#f4f0ff] hover:bg-[#3d36c4]"
-          }`}
-        >
-          {fortuneStatus?.exhausted
-            ? "오늘의 별이 부족해요"
-            : `${config.icon} ${config.title} 보기${fortuneStatus?.cost ? ` (⭐${fortuneStatus.cost})` : ""}`}
-        </button>
+        {fortuneStatus?.exhausted ? (
+          <button
+            type="button"
+            onClick={openInsufficient}
+            className="w-full py-3 rounded-[5px] font-medium text-sm bg-amber-500/15 border border-amber-400/30 text-amber-200 hover:bg-amber-500/25 transition-colors"
+          >
+            ⭐ 오늘의 별이 부족해요 · 자세히
+          </button>
+        ) : (
+          <button
+            type="submit"
+            className="w-full py-3 rounded-[5px] font-medium text-sm bg-[#5046e4] text-[#f4f0ff] hover:bg-[#3d36c4] transition-colors"
+          >
+            {config.icon} {config.title} 보기{fortuneStatus?.cost ? ` (⭐${fortuneStatus.cost})` : ""}
+          </button>
+        )}
       </form>
     </div>
   );
