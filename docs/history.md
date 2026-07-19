@@ -1,6 +1,17 @@
 # 📋 개발 일지
 ---
 
+## 2026-07-19
+
+- 크레딧 UX 보강 — 별 부족 시 **안내 모달**(프리미엄/로그인 유도, `InsufficientCreditsModal` + `CreditsProvider` 전역 `openInsufficient`), 헤더 ⭐잔량 0이면 강조, 폼 부족 버튼을 "⭐ 별이 부족해요 · 자세히"로 통일(GeneralFortuneForm·AiQuizLayout·TarotInputPhase·CompatibilityBirthForm·TodayFortuneCard의 구 "이미 이용" 문구 정리)
+- 로그인 풀림 버그 수정 — `/api/auth/me`·`AuthContext` fetch에 `no-store`(인증 상태 API 캐시로 로그아웃처럼 보이던 문제). `/admin/menus` 리스트에 **⭐크레딧 컬럼** 추가. 소모량 기본값 0/1/2(프리미엄 2·그 외 1·무료 0)로 조정
+- admin 심리테스트 **운세형 관리** (`/admin/psych`) — 노출·순서에 더해 **별 소모(cost)·AI 프롬프트 override·문항/결과 미리보기** 편집 모달. 심테별 cost 과금(`usage-check` subKey·`getPsychCost`)·프롬프트 override(`buildPromptFromDB`) 연동, 문항 미리보기(`PsychPreview`, 엔진별)
+- admin **3그룹 재편** — 사이드바·홈을 공통(대시보드·회원·AI사용량) / 운세(배치·메뉴관리·기록·통계·프롬프트) / 심리(메뉴관리)로 분리 (`AdminSidebar`·`admin/page.tsx`)
+- **운세·심리 완전 분리** — `fortunes.json`에서 심테 카드·카테고리 제거, 운세 메뉴관리·홈 운세 그리드에서 심테 제외. 심테 과금·권한 자립화(cost=`settings/psych`, 권한=회원 전용 고정) → `menus/psych-test` 문서 불필요. 심리 그룹 라벨을 "메뉴 관리"로 통일
+- 문서 — admin 관리 방향 조사 보고서(`docs/admin-psych-management.md`), 크레딧 실동작 검증 체크리스트(`docs/credit-verification-checklist.md`)
+
+---
+
 ## 2026-07-17
 
 - 심테 `score` 엔진 신설 (`src/lib/psych/engine.ts` `scoreScale`) — 리커트 점수 합산 → 총점 밴드 + 축별 점수. 스트레스 지수(#17, PSS 10문항)·번아웃 위험도(#18, MBI 3축 15문항) 2종 추가, `QuizLayout`에 score 결과 뷰(게이지·축별 바)
