@@ -14,6 +14,9 @@ import PsychHomeBody from "@/components/home/PsychHomeBody";
 import Footer from "@/components/Footer";
 import { PSYCH_ENABLED } from "@/lib/psych/config";
 
+// admin 메뉴·심테 노출/순서 변경이 재배포 없이 반영되도록 ISR (60초)
+export const revalidate = 60;
+
 async function getMenuItems(): Promise<MenuItem[]> {
   try {
     const db = getAdminFirestore();

@@ -1,17 +1,25 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { allPsychTests, getPsychTestBySlug } from "@/data/psych";
 import QuizLayout from "@/components/psych/QuizLayout";
 import AiQuizLayout from "@/components/psych/AiQuizLayout";
 import RankingLayout from "@/components/psych/RankingLayout";
 import { BASE_URL } from "@/lib/utils/site";
 import { PSYCH_ENABLED } from "@/lib/psych/config";
-import { isPsychTestEnabled, getVisiblePsychTests } from "@/lib/psych/settings";
+import {
+  isPsychTestEnabled,
+  getVisiblePsychTests,
+  getRuntimePsychTest,
+  getPsychTestSlugs,
+} from "@/lib/psych/settings";
 
-export function generateStaticParams() {
+// 편집·신규 심테가 재배포 없이 반영되도록 ISR (60초). 새 slug는 on-demand 렌더.
+export const revalidate = 60;
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
   if (!PSYCH_ENABLED) return [];
-  return allPsychTests.map((t) => ({ slug: t.slug }));
+  return (await getPsychTestSlugs()).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -20,7 +28,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const test = getPsychTestBySlug(slug);
+  const test = await getRuntimePsychTest(slug);
   if (!test) return {};
   const title =
     test.engine === "ranking"
@@ -43,7 +51,7 @@ export default async function PsychTestPage({
 }) {
   if (!PSYCH_ENABLED) notFound();
   const { slug } = await params;
-  const test = getPsychTestBySlug(slug);
+  const test = await getRuntimePsychTest(slug);
   if (!test) notFound();
   if (!(await isPsychTestEnabled(slug))) notFound(); // admin 비활성 시 숨김
 

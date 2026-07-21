@@ -43,7 +43,9 @@ const NAV_GROUPS = [
   {
     label: "심리",
     items: [
-      { href: "/admin/psych",    label: "메뉴 관리", icon: Brain },
+      { href: "/admin/psych",          label: "메뉴 관리", icon: Brain },
+      { href: "/admin/psych/readings", label: "심테 기록", icon: BookOpen },
+      { href: "/admin/psych/stats",    label: "심테 통계", icon: BarChart2 },
     ],
   },
 ];

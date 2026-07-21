@@ -1,6 +1,18 @@
 # 📋 개발 일지
 ---
 
+## 2026-07-21
+
+- 심리테스트 정의를 코드(`src/data/psych`) → **Firestore(`psych_tests`)로 이관** — admin 첫 진입 시 코드 20종 자동 시드(레거시 `settings/psych` 노출·순서·cost·프롬프트 이월), 완전 CRUD화 (`src/lib/psych/tests-store.ts`, `src/types/psych.ts`, `src/app/admin/psych/actions.ts`)
+- `/admin/psych`를 **운세 메뉴관리형 테이블로 재작성** (`src/app/admin/psych/page.tsx`) — 정렬 컬럼(아이콘·이름/설명·엔진(=카테고리)·노출·AI·회원등급·⭐크레딧·슬러그)·전체/선택 노출토글·순서변경(드래그+▲▼)·추가/삭제·컬럼 표시설정. 엔진을 카테고리로 매핑
+- **엔진별 문항·결과 빌더 신설** (`src/components/admin/PsychContentBuilder.tsx`) — mbti/category/score/ranking + AI(quiz·text)의 문항·선택지·결과·구간·항목·SEO를 add/remove/순서변경으로 편집, 신규 심테는 엔진 선택 시 빈 템플릿 자동 생성 (`getPsychTestContent`·`savePsychTestContent`)
+- **심테 기록·통계 페이지 신설** (`src/app/admin/psych/readings`·`stats` + API 2종) — 운세 기록·통계와 대칭. AI 심테(`ai_readings` type `psych-test`) 조회·기간별 집계·심테별 순위 드릴다운 (`src/lib/firebase/psych-readings.ts`), 사이드바 심리 그룹에 메뉴 추가 (`AdminSidebar`)
+- **런타임 Firestore 전환** — `/psych`·`/psych/[slug]`·홈 스와이프가 Firestore content로 렌더(`getRuntimePsychTest`·`getVisiblePsychTests` 재구성, `docToPsychTest`), 편집·신규 심테 반영. `revalidate=60` ISR로 재배포 없이 반영(홈 포함)·신규 slug on-demand (`src/lib/psych/settings.ts`, `src/app/(psych)/**`, `src/app/(user)/page.tsx`)
+- 비용·프롬프트·노출 런타임 getter를 `psych_tests` 우선으로 전환(레거시 `settings/psych`·코드 폴백), dev 실페이지에서 편집→반영 end-to-end 검증
+- 크레딧 실동작 검증 완료 처리(`TODO.md`), 색인 3순위(띠 4종) 완료 체크(`docs/indexing-checklist.md`)
+
+---
+
 ## 2026-07-19
 
 - 크레딧 UX 보강 — 별 부족 시 **안내 모달**(프리미엄/로그인 유도, `InsufficientCreditsModal` + `CreditsProvider` 전역 `openInsufficient`), 헤더 ⭐잔량 0이면 강조, 폼 부족 버튼을 "⭐ 별이 부족해요 · 자세히"로 통일(GeneralFortuneForm·AiQuizLayout·TarotInputPhase·CompatibilityBirthForm·TodayFortuneCard의 구 "이미 이용" 문구 정리)
