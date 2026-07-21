@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   alternates: { canonical: `${BASE_URL}/psych` },
 };
 
+// admin 노출·순서·신규 심테가 재배포 없이 반영되도록 ISR (60초)
+export const revalidate = 60;
+
 export default async function PsychListPage() {
   if (!PSYCH_ENABLED) notFound();
   const tests = await getVisiblePsychTests();

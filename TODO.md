@@ -29,7 +29,7 @@
 - **운세·심리 완전 분리** — `fortunes.json`에서 심테 카드·카테고리 제거, 운세 메뉴관리(`/admin/menus`)·홈 운세 그리드에서 심테 제외. 심테 과금·권한 자립화(cost=`settings/psych`, 권한=회원 전용 고정) → **`menus/psych-test` 문서 불필요**.
 
 **⬜ 남은 것**
-- [ ] **크레딧 실동작 검증** — 회원 로그인 → 헤더 ⭐, AI 심테/운세 차감, 재열람 무료, 소진 시 부족 모달, admin 지급량·cost 반영. (사용자 dev/배포 검증) → **체크리스트: [docs/credit-verification-checklist.md](docs/credit-verification-checklist.md)**
+- [x] **크레딧 실동작 검증** — 회원 로그인 → 헤더 ⭐, AI 심테/운세 차감, 재열람 무료, 소진 시 부족 모달, admin 지급량·cost 반영. ✅ **완료 (2026-07-21)** — 체크리스트: [docs/credit-verification-checklist.md](docs/credit-verification-checklist.md)
 - [ ] **심리 그룹 하위 확장** (심테 커지면) — 심리 그룹에 **심테 기록**(`/admin/psych/readings`)·**심테 통계** 페이지 추가. 현재 심리 그룹엔 "메뉴 관리" 1개뿐. 운세와 대칭 구조로.
 - [ ] (보류) 전역 노출 토글 env(`PSYCH_ENABLED`) → admin 런타임 토글. SSG·애드센스 고려해 **env 유지**가 안전. 런칭 후 필요 시.
 - [ ] (장기) 심테 문항·결과 본문까지 admin CRUD(옵션 C) — SSG 포기·4엔진 편집 UI 필요. 지금은 코드 관리(미리보기만).
@@ -105,6 +105,7 @@
 
 | 날짜 | 내용 |
 | ---- | ---- |
+| 2026-07-21 | 크레딧(⭐) 실동작 검증 완료 — 지급·차감·재열람 무료·소진 모달·admin 반영 |
 | 2026-07-17 | 심테 ranking 엔진 + 사막 동물(#72) — **카탈로그 MVP 15개 전부 완료** (총 20종) |
 | 2026-07-17 | AI 자유텍스트 심테 4종 (고민 A-1·감정일기 A-2·카톡 A-3·성격 A-5) + `AiTextTest` text 모드 |
 | 2026-07-17 | 심테 score 엔진 + 스트레스(#17 PSS)·번아웃(#18 MBI 3축) 2종 |

@@ -65,10 +65,10 @@
 - [x] https://www.todays-vibe.com/chinese-zodiac/snake
 - [x] https://www.todays-vibe.com/chinese-zodiac/horse
 - [x] https://www.todays-vibe.com/chinese-zodiac/goat
-- [ ] https://www.todays-vibe.com/chinese-zodiac/monkey
-- [ ] https://www.todays-vibe.com/chinese-zodiac/rooster
-- [ ] https://www.todays-vibe.com/chinese-zodiac/dog
-- [ ] https://www.todays-vibe.com/chinese-zodiac/pig
+- [x] https://www.todays-vibe.com/chinese-zodiac/monkey
+- [x] https://www.todays-vibe.com/chinese-zodiac/rooster
+- [x] https://www.todays-vibe.com/chinese-zodiac/dog
+- [x] https://www.todays-vibe.com/chinese-zodiac/pig
 
 ## 4순위 — 타로 카드 상세 78개
 
