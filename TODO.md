@@ -30,9 +30,9 @@
 
 **⬜ 남은 것**
 - [x] **크레딧 실동작 검증** — 회원 로그인 → 헤더 ⭐, AI 심테/운세 차감, 재열람 무료, 소진 시 부족 모달, admin 지급량·cost 반영. ✅ **완료 (2026-07-21)** — 체크리스트: [docs/credit-verification-checklist.md](docs/credit-verification-checklist.md)
-- [ ] **심리 그룹 하위 확장** (심테 커지면) — 심리 그룹에 **심테 기록**(`/admin/psych/readings`)·**심테 통계** 페이지 추가. 현재 심리 그룹엔 "메뉴 관리" 1개뿐. 운세와 대칭 구조로.
-- [ ] (보류) 전역 노출 토글 env(`PSYCH_ENABLED`) → admin 런타임 토글. SSG·애드센스 고려해 **env 유지**가 안전. 런칭 후 필요 시.
-- [ ] (장기) 심테 문항·결과 본문까지 admin CRUD(옵션 C) — SSG 포기·4엔진 편집 UI 필요. 지금은 코드 관리(미리보기만).
+- [x] **심리 그룹 하위 확장** — 심리 그룹에 **심테 기록**(`/admin/psych/readings`)·**심테 통계**(`/admin/psych/stats`) 페이지 추가, 운세와 대칭. ✅ **완료 (2026-07-21)**
+- [x] **심테 문항·결과 admin CRUD(옵션 C)** — 심테를 Firestore(`psych_tests`)로 이관하고 `/admin/psych`를 운세 메뉴관리형으로 재작성 + **엔진별 문항·결과 빌더**(`PsychContentBuilder`) 신설. 런타임을 Firestore content 렌더 + 60초 ISR로 전환(SSG 유지). ✅ **완료 (2026-07-21)**
+- [ ] (보류) 전역 노출 토글 env(`PSYCH_ENABLED`) → admin 런타임 토글. **개별 심테 노출은 이제 admin(`psych_tests.ready`)+ISR로 즉시 반영됨.** 남은 건 전역 on/off env뿐 — 애드센스 고려해 env 유지가 안전, 런칭 후 필요 시.
 
 ---
 
@@ -94,10 +94,11 @@
 
 ---
 
-### 5. [후속] 심테 관리 심화 (여유 있을 때)
-- **AI 심테 프롬프트 admin 편집**: energy·emotion 프롬프트가 코드 카탈로그(`buildPsychTestPrompt`) 사용 중 → admin/prompts에서 편집하려면 DB 프롬프트로 전환 필요
-- **문항·결과 본문 CRUD**: 현재 코드(`src/data/psych/*.ts`) 관리 → Firestore 이관 시 admin 직접 편집(2단계, SSG 캐싱 전략 필요)
-- **`PSYCH_ENABLED` 런타임 토글**: 현재 env·빌드타임. admin에서 즉시 on/off하려면 Firestore 설정 + 페이지 dynamic/ISR 필요
+### 5. [후속] 심테 관리 심화
+- [x] **AI 심테 프롬프트 admin 편집** — 프롬프트가 `psych_tests`로 이관돼 `/admin/psych` 편집 모달에서 수정, `getPsychPromptOverride`가 Firestore 우선. ✅ **완료 (2026-07-21)**
+- [x] **문항·결과 본문 CRUD** — 코드 → Firestore 이관 + 엔진별 빌더로 admin 직접 편집. ✅ **완료 (2026-07-21)**
+- [ ] **`PSYCH_ENABLED` 전역 런타임 토글**: 개별 심테 노출은 admin+ISR로 해결됨. 남은 건 전역 env on/off → Firestore 설정화(선택). 현재 env 유지.
+- [ ] (여유 시) 신규 심테를 admin에서 처음부터 저작하는 흐름 실전 검증 — 빈 템플릿 → 문항·결과 채우고 노출까지 end-to-end
 
 ---
 
@@ -105,6 +106,10 @@
 
 | 날짜 | 내용 |
 | ---- | ---- |
+| 2026-07-21 | 심테 Firestore(`psych_tests`) 이관 + `/admin/psych` 운세 메뉴관리형 재작성(추가/삭제/순서/노출/cost/AI프롬프트) |
+| 2026-07-21 | 엔진별 문항·결과 빌더(`PsychContentBuilder`) — mbti·category·score·ranking·AI(quiz·text) admin 편집 |
+| 2026-07-21 | 심테 기록·통계 페이지(`/admin/psych/readings`·`stats`) — 운세 대칭 |
+| 2026-07-21 | 런타임 Firestore content 렌더 전환 + 60초 ISR(홈·`/psych`·상세) — 편집 재배포 없이 반영, dev 검증 완료 |
 | 2026-07-21 | 크레딧(⭐) 실동작 검증 완료 — 지급·차감·재열람 무료·소진 모달·admin 반영 |
 | 2026-07-17 | 심테 ranking 엔진 + 사막 동물(#72) — **카탈로그 MVP 15개 전부 완료** (총 20종) |
 | 2026-07-17 | AI 자유텍스트 심테 4종 (고민 A-1·감정일기 A-2·카톡 A-3·성격 A-5) + `AiTextTest` text 모드 |
