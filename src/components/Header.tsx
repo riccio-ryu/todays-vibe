@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 import { signOut } from "@/lib/firebase/auth";
@@ -10,6 +11,9 @@ import PWAInstallButton from "@/components/common/PWAInstallButton";
 import { useCredits } from "@/components/credits/CreditsProvider";
 
 export default function Header() {
+  const pathname = usePathname();
+  // 심테(낮) 화면에서 로고를 누르면 홈의 심테 탭으로 — 운세 탭으로 튕기지 않게
+  const homeHref = pathname?.startsWith("/psych") ? "/?tab=psych" : "/";
   const { user, loading, isAdmin } = useAuth();
   const { remaining, grant, loading: creditsLoading } = useCredits();
   const [open, setOpen] = useState(false);
@@ -34,7 +38,7 @@ export default function Header() {
   return (
     <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center justify-between gap-3 w-[calc(100%-2rem)] max-w-2xl px-4 py-2.5 rounded-full backdrop-blur-xl header-pill">
       {/* Logo */}
-      <Link href="/" className="shrink-0">
+      <Link href={homeHref} className="shrink-0">
         <Image
           src="/brand/logo.svg"
           alt="오늘운"

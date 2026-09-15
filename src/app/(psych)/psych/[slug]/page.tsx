@@ -86,28 +86,28 @@ export default async function PsychTestPage({
       )}
 
       <section className="max-w-xl mx-auto px-4 pb-16">
-        <div className="border-t border-white/10 pt-10 space-y-8">
+        <div className="border-t border-slate-900/8 pt-10 space-y-8">
           {test.seoContent.map((block) => (
             <div key={block.heading}>
-              <h2 className="text-white font-bold text-lg mb-3">{block.heading}</h2>
-              <p className="text-white/50 text-sm leading-relaxed">{block.body}</p>
+              <h2 className="text-slate-800 font-bold text-lg mb-3">{block.heading}</h2>
+              <p className="text-slate-500 text-sm leading-relaxed">{block.body}</p>
             </div>
           ))}
 
           {others.length > 0 && (
             <div>
-              <h3 className="text-white/70 font-semibold text-sm mb-3">다른 심리 테스트</h3>
+              <h3 className="text-slate-600 font-semibold text-sm mb-3">다른 심리 테스트</h3>
               <div className="grid grid-cols-1 gap-2">
                 {others.map((t) => (
                   <Link
                     key={t.slug}
                     href={`/psych/${t.slug}`}
-                    className="flex items-center gap-3 rounded-xl bg-white/5 border border-white/10 px-4 py-3 hover:border-white/25 transition-colors"
+                    className="flex items-center gap-3 rounded-xl bg-white/60 border border-slate-900/8 px-4 py-3 hover:border-slate-900/15 transition-colors"
                   >
                     <span className="text-xl">{t.icon}</span>
                     <div className="min-w-0">
-                      <p className="text-white/80 text-sm">{t.title}</p>
-                      <p className="text-white/40 text-xs truncate">{t.summary}</p>
+                      <p className="text-slate-700 text-sm">{t.title}</p>
+                      <p className="text-slate-500 text-xs truncate">{t.summary}</p>
                     </div>
                   </Link>
                 ))}

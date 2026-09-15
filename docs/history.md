@@ -1,6 +1,42 @@
 # 📋 개발 일지
 ---
 
+## 2026-09-15
+
+- 사이트맵 심테 목록을 Firestore 기준으로 전환 (`src/app/sitemap.ts`) — 정적 `@/data/psych`를 읽어 admin에서 추가·숨긴 심테가 반영되지 않던 문제 수정. `sitemap()` async 전환 + `revalidate = 3600`(1시간 내 반영), `PSYCH_ENABLED=false`면 Firestore 조회 자체를 건너뛰도록 가드
+- admin 심테 **기록·통계 라벨 Firestore 연동** — 7/21 이관 잔여분. `/admin/psych/readings`·`stats`가 정적 코드 목록(`@/data/psych`)으로 아이콘·이름을 매핑해, admin에서 추가한 심테는 🧠로만 보이고 개명해도 옛 이름이 뜨던 문제 수정
+  - `getPsychTestLabels()` 신설 (`src/lib/psych/tests-store.ts`) — 라벨용 최소 메타(slug·icon·title·engine), 조회 실패 시 `[]` 반환해 라벨 때문에 화면이 죽지 않게 처리. 타입 `PsychTestLabel` 추가 (`src/types/psych.ts`)
+  - API 2종이 `tests` 동봉 (`api/admin/psych/readings`는 기록 조회와 `Promise.all` 병렬, `stats`는 전체 집계 응답에만 — 드릴다운 제외)
+  - 기록 페이지: 모듈 상수 `TEST_META`·`SLUG_OPTIONS` 제거 → API 기반 `useMemo`, 필터 드롭다운·"AI 심테 수" 카드도 Firestore의 AI 심테 기준
+  - 통계 페이지: `ICON_BY_SLUG` → `labelBySlug`, 아이콘뿐 아니라 **이름도 Firestore 우선**(개명 반영), 없으면 기록에 저장된 title로 폴백
+- **심테 코드→Firestore 누락분 자동 시드** (`src/lib/psych/tests-store.ts`) — `seedPsychTestsIfEmpty()`(컬렉션이 빈 경우만 동작)를 `syncPsychTestsFromCode()`로 확장. 코드에만 있는 slug를 기존 최대 order 뒤에 append, 기존 문서는 무수정이라 admin 편집분 보존. 7/21 이관 이후 "데이터 파일을 추가해도 런타임에 안 뜨던" 문제 해소 (admin 1회 진입 시 등록 → 60초 ISR 반영)
+- **심리 테스트 1차 확장 4종** (`src/data/psych/`) — 엔진·레이아웃 무수정, 데이터 파일만 추가해 총 24종(로직 18 + AI 6)
+  - `love-mbti.ts` (M-4 연애 MBTI) — 연애 상황 20문항·16유형, 기존 `mbti` 엔진 재사용
+  - `zombie.ts` (#47 좀비 생존) — `score` 엔진 10문항, 총점/최대점을 생존율 %로 + 판단력·생존체력·팀워크 3축
+  - `superpower.ts` (#70 나의 초능력) — `category` 8문항 → 독심술·시간정지·순간이동·치유
+  - `flower.ts` (#68 꽃 유형) — `category` 8문항 → 장미·해바라기·안개꽃·백합
+  - 애드센스 재거절 대응으로 각 심테에 `intro` + 결과별 본문 + `seoContent` 3블록을 충실히 작성
+- **심테 목록 '준비중' 표시** — 운세 그리드와 동일한 취급으로, 카탈로그 미구현분을 흐릿하게 노출
+  - `src/data/psych/coming-soon.ts` 신규 — 카탈로그 97종에서 구현 24종과 중복 기획(#40↔A-4, #48↔A-8)을 뺀 **71종** placeholder(아이콘·제목·한 줄 요약·섹션). Firestore에는 넣지 않음(넣으면 `syncPsychTestsFromCode`가 등록해 admin 테이블이 뒤덮임)
+  - `src/components/psych/ComingSoonSection.tsx` 신규 — 카탈로그 섹션 8개 아코디언(기본 접힘), 카드는 `opacity-40 grayscale` + "준비중" 뱃지 + 링크 없음(클릭 불가·크롤 대상 아님)
+  - `/psych` 목록 하단에 배치. 홈 낮 패널·사이트맵·`/psych/[slug]`는 무변경
+- **`(psych)` 그룹 낮/해 테마 통일** — 홈 심테 탭은 낮(밝은 배경·slate 글씨)인데 `/psych` 목록·상세·퀴즈만 `TimeBackground`(밤) + 흰 글씨로 남아, 홈에서 테스트를 누르면 화면이 어두워지던 불일치 해소
+  - `(psych)/layout.tsx` — `TimeBackground` 제거, `HomeSwipe` 낮 패널과 동일한 고정 그라데이션(`from-[#fde9c8] via-[#fbd6e6] to-[#cfe5ff]`) + `Footer variant="day"`
+  - 목록·상세·`QuizLayout`·`RankingLayout`·`AiQuizLayout` 색상 140건 치환 — `text-white*`→slate, `bg-white/5~10`→`bg-white/60~70`, `border-white/*`→`border-slate-900/*`, 밝은 배경에서 대비가 죽는 브랜드색(`#9382ff`·`#c9bfff` 텍스트, amber-200)은 진한 쪽으로. `bg-[#5046e4]` 버튼 위의 `text-[#f4f0ff]`는 유지
+  - 준비중 섹션(`ComingSoonSection`)에 `variant` prop 추가 — 홈 탭·`/psych` 모두 낮 테마 적용
+- **준비중 섹션을 홈 심테 탭에도 노출** (`PsychHomeBody`) — 실제 진입점이 홈 스와이프의 심테 탭이라, `/psych`에만 있던 것을 홈에도 추가(2열 그리드)
+- **심리 테스트 2차 확장 5종** (`src/data/psych/`) — 엔진 무수정, 총 29종(로직 23 + AI 6)·준비중 71→66종
+  - `work-mbti.ts` (M-5 직장 MBTI) — 업무 상황 20문항·16유형
+  - `crush.ts` (#25 썸 성공 확률) — `score` 8문항, 총점/최대점을 성공 확률로 + 상대 신호·나의 적극성 2축
+  - `contact-style.ts` (#33 연락 집착도) — `score` 8문항, 확인 강박·의미 부여 2축
+  - `love-language.ts` (#28 사랑의 언어) — `category` 10문항·5유형(문항당 선택지 5개). 카탈로그의 "주 언어 2가지"는 `scoreCategory`가 최다 1개만 반환해 **주 언어 1가지**로 구현, 엔진 확장은 TODO로 남김
+  - `snack.ts` (#65 스낵 유형 SPTI) — `category` 8문항·4유형
+- 홈 활성 탭을 URL에 유지 (`HomeSwipe`·`Header`) — 심테 탭 전환 시 `/?tab=psych`로 `replaceState`, 홈 진입 시 복원(복원 이동은 애니메이션 없이). `/psych/*`에서 헤더 로고도 `/?tab=psych`로 연결해 운세 탭으로 튕기지 않게 함
+- 문서 — 카탈로그 구현현황 20종→24종 및 신규 추가 경로 주의사항 명시, TODO 확장 트래커·완료표 갱신
+- 검증 — `tsc --noEmit` 통과, `npm run build` 성공(294 페이지), eslint 신규 이슈 없음
+
+---
+
 ## 2026-07-21
 
 - 심리테스트 정의를 코드(`src/data/psych`) → **Firestore(`psych_tests`)로 이관** — admin 첫 진입 시 코드 20종 자동 시드(레거시 `settings/psych` 노출·순서·cost·프롬프트 이월), 완전 CRUD화 (`src/lib/psych/tests-store.ts`, `src/types/psych.ts`, `src/app/admin/psych/actions.ts`)

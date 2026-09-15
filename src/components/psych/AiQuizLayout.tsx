@@ -108,14 +108,14 @@ function AiQuizInner({ test }: { test: Extract<AiTest, { questions: unknown[] }>
       {!started ? (
         <div className="text-center">
           <span className="text-5xl block mb-3">{test.icon}</span>
-          <h1 className="text-white font-bold text-2xl mb-3">{test.title}</h1>
-          <p className="text-white/60 text-sm leading-relaxed max-w-md mx-auto mb-8">
+          <h1 className="text-slate-800 font-bold text-2xl mb-3">{test.title}</h1>
+          <p className="text-slate-600 text-sm leading-relaxed max-w-md mx-auto mb-8">
             {test.intro}
           </p>
 
-          <div className="rounded-2xl bg-white/5 border border-white/10 p-5 mb-6 text-left">
-            <p className="text-white/40 text-xs mb-2">이 테스트는</p>
-            <div className="flex items-center gap-4 text-sm text-white/70">
+          <div className="rounded-2xl bg-white/60 border border-slate-900/8 p-5 mb-6 text-left">
+            <p className="text-slate-500 text-xs mb-2">이 테스트는</p>
+            <div className="flex items-center gap-4 text-sm text-slate-600">
               <span>📝 {total}문항</span>
               <span>⚡ 1분 이내</span>
               <span>✦ AI 해석{fortuneStatus?.cost ? ` ⭐${fortuneStatus.cost}` : ""}</span>
@@ -125,7 +125,7 @@ function AiQuizInner({ test }: { test: Extract<AiTest, { questions: unknown[] }>
           {exhausted ? (
             <button
               onClick={openInsufficient}
-              className="w-full py-3 rounded-[5px] bg-amber-500/15 border border-amber-400/30 text-amber-200 text-sm font-medium hover:bg-amber-500/25 transition-colors"
+              className="w-full py-3 rounded-[5px] bg-amber-500/20 border border-amber-400/30 text-amber-700 text-sm font-medium hover:bg-amber-500/25 transition-colors"
             >
               ⭐ 오늘의 별이 부족해요 · 자세히
             </button>
@@ -138,19 +138,19 @@ function AiQuizInner({ test }: { test: Extract<AiTest, { questions: unknown[] }>
             </button>
           )}
           {!user && !loading && (
-            <p className="text-white/35 text-xs mt-3">AI 해석은 로그인하면 이용할 수 있어요</p>
+            <p className="text-slate-400 text-xs mt-3">AI 해석은 로그인하면 이용할 수 있어요</p>
           )}
         </div>
       ) : (
         <div>
           <div className="mb-6">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-white/40 text-xs">
+              <span className="text-slate-500 text-xs">
                 {step + 1} / {total}
               </span>
-              <span className="text-[#9382ff] text-xs">{test.title}</span>
+              <span className="text-[#5046e4] text-xs">{test.title}</span>
             </div>
-            <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+            <div className="h-1.5 rounded-full bg-white/70 overflow-hidden">
               <motion.div
                 className="h-full bg-[#5046e4]"
                 initial={{ width: 0 }}
@@ -168,7 +168,7 @@ function AiQuizInner({ test }: { test: Extract<AiTest, { questions: unknown[] }>
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.22 }}
             >
-              <h2 className="text-white font-semibold text-lg leading-snug mb-6">
+              <h2 className="text-slate-800 font-semibold text-lg leading-snug mb-6">
                 {test.questions[step].q}
               </h2>
               <div className="space-y-3">
@@ -176,7 +176,7 @@ function AiQuizInner({ test }: { test: Extract<AiTest, { questions: unknown[] }>
                   <button
                     key={i}
                     onClick={() => handleSelect(i)}
-                    className="w-full text-left px-4 py-3.5 rounded-[5px] bg-white/5 border border-white/10 text-[#f4f0ff]/85 text-sm hover:bg-[#9382ff]/10 hover:border-[#9382ff]/40 transition-colors"
+                    className="w-full text-left px-4 py-3.5 rounded-[5px] bg-white/60 border border-slate-900/8 text-slate-700 text-sm hover:bg-[#9382ff]/10 hover:border-[#9382ff]/40 transition-colors"
                   >
                     {opt}
                   </button>
@@ -248,8 +248,8 @@ function AiTextLayout({ test }: { test: Extract<AiTest, { fields: unknown[] }> }
 
       <div className="text-center mb-6">
         <span className="text-5xl block mb-3">{test.icon}</span>
-        <h1 className="text-white font-bold text-2xl mb-3">{test.title}</h1>
-        <p className="text-white/60 text-sm leading-relaxed max-w-md mx-auto">{test.intro}</p>
+        <h1 className="text-slate-800 font-bold text-2xl mb-3">{test.title}</h1>
+        <p className="text-slate-600 text-sm leading-relaxed max-w-md mx-auto">{test.intro}</p>
       </div>
 
       <div className="space-y-5">
@@ -258,16 +258,16 @@ function AiTextLayout({ test }: { test: Extract<AiTest, { fields: unknown[] }> }
           const min = f.minLength ?? 1;
           return (
             <div key={f.key}>
-              <label className="block text-white/70 text-sm font-medium mb-2">{f.label}</label>
+              <label className="block text-slate-600 text-sm font-medium mb-2">{f.label}</label>
               <textarea
                 value={values[f.key] ?? ""}
                 onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
                 rows={f.rows ?? 5}
                 placeholder={f.placeholder}
-                className="w-full px-4 py-3 rounded-[5px] bg-white/5 border border-white/10 text-[#f4f0ff] text-sm placeholder-white/25 focus:outline-none focus:border-[#9382ff]/50 transition-colors resize-none"
+                className="w-full px-4 py-3 rounded-[5px] bg-white/60 border border-slate-900/8 text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:border-[#9382ff]/50 transition-colors resize-none"
               />
               {min > 1 && (
-                <p className={`text-xs mt-1 text-right ${len >= min ? "text-white/30" : "text-white/40"}`}>
+                <p className={`text-xs mt-1 text-right ${len >= min ? "text-slate-400" : "text-slate-500"}`}>
                   {len} / 최소 {min}자
                 </p>
               )}
@@ -278,7 +278,7 @@ function AiTextLayout({ test }: { test: Extract<AiTest, { fields: unknown[] }> }
         {exhausted ? (
           <button
             onClick={openInsufficient}
-            className="w-full py-3 rounded-[5px] bg-amber-500/15 border border-amber-400/30 text-amber-200 text-sm font-medium hover:bg-amber-500/25 transition-colors"
+            className="w-full py-3 rounded-[5px] bg-amber-500/20 border border-amber-400/30 text-amber-700 text-sm font-medium hover:bg-amber-500/25 transition-colors"
           >
             ⭐ 오늘의 별이 부족해요 · 자세히
           </button>
@@ -289,14 +289,14 @@ function AiTextLayout({ test }: { test: Extract<AiTest, { fields: unknown[] }> }
             className={`w-full py-3 rounded-[5px] font-medium text-sm transition-colors ${
               canSubmit
                 ? "bg-[#5046e4] text-[#f4f0ff] hover:bg-[#3d36c4]"
-                : "bg-white/8 text-[#a8a6b7]/40 cursor-not-allowed"
+                : "bg-white/65 text-slate-400 cursor-not-allowed"
             }`}
           >
             {test.icon} AI 분석받기{fortuneStatus?.cost ? ` (⭐${fortuneStatus.cost})` : ""}
           </button>
         )}
         {!user && !loading && (
-          <p className="text-white/35 text-xs text-center">AI 분석은 로그인하면 이용할 수 있어요</p>
+          <p className="text-slate-400 text-xs text-center">AI 분석은 로그인하면 이용할 수 있어요</p>
         )}
       </div>
     </div>

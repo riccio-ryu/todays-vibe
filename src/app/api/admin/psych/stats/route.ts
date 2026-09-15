@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { requireAdmin } from "@/lib/api/require-admin";
 import { getPsychReadings } from "@/lib/firebase/psych-readings";
+import { getPsychTestLabels } from "@/lib/psych/tests-store";
 import { todayKST, kstDateOffset } from "@/lib/utils/date";
 
 import type { StatsPeriod as Period } from "@/types/admin";
@@ -97,6 +98,9 @@ export async function GET(req: NextRequest) {
       : dateRangeArray(startDate, endDate);
     const dailyData = allDates.map((date) => ({ date, count: dailyCounts[date] ?? 0 }));
 
+    // 심테 라벨(아이콘·이름)은 Firestore 정의 기준 — 드릴다운 응답에는 불필요
+    const tests = await getPsychTestLabels();
+
     return Response.json({
       totalUsage: readings.length,
       topTest: testRanking[0] ?? null,
@@ -104,6 +108,7 @@ export async function GET(req: NextRequest) {
       testCount: testRanking.length,
       testRanking,
       dailyData,
+      tests,
     });
   } catch (err) {
     console.error("[admin/psych/stats]", err);

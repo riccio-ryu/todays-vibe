@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { requireAdmin } from "@/lib/api/require-admin";
 import { getPsychReadings } from "@/lib/firebase/psych-readings";
+import { getPsychTestLabels } from "@/lib/psych/tests-store";
 
 export async function GET(request: NextRequest) {
   if (!(await requireAdmin(request))) {
@@ -13,7 +14,9 @@ export async function GET(request: NextRequest) {
     const userFilter = searchParams.get("userId") ?? "";
     const limit = Math.min(parseInt(searchParams.get("limit") ?? "50"), 100);
 
-    let readings = await getPsychReadings();
+    // 심테 라벨(아이콘·이름·엔진)은 Firestore 정의 기준 — admin에서 추가·수정한 심테도 표시
+    const [readingsAll, tests] = await Promise.all([getPsychReadings(), getPsychTestLabels()]);
+    let readings = readingsAll;
 
     // 심테별 카운트 (필터 적용 전 전체 기준)
     const slugCounts = readings.reduce<Record<string, number>>((acc, r) => {
@@ -31,7 +34,7 @@ export async function GET(request: NextRequest) {
     const total = readings.length;
     readings = readings.slice(0, limit);
 
-    return Response.json({ readings, total, slugCounts });
+    return Response.json({ readings, total, slugCounts, tests });
   } catch (err) {
     console.error("[admin/psych/readings]", err);
     return Response.json({ error: String(err) }, { status: 500 });

@@ -78,14 +78,14 @@ export default function QuizLayout({ test }: Props) {
       {!started ? (
         <div className="text-center">
           <span className="text-5xl block mb-3">{test.icon}</span>
-          <h1 className="text-white font-bold text-2xl mb-3">{test.title}</h1>
-          <p className="text-white/60 text-sm leading-relaxed max-w-md mx-auto mb-8">
+          <h1 className="text-slate-800 font-bold text-2xl mb-3">{test.title}</h1>
+          <p className="text-slate-600 text-sm leading-relaxed max-w-md mx-auto mb-8">
             {test.intro}
           </p>
 
-          <div className="rounded-2xl bg-white/5 border border-white/10 p-5 mb-6 text-left">
-            <p className="text-white/40 text-xs mb-2">이 테스트는</p>
-            <div className="flex items-center gap-4 text-sm text-white/70">
+          <div className="rounded-2xl bg-white/60 border border-slate-900/8 p-5 mb-6 text-left">
+            <p className="text-slate-500 text-xs mb-2">이 테스트는</p>
+            <div className="flex items-center gap-4 text-sm text-slate-600">
               <span>📝 {total}문항</span>
               <span>⚡ {total >= 15 ? "3분" : "1분"} 이내</span>
               <span>🔢 즉시 결과</span>
@@ -103,12 +103,12 @@ export default function QuizLayout({ test }: Props) {
         <div>
           <div className="mb-6">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-white/40 text-xs">
+              <span className="text-slate-500 text-xs">
                 {step + 1} / {total}
               </span>
-              <span className="text-[#9382ff] text-xs">{test.title}</span>
+              <span className="text-[#5046e4] text-xs">{test.title}</span>
             </div>
-            <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+            <div className="h-1.5 rounded-full bg-white/70 overflow-hidden">
               <motion.div
                 className="h-full bg-[#5046e4]"
                 initial={{ width: 0 }}
@@ -126,7 +126,7 @@ export default function QuizLayout({ test }: Props) {
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.22 }}
             >
-              <h2 className="text-white font-semibold text-lg leading-snug mb-6">
+              <h2 className="text-slate-800 font-semibold text-lg leading-snug mb-6">
                 {test.questions[step].q}
               </h2>
               <div className="space-y-3">
@@ -134,7 +134,7 @@ export default function QuizLayout({ test }: Props) {
                   <button
                     key={i}
                     onClick={() => handleSelect(i)}
-                    className="w-full text-left px-4 py-3.5 rounded-[5px] bg-white/5 border border-white/10 text-[#f4f0ff]/85 text-sm hover:bg-[#9382ff]/10 hover:border-[#9382ff]/40 transition-colors"
+                    className="w-full text-left px-4 py-3.5 rounded-[5px] bg-white/60 border border-slate-900/8 text-slate-700 text-sm hover:bg-[#9382ff]/10 hover:border-[#9382ff]/40 transition-colors"
                   >
                     {opt.label}
                   </button>
@@ -171,30 +171,30 @@ function MbtiResultView({
         className="text-center"
       >
         <span className="text-6xl block mb-3">{result.icon}</span>
-        <p className="text-[#9382ff] text-sm font-semibold tracking-widest mb-1">
+        <p className="text-[#5046e4] text-sm font-semibold tracking-widest mb-1">
           {result.code}
         </p>
-        <h1 className="text-white font-bold text-2xl mb-2">{result.title}</h1>
-        <p className="text-white/60 text-sm mb-6">{result.tagline}</p>
+        <h1 className="text-slate-800 font-bold text-2xl mb-2">{result.title}</h1>
+        <p className="text-slate-600 text-sm mb-6">{result.tagline}</p>
 
-        <div className="rounded-2xl bg-white/5 border border-white/10 p-5 text-left mb-4">
-          <p className="text-white/80 text-sm leading-relaxed">{result.body}</p>
+        <div className="rounded-2xl bg-white/60 border border-slate-900/8 p-5 text-left mb-4">
+          <p className="text-slate-700 text-sm leading-relaxed">{result.body}</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8 text-left">
-          <div className="rounded-2xl bg-white/5 border border-white/10 p-4">
-            <p className="text-[#9382ff] text-xs font-semibold mb-2">💪 강점</p>
+          <div className="rounded-2xl bg-white/60 border border-slate-900/8 p-4">
+            <p className="text-[#5046e4] text-xs font-semibold mb-2">💪 강점</p>
             <ul className="space-y-1.5">
               {result.strengths.map((s) => (
-                <li key={s} className="text-white/70 text-sm">· {s}</li>
+                <li key={s} className="text-slate-600 text-sm">· {s}</li>
               ))}
             </ul>
           </div>
-          <div className="rounded-2xl bg-white/5 border border-white/10 p-4">
-            <p className="text-[#e4a446] text-xs font-semibold mb-2">🍃 조심할 점</p>
+          <div className="rounded-2xl bg-white/60 border border-slate-900/8 p-4">
+            <p className="text-amber-700 text-xs font-semibold mb-2">🍃 조심할 점</p>
             <ul className="space-y-1.5">
               {result.cautions.map((c) => (
-                <li key={c} className="text-white/70 text-sm">· {c}</li>
+                <li key={c} className="text-slate-600 text-sm">· {c}</li>
               ))}
             </ul>
           </div>
@@ -233,24 +233,24 @@ function CategoryResultView({
         transition={{ duration: 0.4 }}
       >
         <div className="text-center mb-6">
-          <p className="text-white/40 text-xs mb-2">{test.title}</p>
+          <p className="text-slate-500 text-xs mb-2">{test.title}</p>
           <span className="text-6xl block mb-3">{result.emoji}</span>
-          <h1 className="text-white font-bold text-2xl">{result.title}</h1>
-          <p className="text-[#9382ff]/90 text-sm mt-2">{result.headline}</p>
+          <h1 className="text-slate-800 font-bold text-2xl">{result.title}</h1>
+          <p className="text-[#5046e4]/90 text-sm mt-2">{result.headline}</p>
         </div>
 
-        <div className="rounded-2xl bg-white/5 border border-white/10 p-5 space-y-5">
-          <p className="text-white/80 text-sm leading-relaxed">{result.description}</p>
+        <div className="rounded-2xl bg-white/60 border border-slate-900/8 p-5 space-y-5">
+          <p className="text-slate-700 text-sm leading-relaxed">{result.description}</p>
 
           <div>
-            <p className="text-[#9382ff] text-xs font-semibold uppercase tracking-widest mb-2">
+            <p className="text-[#5046e4] text-xs font-semibold uppercase tracking-widest mb-2">
               이런 매력이 있어요
             </p>
             <div className="flex flex-wrap gap-1.5">
               {result.traits.map((t) => (
                 <span
                   key={t}
-                  className="px-2.5 py-1 rounded-full bg-[#9382ff]/15 border border-[#9382ff]/25 text-[#c9bfff] text-xs"
+                  className="px-2.5 py-1 rounded-full bg-[#9382ff]/15 border border-[#9382ff]/25 text-[#5046e4] text-xs"
                 >
                   {t}
                 </span>
@@ -258,11 +258,11 @@ function CategoryResultView({
             </div>
           </div>
 
-          <div className="rounded-xl bg-gradient-to-br from-[#5046e4]/25 to-[#2a2170]/20 border border-[#9382ff]/20 p-4">
-            <p className="text-[#c9bfff] text-xs font-semibold uppercase tracking-widest mb-1.5">
+          <div className="rounded-xl bg-gradient-to-br from-[#5046e4]/12 to-[#2a2170]/8 border border-[#9382ff]/20 p-4">
+            <p className="text-[#5046e4] text-xs font-semibold uppercase tracking-widest mb-1.5">
               한 뼘 조언
             </p>
-            <p className="text-white/85 text-sm leading-relaxed">{result.advice}</p>
+            <p className="text-slate-700 text-sm leading-relaxed">{result.advice}</p>
           </div>
         </div>
 
@@ -306,21 +306,21 @@ function ScoreResultView({
         transition={{ duration: 0.4 }}
       >
         <div className="text-center mb-6">
-          <p className="text-white/40 text-xs mb-2">{test.title}</p>
+          <p className="text-slate-500 text-xs mb-2">{test.title}</p>
           <span className="text-6xl block mb-3">{band.emoji}</span>
-          <h1 className="text-white font-bold text-2xl">{band.title}</h1>
-          <p className="text-[#9382ff]/90 text-sm mt-2">{band.headline}</p>
+          <h1 className="text-slate-800 font-bold text-2xl">{band.title}</h1>
+          <p className="text-[#5046e4]/90 text-sm mt-2">{band.headline}</p>
         </div>
 
         {/* 총점 게이지 */}
-        <div className="rounded-2xl bg-white/5 border border-white/10 p-5 mb-4">
+        <div className="rounded-2xl bg-white/60 border border-slate-900/8 p-5 mb-4">
           <div className="flex items-baseline justify-between mb-2">
-            <span className="text-white/60 text-xs font-semibold uppercase tracking-widest">종합 점수</span>
-            <span className="text-white font-bold text-lg tabular-nums">
-              {total}<span className="text-white/30 text-sm font-normal"> / {maxTotal}</span>
+            <span className="text-slate-600 text-xs font-semibold uppercase tracking-widest">종합 점수</span>
+            <span className="text-slate-800 font-bold text-lg tabular-nums">
+              {total}<span className="text-slate-400 text-sm font-normal"> / {maxTotal}</span>
             </span>
           </div>
-          <div className="h-2.5 rounded-full bg-white/10 overflow-hidden">
+          <div className="h-2.5 rounded-full bg-white/70 overflow-hidden">
             <motion.div
               className="h-full bg-gradient-to-r from-[#5046e4] to-[#9382ff]"
               initial={{ width: 0 }}
@@ -337,10 +337,10 @@ function ScoreResultView({
                 return (
                   <div key={a.key}>
                     <div className="flex justify-between text-[11px] mb-1">
-                      <span className="text-white/55">{a.label}</span>
-                      <span className="text-white/40 tabular-nums">{a.score}/{a.max}</span>
+                      <span className="text-slate-500">{a.label}</span>
+                      <span className="text-slate-500 tabular-nums">{a.score}/{a.max}</span>
                     </div>
-                    <div className="h-1.5 rounded-full bg-white/8 overflow-hidden">
+                    <div className="h-1.5 rounded-full bg-white/65 overflow-hidden">
                       <motion.div
                         className="h-full bg-[#9382ff]/70"
                         initial={{ width: 0 }}
@@ -355,11 +355,11 @@ function ScoreResultView({
           )}
         </div>
 
-        <div className="rounded-2xl bg-white/5 border border-white/10 p-5 space-y-4">
-          <p className="text-white/80 text-sm leading-relaxed">{band.description}</p>
-          <div className="rounded-xl bg-gradient-to-br from-[#5046e4]/25 to-[#2a2170]/20 border border-[#9382ff]/20 p-4">
-            <p className="text-[#c9bfff] text-xs font-semibold uppercase tracking-widest mb-1.5">이럴 땐 이렇게</p>
-            <p className="text-white/85 text-sm leading-relaxed">{band.advice}</p>
+        <div className="rounded-2xl bg-white/60 border border-slate-900/8 p-5 space-y-4">
+          <p className="text-slate-700 text-sm leading-relaxed">{band.description}</p>
+          <div className="rounded-xl bg-gradient-to-br from-[#5046e4]/12 to-[#2a2170]/8 border border-[#9382ff]/20 p-4">
+            <p className="text-[#5046e4] text-xs font-semibold uppercase tracking-widest mb-1.5">이럴 땐 이렇게</p>
+            <p className="text-slate-700 text-sm leading-relaxed">{band.advice}</p>
           </div>
         </div>
 
@@ -397,7 +397,7 @@ function ResultButtons({
       </button>
       <button
         onClick={onReset}
-        className="flex items-center justify-center gap-2 px-4 py-3 rounded-[5px] bg-white/5 border border-white/10 text-white/70 font-medium text-sm hover:border-white/25 transition-colors"
+        className="flex items-center justify-center gap-2 px-4 py-3 rounded-[5px] bg-white/60 border border-slate-900/8 text-slate-600 font-medium text-sm hover:border-slate-900/15 transition-colors"
       >
         <RotateCcw className="w-4 h-4" /> 다시
       </button>
