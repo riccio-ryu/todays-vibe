@@ -1,11 +1,15 @@
 import type { MetadataRoute } from "next";
 import { getAllCards, getCardSlug } from "@/lib/tarot/utils";
 import { allDreamSymbols } from "@/data/dream-dictionary";
-import { allPsychTests } from "@/data/psych";
 import zodiacData from "@/data/zodiac-signs.json";
 import chineseData from "@/data/chinese-zodiac.json";
 import { BASE_URL } from "@/lib/utils/site";
 import { PSYCH_ENABLED } from "@/lib/psych/config";
+import { getVisiblePsychTests } from "@/lib/psych/settings";
+
+// 심테 목록을 Firestore에서 읽으므로 빌드 시점에 고정되지 않게 ISR.
+// admin에서 심테를 추가·숨김하면 1시간 내 사이트맵에 반영된다.
+export const revalidate = 3600;
 
 const staticRoutes = [
   { path: "/", priority: 1.0, changeFrequency: "daily" as const },
@@ -37,7 +41,7 @@ const staticRoutes = [
   { path: "/terms", priority: 0.4, changeFrequency: "yearly" as const },
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   const staticEntries = staticRoutes
     .filter(({ path }) => PSYCH_ENABLED || path !== "/psych")
@@ -64,15 +68,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  // 심리 테스트 상세 페이지 (운영 미노출 시 제외)
-  const psychEntries = PSYCH_ENABLED
-    ? allPsychTests.map((t) => ({
-        url: `${BASE_URL}/psych/${t.slug}`,
-        lastModified: now,
-        changeFrequency: "monthly" as const,
-        priority: 0.6,
-      }))
-    : [];
+  // 심리 테스트 상세 페이지 — admin(psych_tests)에서 노출 중인 것만.
+  // 전역 미노출(PSYCH_ENABLED=false)이면 Firestore 조회 없이 건너뛴다.
+  const visiblePsychTests = PSYCH_ENABLED ? await getVisiblePsychTests() : [];
+  const psychEntries = visiblePsychTests.map((t) => ({
+    url: `${BASE_URL}/psych/${t.slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
 
   // 별자리 12궁 상세 페이지
   const zodiacEntries = zodiacData.zodiacSigns.map((s) => ({
