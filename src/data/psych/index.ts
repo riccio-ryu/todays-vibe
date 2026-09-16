@@ -20,6 +20,11 @@ import { crushTest } from "./crush";
 import { contactStyleTest } from "./contact-style";
 import { loveLanguageTest } from "./love-language";
 import { snackTest } from "./snack";
+import { chatToneTest } from "./chat-tone";
+import { glassMentalTest } from "./glass-mental";
+import { lazinessTest } from "./laziness";
+import { rpgJobTest } from "./rpg-job";
+import { joseonJobTest } from "./joseon-job";
 import { zombieTest } from "./zombie";
 import { stressTest } from "./stress";
 import { burnoutTest } from "./burnout";
@@ -71,9 +76,14 @@ export const allLogicPsychTests: LogicPsychTest[] = [
   flowerTest,
   snackTest,
   superpowerTest,
+  chatToneTest,
+  glassMentalTest,
+  rpgJobTest,
+  joseonJobTest,
   stressTest,
   burnoutTest,
   zombieTest,
+  lazinessTest,
   desertTest,
   workVillainTest,
   decisionTest,

@@ -31,6 +31,12 @@
   - `contact-style.ts` (#33 연락 집착도) — `score` 8문항, 확인 강박·의미 부여 2축
   - `love-language.ts` (#28 사랑의 언어) — `category` 10문항·5유형(문항당 선택지 5개). 카탈로그의 "주 언어 2가지"는 `scoreCategory`가 최다 1개만 반환해 **주 언어 1가지**로 구현, 엔진 확장은 TODO로 남김
   - `snack.ts` (#65 스낵 유형 SPTI) — `category` 8문항·4유형
+- **심리 테스트 3차 확장 5종** (`src/data/psych/`) — 엔진 무수정, 총 34종(로직 28 + AI 6)·준비중 66→61종
+  - `chat-tone.ts` (#10 단톡방 말투) — `category` 8문항 → 리액션 폭격·간결 단답·정리 장문·조용한 관찰
+  - `glass-mental.ts` (#23 유리멘탈 방어 유형) — `category` 8문항 → 폭발·잠수·쿨·반격
+  - `laziness.ts` (#55 게으름 지수) — `score` 10문항, 미루기·생활 관리 2축. 자기비하로 흐르지 않게 "에너지 배분"으로 해석하고 최고 구간엔 상담 권유 문구
+  - `rpg-job.ts` (#46 판타지 RPG 직업) — `category` 8문항 → 탱커·힐러·딜러·마법사·서포터 5직업
+  - `joseon-job.ts` (#64 조선시대 직업) — `category` 10문항 → 보부상·성균관 선비·암행어사·예인·신관 사또
 - 홈 활성 탭을 URL에 유지 (`HomeSwipe`·`Header`) — 심테 탭 전환 시 `/?tab=psych`로 `replaceState`, 홈 진입 시 복원(복원 이동은 애니메이션 없이). `/psych/*`에서 헤더 로고도 `/?tab=psych`로 연결해 운세 탭으로 튕기지 않게 함
 - 문서 — 카탈로그 구현현황 20종→24종 및 신규 추가 경로 주의사항 명시, TODO 확장 트래커·완료표 갱신
 - 검증 — `tsc --noEmit` 통과, `npm run build` 성공(294 페이지), eslint 신규 이슈 없음
