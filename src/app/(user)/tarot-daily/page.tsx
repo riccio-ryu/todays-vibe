@@ -3,9 +3,12 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { ArrowLeft, Heart, Briefcase, DollarSign } from "lucide-react";
+import { Heart, Briefcase, DollarSign } from "lucide-react";
 import TarotCard from "@/components/tarot/TarotCard";
-import { drawCards, getCardMeaning, getSuitLabel, type DrawnCard } from "@/lib/tarot/utils";
+import { drawCards, getCardMeaning, getCardSlug, getSuitLabel, type DrawnCard } from "@/lib/tarot/utils";
+import { shareOrCopyUrl } from "@/lib/utils/share";
+import FavoriteButton from "@/components/common/FavoriteButton";
+import BackHomePill from "@/components/common/BackHomePill";
 
 export default function TarotDailyPage() {
   const [drawn, setDrawn] = useState<DrawnCard | null>(null);
@@ -27,13 +30,13 @@ export default function TarotDailyPage() {
   const meaning = drawn ? getCardMeaning(drawn.card, drawn.reversed) : null;
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-10">
+    <div className="max-w-lg mx-auto px-4 py-6">
       {/* 헤더 */}
-      <div className="flex items-center gap-3 mb-8">
-        <Link href="/" className="text-white/40 hover:text-white/70 text-sm transition-colors">
-          <ArrowLeft className="w-4 h-4" /> 홈
-        </Link>
-        <span className="text-white/20">|</span>
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-3">
+          <BackHomePill />
+          <FavoriteButton menuId="tarot-daily" />
+        </div>
         <h1 className="text-white font-semibold text-lg">타로 원카드</h1>
       </div>
 
@@ -184,16 +187,67 @@ export default function TarotDailyPage() {
                 </p>
               )}
 
-              {/* 다시 뽑기 */}
-              <button
-                onClick={handleReset}
-                className="w-full py-3 rounded-xl border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-sm transition-colors"
+              {/* 카드 사전 링크 */}
+              <Link
+                href={`/tarot-cards/${getCardSlug(drawn.card)}`}
+                className="block text-center text-purple-300/70 hover:text-purple-200 text-xs underline underline-offset-4 transition-colors"
               >
-                다시 뽑기
-              </button>
+                {drawn.card.nameKo} 카드의 상징과 자세한 의미 보기 →
+              </Link>
+
+              {/* 다시 뽑기 + 공유하기 */}
+              <div className="flex gap-3">
+                <button
+                  onClick={handleReset}
+                  className="flex-1 py-3 rounded-xl border border-white/10 text-white/50 hover:text-white/80 hover:border-white/20 text-sm transition-colors"
+                >
+                  다시 뽑기
+                </button>
+                <button
+                  onClick={() => shareOrCopyUrl(`${drawn.card.nameKo} 타로 원카드 | 오늘운`)}
+                  className="flex-1 py-3 rounded-xl bg-[#5046e4]/30 border border-[#9382ff]/25 text-[#9382ff] text-sm font-medium hover:bg-[#5046e4]/50 transition-colors"
+                >
+                  📤 공유하기
+                </button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
+
+      {/* 타로 안내 */}
+      <div className="mt-12 border-t border-white/10 pt-10 space-y-5">
+        <h2 className="text-white font-bold text-lg">타로 원카드란?</h2>
+        <p className="text-white/50 text-sm leading-relaxed">
+          타로(Tarot)는 15세기 유럽에서 시작된 78장의 카드 덱으로, 오늘날 직관과 성찰의 도구로 널리 사용됩니다.
+          원카드(One Card Draw)는 하루를 시작하거나 마무리할 때 단 한 장을 뽑아
+          오늘의 에너지와 메시지를 읽는 방식입니다. 정방향은 카드 에너지가 원활히 흐를 때,
+          역방향은 그 에너지가 내면을 향하거나 지연될 때의 의미를 담습니다.
+        </p>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="rounded-xl bg-white/5 border border-white/10 p-4">
+            <p className="text-purple-300 text-xs font-semibold mb-2">메이저 아르카나 (22장)</p>
+            <p className="text-white/40 text-xs leading-relaxed">
+              삶의 큰 흐름과 영적 교훈을 담습니다.
+              0번 바보(The Fool)부터 21번 세계(The World)까지,
+              인간의 내면 여정을 상징합니다.
+            </p>
+          </div>
+          <div className="rounded-xl bg-white/5 border border-white/10 p-4">
+            <p className="text-purple-300 text-xs font-semibold mb-2">마이너 아르카나 (56장)</p>
+            <p className="text-white/40 text-xs leading-relaxed">
+              일상의 사건·감정·도전을 담습니다.
+              컵(감정)·완드(열정)·검(생각)·펜타클(물질)
+              4개 수트, 각 14장으로 구성됩니다.
+            </p>
+          </div>
+        </div>
+        <Link
+          href="/tarot-cards"
+          className="block rounded-xl bg-purple-900/20 border border-purple-500/20 p-4 text-center text-purple-200 hover:bg-purple-900/30 text-sm font-medium transition-colors"
+        >
+          📖 타로 카드 78장 의미 사전 보러 가기
+        </Link>
       </div>
     </div>
   );

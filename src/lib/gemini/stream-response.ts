@@ -17,11 +17,24 @@ export async function createFortuneStreamResponse(opts: {
   userId: string | null;
   readingType: ReadingType;
   input: Record<string, unknown>;
+  onRollback?: (() => Promise<void>) | null;
 }): Promise<Response> {
-  const result = await generateStreamWithRetry({
-    model: DEFAULT_MODEL,
-    contents: opts.contents,
-  });
+  let result;
+  try {
+    result = await generateStreamWithRetry({
+      model: DEFAULT_MODEL,
+      contents: opts.contents,
+    });
+  } catch (err) {
+    console.error("[stream init error]", err);
+    if (opts.onRollback) {
+      try { await opts.onRollback(); } catch (rbErr) { console.error("[rollback error]", rbErr); }
+    }
+    return Response.json(
+      { error: "AI 풀이 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
+      { status: 500 }
+    );
+  }
 
   const stream = new ReadableStream({
     async start(controller) {

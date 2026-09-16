@@ -4,6 +4,7 @@ import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import { buildPrompt } from "@/lib/claude/prompts";
 import { generateStreamWithRetry, DEFAULT_MODEL } from "@/lib/gemini/client";
+import { checkUsage, denyResponse } from "@/lib/usage-check";
 import { type TojeongInput } from "@/types/fortune";
 
 export const runtime = "nodejs";
@@ -72,6 +73,10 @@ export async function POST(req: NextRequest) {
     return new Response(stream, { headers: STREAM_HEADERS });
   }
 
+  // 캐시 없음 → 새로 생성 시 별 소모
+  const check = await checkUsage(req, "tojeong");
+  if (!check.allowed) return denyResponse(check.reason);
+
   // AI 생성 + 저장
   const prompt = buildPrompt("tojeong", input);
   const aiResult = await generateStreamWithRetry({ model: DEFAULT_MODEL, contents: prompt });
@@ -102,6 +107,7 @@ export async function POST(req: NextRequest) {
         });
       } catch (err) {
         console.error("[tojeong stream error]", err);
+        if (check.rollback) await check.rollback().catch(() => {});
       }
       controller.close();
     },

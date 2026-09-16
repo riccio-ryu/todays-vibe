@@ -6,13 +6,15 @@ import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 import { signOut } from "@/lib/firebase/auth";
 import { User, Settings } from "lucide-react";
+import PWAInstallButton from "@/components/common/PWAInstallButton";
+import { useCredits } from "@/components/credits/CreditsProvider";
 
 export default function Header() {
   const { user, loading, isAdmin } = useAuth();
+  const { remaining, grant, loading: creditsLoading } = useCredits();
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // 메뉴 외부 클릭 시 닫기
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -30,40 +32,61 @@ export default function Header() {
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-[10px] backdrop-blur-md bg-black/30 border-b border-white/10">
+    <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center justify-between gap-3 w-[calc(100%-2rem)] max-w-2xl px-4 py-2.5 rounded-full backdrop-blur-xl header-pill">
       {/* Logo */}
-      <Link href="/">
+      <Link href="/" className="shrink-0">
         <Image
           src="/brand/logo.svg"
           alt="오늘운"
           width={820}
           height={400}
-          style={{ width: "80px", height: "auto" }}
+          style={{ width: "72px", height: "auto" }}
           priority
         />
       </Link>
 
       {/* Auth */}
-      <nav className="flex items-center gap-3">
+      <nav className="flex items-center gap-2.5">
         {loading ? (
-          <div className="w-8 h-8 rounded-full bg-white/10 animate-pulse" />
+          <div className="w-7 h-7 rounded-full bg-white/8 animate-pulse" />
         ) : user ? (
-          <div ref={menuRef} className="relative">
+          <div ref={menuRef} className="relative flex items-center gap-2">
+            {/* 오늘의 별 잔량 (0이면 강조) */}
+            {(() => {
+              const empty = grant !== -1 && !creditsLoading && (remaining ?? 0) <= 0;
+              return (
+                <Link
+                  href="/mypage"
+                  title="오늘의 별 (매일 자정 충전)"
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded-full border text-xs font-medium transition-colors ${
+                    empty
+                      ? "bg-amber-500/15 border-amber-400/30 text-amber-200 hover:bg-amber-500/25"
+                      : "bg-white/8 border-white/10 text-[#f4f0ff] hover:bg-white/12"
+                  }`}
+                >
+                  <span className={empty ? "opacity-60" : "text-[#ffd968]"}>⭐</span>
+                  <span className="tabular-nums">
+                    {grant === -1 ? "∞" : creditsLoading ? "…" : remaining ?? 0}
+                  </span>
+                </Link>
+              );
+            })()}
+            <PWAInstallButton />
             {/* 아바타 버튼 */}
             <button
               onClick={() => setOpen((v) => !v)}
-              className="w-8 h-8 rounded-full overflow-hidden ring-2 ring-white/20 hover:ring-purple-400 transition-all focus:outline-none"
+              className="w-7 h-7 rounded-full overflow-hidden ring-2 ring-white/15 hover:ring-[#9382ff] transition-all focus:outline-none"
             >
               {user.photoURL ? (
                 <Image
                   src={user.photoURL}
                   alt="avatar"
-                  width={32}
-                  height={32}
+                  width={28}
+                  height={28}
                   className="object-cover w-full h-full"
                 />
               ) : (
-                <div className="w-full h-full bg-purple-700 flex items-center justify-center text-white text-sm font-bold">
+                <div className="w-full h-full bg-[#9382ff]/60 flex items-center justify-center text-[#f4f0ff] text-xs font-bold">
                   {(user.displayName ?? user.email ?? "U")[0].toUpperCase()}
                 </div>
               )}
@@ -71,37 +94,37 @@ export default function Header() {
 
             {/* 드롭다운 */}
             {open && (
-              <div className="absolute right-0 mt-2 w-52 rounded-xl bg-gray-900 border border-white/10 shadow-xl overflow-hidden">
-                <div className="px-4 py-3 border-b border-white/10">
-                  <p className="text-white text-sm font-medium truncate">
+              <div className="absolute right-0 top-full mt-3 w-52 rounded-[16px] overflow-hidden card-glow">
+                <div className="px-4 py-3 border-b border-white/8">
+                  <p className="text-[#f4f0ff] text-sm font-medium truncate">
                     {user.displayName ?? "사용자"}
                   </p>
-                  <p className="text-white/40 text-xs truncate">{user.email}</p>
+                  <p className="text-[#a8a6b7] text-xs truncate">{user.email}</p>
                 </div>
                 <div className="py-1">
                   <Link
                     href="/mypage"
                     onClick={() => setOpen(false)}
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-white/80 hover:bg-white/5 transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-[#a8a6b7] hover:text-[#f4f0ff] hover:bg-white/5 transition-colors"
                   >
                     <User className="w-3.5 h-3.5" /> 마이페이지
                   </Link>
                   {isAdmin && (
                     <>
-                      <div className="border-t border-white/10 my-1" />
+                      <div className="border-t border-white/8 my-1" />
                       <Link
                         href="/admin"
                         onClick={() => setOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-amber-400 hover:bg-white/5 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-[#9382ff] hover:bg-white/5 transition-colors"
                       >
                         <Settings className="w-3.5 h-3.5" /> 관리자 페이지
                       </Link>
                     </>
                   )}
-                  <div className="border-t border-white/10 my-1" />
+                  <div className="border-t border-white/8 my-1" />
                   <button
                     onClick={handleSignOut}
-                    className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-white/5 transition-colors"
+                    className="w-full text-left px-4 py-2 text-sm text-[#a8a6b7]/60 hover:bg-white/5 hover:text-[#a8a6b7] transition-colors"
                   >
                     로그아웃
                   </button>
@@ -111,15 +134,16 @@ export default function Header() {
           </div>
         ) : (
           <>
+            <PWAInstallButton />
             <Link
               href="/login"
-              className="px-4 py-1.5 text-sm text-white/80 border border-white/20 rounded-lg hover:bg-white/10 transition-colors"
+              className="px-3.5 py-1.5 text-sm text-[#a8a6b7] border border-white/15 rounded-[5px] hover:bg-white/8 hover:text-[#f4f0ff] transition-colors"
             >
               로그인
             </Link>
             <Link
               href="/signup"
-              className="px-4 py-1.5 text-sm text-white font-semibold bg-purple-600 rounded-lg hover:bg-purple-500 transition-colors"
+              className="hidden sm:block px-3.5 py-1.5 text-sm text-[#f4f0ff] font-medium bg-[#5046e4] rounded-[5px] hover:bg-[#3d36c4] transition-colors"
             >
               회원가입
             </Link>

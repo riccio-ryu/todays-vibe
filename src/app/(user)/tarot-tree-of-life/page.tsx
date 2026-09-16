@@ -61,20 +61,22 @@ export default function TarotTreeOfLifePage() {
   }
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-10">
-      <PageHeader title="생명의 나무 타로" />
+    <div className="max-w-lg mx-auto px-4 py-6">
+      <PageHeader title="생명의 나무 타로" menuId="tarot-tree-of-life" />
 
       <AnimatePresence mode="wait">
 
         {phase === "input" && (
-          <TarotInputPhase
-            subtitle="카발라의 세피로트 10위치로 삶의 전 영역을 탐색합니다"
-            placeholder="예: 지금 나의 삶 전체를 보고 싶어요"
-            question={question}
-            setQuestion={setQuestion}
-            fortuneStatus={fortuneStatus}
-            handleStartShuffle={handleStartShuffle}
-          />
+          fortuneStatus?.todayReading
+            ? <TarotTodayResult todayReading={fortuneStatus.todayReading} onReshuffle={handleStartShuffle} />
+            : <TarotInputPhase
+                subtitle="카발라의 세피로트 10위치로 삶의 전 영역을 탐색합니다"
+                placeholder="예: 지금 나의 삶 전체를 보고 싶어요"
+                question={question}
+                setQuestion={setQuestion}
+                fortuneStatus={fortuneStatus}
+                handleStartShuffle={handleStartShuffle}
+              />
         )}
 
         {phase === "shuffling" && <TarotShufflingAnimation />}
@@ -185,7 +187,7 @@ export default function TarotTreeOfLifePage() {
             </div>
 
             {phase === "drawn" && revealed.every(Boolean) && (
-              <TarotActionButtons onInterpret={handleInterpret} onReset={handleReset} />
+              <TarotActionButtons onInterpret={handleInterpret} onReset={handleReset} exhausted={fortuneStatus?.exhausted === true} />
             )}
 
             {phase === "reading" && (
@@ -201,9 +203,6 @@ export default function TarotTreeOfLifePage() {
 
       </AnimatePresence>
 
-      {fortuneStatus?.exhausted && phase === "input" && (
-        <TarotTodayResult todayReading={fortuneStatus.todayReading} />
-      )}
     </div>
   );
 }

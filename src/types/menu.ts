@@ -30,5 +30,7 @@ export interface MenuItem {
   color: string;
   order: number;
   usageLimits?: UsageLimits;
+  /** 별(⭐) 크레딧 소모량. 미설정 시 기본값(프리미엄 3 / AI 2 / 일반 1) */
+  cost?: number;
   popular?: boolean;
 }

@@ -45,12 +45,12 @@ export default function TarotCard({
       >
         {/* 뒷면 */}
         <div
-          className="absolute inset-0 rounded-xl shadow-lg shadow-black/40"
+          className="absolute inset-0 rounded-2xl"
           style={{ backfaceVisibility: "hidden", ...CARD_BACK_STYLE }}
         />
         {/* 앞면 */}
         <div
-          className="absolute inset-0 rounded-xl overflow-hidden shadow-lg shadow-black/40"
+          className="absolute inset-0 rounded-2xl overflow-hidden"
           style={{
             backfaceVisibility: "hidden",
             transform: "rotateY(180deg)",

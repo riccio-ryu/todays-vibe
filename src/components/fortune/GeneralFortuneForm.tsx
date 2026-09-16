@@ -4,9 +4,14 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
+import { useCredits } from "@/components/credits/CreditsProvider";
+import { useBirthInfo } from "@/lib/hooks/useBirthInfo";
 import { type FortuneType, type GeneralFortuneInput } from "@/types/fortune";
 import FortuneResult from "./FortuneResult";
 import TodayFortuneCard from "@/components/common/TodayFortuneCard";
+import FavoriteButton from "@/components/common/FavoriteButton";
+import SavedBirthBanner from "@/components/common/SavedBirthBanner";
+import BackHomePill from "@/components/common/BackHomePill";
 
 interface Config {
   type: FortuneType;
@@ -24,33 +29,46 @@ export default function GeneralFortuneForm({ config }: Props) {
   const { user } = useAuth();
   const { result, isLoading, error, submit, reset } = useFortuneStream();
   const { fortuneStatus } = useFortuneStatus(config.type);
+  const { refresh: refreshCredits, openInsufficient } = useCredits();
+  const { savedInfo, saving, saveStatus, saveBirthInfo } = useBirthInfo();
 
   const [year, setYear] = useState("");
   const [month, setMonth] = useState("");
   const [day, setDay] = useState("");
   const [gender, setGender] = useState<"male" | "female">("male");
   const [question, setQuestion] = useState("");
+  const [showForm, setShowForm] = useState(false);
+  const [isOtherMode, setIsOtherMode] = useState(false);
+  const [wantSave, setWantSave] = useState(false);
 
-  const [saveBirth, setSaveBirth] = useState(false);
-  const [savedInfo, setSavedInfo] = useState<{ year: number; month: number; day: number; gender: "male" | "female" } | null>(null);
-  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
-
-  // 저장된 출생 정보 자동 불러오기
+  // 저장된 정보로 자동 채우기
   useEffect(() => {
-    if (!user) return;
-    fetch("/api/user/birth-info")
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.birthInfo) {
-          setSavedInfo(d.birthInfo);
-          setYear(String(d.birthInfo.year));
-          setMonth(String(d.birthInfo.month));
-          setDay(String(d.birthInfo.day));
-          setGender(d.birthInfo.gender ?? "male");
-        }
-      })
-      .catch(() => {});
-  }, [user]);
+    if (savedInfo && !isOtherMode) {
+      setYear(String(savedInfo.year));
+      setMonth(String(savedInfo.month));
+      setDay(String(savedInfo.day));
+      setGender(savedInfo.gender ?? "male");
+    }
+  }, [savedInfo, isOtherMode]);
+
+  useEffect(() => {
+    setWantSave(!!savedInfo && !isOtherMode);
+  }, [savedInfo, isOtherMode]);
+
+  function handleOtherMode() {
+    setIsOtherMode(true);
+    setYear(""); setMonth(""); setDay(""); setGender("male");
+  }
+
+  function handleRestoreMyInfo() {
+    setIsOtherMode(false);
+    if (savedInfo) {
+      setYear(String(savedInfo.year));
+      setMonth(String(savedInfo.month));
+      setDay(String(savedInfo.day));
+      setGender(savedInfo.gender ?? "male");
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -65,36 +83,51 @@ export default function GeneralFortuneForm({ config }: Props) {
       question: question.trim() || undefined,
     };
 
-    if (saveBirth && user) {
-      setSaveStatus("saving");
-      fetch("/api/user/birth-info", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ year: y, month: m, day: d, gender }),
-      })
-        .then(() => { setSaveStatus("saved"); setSavedInfo({ year: y, month: m, day: d, gender }); })
-        .catch(() => setSaveStatus("idle"));
-    }
-
     await submit(config.type, input);
+    refreshCredits(); // 별 소모 후 헤더 잔량 갱신
   }
 
-  if (result || isLoading) {
+  async function handleToggleSave() {
+    const newVal = !wantSave;
+    setWantSave(newVal);
+    if (newVal) {
+      const y = parseInt(year), m = parseInt(month), d = parseInt(day);
+      if (y && m && d) {
+        await saveBirthInfo({ year: y, month: m, day: d, gender });
+      }
+    }
+  }
+
+  if (result || isLoading || error) {
     return (
-      <div>
-        {saveStatus === "saved" && (
-          <div className="max-w-xl mx-auto px-4 pt-6">
-            <div className="px-4 py-2.5 rounded-xl bg-green-500/10 border border-green-400/20 text-center">
-              <p className="text-green-400 text-sm">출생 정보가 저장되었습니다</p>
-            </div>
-          </div>
-        )}
-        <FortuneResult
-          result={result}
-          isLoading={isLoading}
-          onReset={() => { reset(); setQuestion(""); setSaveStatus("idle"); }}
-          title={`${config.title} 결과`}
-          icon={config.icon}
+      <FortuneResult
+        result={result}
+        isLoading={isLoading}
+        error={error}
+        onReset={() => { reset(); setQuestion(""); }}
+        title={`${config.title} 결과`}
+        icon={config.icon}
+      />
+    );
+  }
+
+  if (fortuneStatus?.todayReading && !result && !showForm) {
+    return (
+      <div className="max-w-xl mx-auto px-4 py-6">
+        <div className="flex items-center justify-between mb-6">
+          <BackHomePill />
+          <FavoriteButton menuId={config.type} />
+        </div>
+        <div className="text-center mb-8">
+          <span className="text-5xl block mb-3">{config.icon}</span>
+          <h1 className="text-white font-bold text-2xl">{config.title}</h1>
+          <p className="text-white/50 text-sm mt-2">{config.questionLabel}</p>
+        </div>
+        <TodayFortuneCard
+          label={`오늘의 ${config.title} 결과`}
+          todayReading={fortuneStatus.todayReading}
+          exhausted={fortuneStatus.exhausted}
+          onNewReading={() => setShowForm(true)}
         />
       </div>
     );
@@ -103,28 +136,26 @@ export default function GeneralFortuneForm({ config }: Props) {
   const currentYear = new Date().getFullYear();
 
   return (
-    <div className="max-w-xl mx-auto px-4 py-10">
-      {/* 헤더 */}
+    <div className="max-w-xl mx-auto px-4 py-6">
+      <div className="flex items-center justify-between mb-6">
+        <BackHomePill />
+        <FavoriteButton menuId={config.type} />
+      </div>
+
       <div className="text-center mb-8">
         <span className="text-5xl block mb-3">{config.icon}</span>
         <h1 className="text-white font-bold text-2xl">{config.title}</h1>
         <p className="text-white/50 text-sm mt-2">{config.questionLabel}</p>
       </div>
 
-      {/* 저장된 정보 알림 */}
-      {savedInfo && (
-        <div className="mb-4 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-400/20 flex items-center justify-between">
-          <p className="text-amber-300 text-sm">저장된 생년월일 정보가 있습니다</p>
-          <button
-            onClick={() => {
-              setYear(""); setMonth(""); setDay(""); setGender("male"); setSavedInfo(null);
-              fetch("/api/user/birth-info", { method: "DELETE" }).catch(() => {});
-            }}
-            className="text-white/40 text-xs hover:text-white/70 transition-colors"
-          >
-            삭제
-          </button>
-        </div>
+      {/* 저장된 내 정보 배너 */}
+      {user && savedInfo && (
+        <SavedBirthBanner
+          savedInfo={savedInfo}
+          isOtherMode={isOtherMode}
+          onOtherMode={handleOtherMode}
+          onRestoreMyInfo={handleRestoreMyInfo}
+        />
       )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
@@ -144,7 +175,7 @@ export default function GeneralFortuneForm({ config }: Props) {
                   max={currentYear}
                   placeholder="1990"
                   required
-                  className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/15 text-white text-sm placeholder-white/20 focus:outline-none focus:border-purple-400 transition-colors"
+                  className="w-full px-3 py-2 rounded-[5px] bg-white/5 border border-white/10 text-[#f4f0ff] text-sm placeholder-white/20 focus:outline-none focus:border-[#9382ff]/50 transition-colors"
                 />
               </div>
               <div>
@@ -153,7 +184,7 @@ export default function GeneralFortuneForm({ config }: Props) {
                   value={month}
                   onChange={(e) => setMonth(e.target.value)}
                   required
-                  className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/15 text-white text-sm focus:outline-none focus:border-purple-400 transition-colors appearance-none"
+                  className="w-full px-3 py-2 rounded-[5px] bg-white/5 border border-white/10 text-[#f4f0ff] text-sm focus:outline-none focus:border-[#9382ff]/50 transition-colors appearance-none"
                 >
                   <option value="" className="bg-gray-900 text-white/40">월</option>
                   {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
@@ -167,7 +198,7 @@ export default function GeneralFortuneForm({ config }: Props) {
                   value={day}
                   onChange={(e) => setDay(e.target.value)}
                   required
-                  className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/15 text-white text-sm focus:outline-none focus:border-purple-400 transition-colors appearance-none"
+                  className="w-full px-3 py-2 rounded-[5px] bg-white/5 border border-white/10 text-[#f4f0ff] text-sm focus:outline-none focus:border-[#9382ff]/50 transition-colors appearance-none"
                 >
                   <option value="" className="bg-gray-900 text-white/40">일</option>
                   {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
@@ -187,10 +218,10 @@ export default function GeneralFortuneForm({ config }: Props) {
                   key={val}
                   type="button"
                   onClick={() => setGender(val)}
-                  className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                  className={`flex-1 py-2 rounded-[5px] text-sm font-medium transition-colors ${
                     gender === val
-                      ? "bg-purple-600 text-white"
-                      : "bg-white/10 text-white/50 hover:bg-white/15"
+                      ? "bg-[#5046e4] text-[#f4f0ff]"
+                      : "bg-white/5 text-[#a8a6b7] hover:bg-white/10"
                   }`}
                 >
                   {label}
@@ -209,54 +240,52 @@ export default function GeneralFortuneForm({ config }: Props) {
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               placeholder={config.questionPlaceholder}
-              className="w-full px-3 py-2.5 rounded-lg bg-white/10 border border-white/15 text-white text-sm placeholder-white/30 focus:outline-none focus:border-purple-400 transition-colors"
+              className="w-full px-3 py-2.5 rounded-[5px] bg-white/5 border border-white/10 text-[#f4f0ff] text-sm placeholder-white/25 focus:outline-none focus:border-[#9382ff]/50 transition-colors"
             />
           </div>
-
-          {/* 출생 정보 저장 (로그인 시) */}
-          {user && (
-            <label className="flex items-center gap-3 cursor-pointer">
-              <div
-                onClick={() => setSaveBirth((v) => !v)}
-                className={`w-10 h-5 rounded-full transition-colors relative shrink-0 ${
-                  saveBirth ? "bg-purple-600" : "bg-white/20"
-                }`}
-              >
-                <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${
-                  saveBirth ? "translate-x-5" : "translate-x-0.5"
-                }`} />
-              </div>
-              <div>
-                <p className="text-white/80 text-sm">출생 정보 저장</p>
-                <p className="text-white/40 text-xs">다음에 자동으로 불러옵니다</p>
-              </div>
-            </label>
-          )}
         </div>
 
-        {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+        {/* 출생정보 저장 버튼 */}
+        {user && !isOtherMode && (
+          <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/5 border border-white/10">
+            <span className="text-sm text-white/60">
+              {saving ? "저장 중..." : wantSave ? "생년월일 저장중" : "생년월일 저장"}
+              {saveStatus === "saved" && <span className="text-[#9382ff] text-xs ml-2">✓</span>}
+            </span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={wantSave}
+              onClick={handleToggleSave}
+              disabled={saving}
+              className={`relative inline-flex w-11 h-6 rounded-full transition-colors duration-200 disabled:opacity-50 shrink-0 focus:outline-none ${
+                wantSave ? "bg-[#5046e4]" : "bg-white/20"
+              }`}
+            >
+              <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200 ${
+                wantSave ? "translate-x-[22px]" : "translate-x-0.5"
+              }`} />
+            </button>
+          </div>
+        )}
 
-        <button
-          type="submit"
-          disabled={fortuneStatus?.exhausted === true}
-          className={`w-full py-3 rounded-xl font-bold text-sm transition-opacity ${
-            fortuneStatus?.exhausted
-              ? "bg-white/10 text-white/30 cursor-not-allowed"
-              : "bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:opacity-90"
-          }`}
-        >
-          {fortuneStatus?.exhausted
-            ? `오늘 ${config.title}을 이미 이용했어요`
-            : `${config.icon} ${config.title} 보기`}
-        </button>
+        {fortuneStatus?.exhausted ? (
+          <button
+            type="button"
+            onClick={openInsufficient}
+            className="w-full py-3 rounded-[5px] font-medium text-sm bg-amber-500/15 border border-amber-400/30 text-amber-200 hover:bg-amber-500/25 transition-colors"
+          >
+            ⭐ 오늘의 별이 부족해요 · 자세히
+          </button>
+        ) : (
+          <button
+            type="submit"
+            className="w-full py-3 rounded-[5px] font-medium text-sm bg-[#5046e4] text-[#f4f0ff] hover:bg-[#3d36c4] transition-colors"
+          >
+            {config.icon} {config.title} 보기{fortuneStatus?.cost ? ` (⭐${fortuneStatus.cost})` : ""}
+          </button>
+        )}
       </form>
-
-      {fortuneStatus?.exhausted && fortuneStatus.todayReading && (
-        <TodayFortuneCard
-          label={`오늘의 ${config.title} 결과`}
-          todayReading={fortuneStatus.todayReading}
-        />
-      )}
     </div>
   );
 }

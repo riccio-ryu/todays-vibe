@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { buildPrompt } from "@/lib/claude/prompts";
+import { buildPromptFromDB } from "@/lib/claude/promptStore";
 import { FortuneRequest } from "@/types/fortune";
 import { checkUsage, denyResponse } from "@/lib/usage-check";
 import { type ReadingType } from "@/lib/firebase/readings";
@@ -19,16 +19,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const usage = await checkUsage(request, type);
+    // psych-test는 심테 slug별 cost 적용 위해 subKey 전달
+    const subKey =
+      type === "psych-test"
+        ? (input as { testSlug?: string })?.testSlug
+        : undefined;
+    const usage = await checkUsage(request, type, subKey);
     if (!usage.allowed) return denyResponse(usage.reason);
 
-    const prompt = buildPrompt(type, input);
+    const prompt = await buildPromptFromDB(type, input);
 
     return createFortuneStreamResponse({
       contents: prompt,
       userId: usage.userId,
       readingType: type as ReadingType,
       input: input as unknown as Record<string, unknown>,
+      onRollback: usage.rollback,
     });
   } catch (err) {
     console.error("[fortune API error]", err);

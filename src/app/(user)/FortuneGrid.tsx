@@ -1,14 +1,40 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { ChevronDown, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { ChevronDown, ArrowRight, Eye, EyeOff, Star } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import LoginRequiredModal from "@/components/common/LoginRequiredModal";
 import type { MenuItem } from "@/types/menu";
+import type { BulkFortuneStatus } from "@/app/api/user/fortune-status-bulk/route";
 
 const STORAGE_KEY = "todays-vibe:accordion";
+
+const CARD_GRADIENTS = [
+  "from-violet-600 to-purple-700",
+  "from-indigo-600 to-violet-700",
+  "from-purple-600 to-indigo-700",
+  "from-blue-600 to-indigo-700",
+  "from-violet-500 to-indigo-600",
+  "from-indigo-700 to-violet-800",
+  "from-purple-500 to-violet-600",
+  "from-sky-600 to-indigo-700",
+  "from-blue-700 to-violet-800",
+  "from-indigo-500 to-blue-600",
+  "from-violet-700 to-purple-800",
+  "from-slate-500 to-indigo-600",
+  "from-blue-600 to-violet-700",
+  "from-purple-700 to-indigo-800",
+  "from-indigo-600 to-blue-700",
+  "from-violet-600 to-blue-700",
+];
+
+function cardColor(id: string): string {
+  let h = 5381;
+  for (let i = 0; i < id.length; i++) h = (h * 33) ^ id.charCodeAt(i);
+  return CARD_GRADIENTS[Math.abs(h) % CARD_GRADIENTS.length];
+}
 
 interface Category {
   id: string;
@@ -19,15 +45,17 @@ interface Category {
 interface Props {
   categories: Category[];
   fortunes: MenuItem[];
+  favorites?: string[];
+  onFavoriteToggle?: (menuId: string) => void;
 }
 
-export default function FortuneGrid({ categories, fortunes }: Props) {
+export default function FortuneGrid({ categories, fortunes, favorites = [], onFavoriteToggle }: Props) {
   const { user, loading } = useAuth();
   const [modalPath, setModalPath] = useState<string | null>(null);
   const [showComingSoon, setShowComingSoon] = useState(false);
   const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
+  const [statusMap, setStatusMap] = useState<Record<string, BulkFortuneStatus>>({});
 
-  // localStorage에서 열린 카테고리 복원
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -36,6 +64,22 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
       // ignore
     }
   }, []);
+
+  const fetchBulkStatus = useCallback(() => {
+    if (!user) return;
+    const readyIds = fortunes.filter((f) => f.ready).map((f) => f.id);
+    if (readyIds.length === 0) return;
+    fetch("/api/user/fortune-status-bulk", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ menuIds: readyIds }),
+    })
+      .then((r) => r.json())
+      .then((d) => setStatusMap(d))
+      .catch(() => {});
+  }, [user, fortunes]);
+
+  useEffect(() => { fetchBulkStatus(); }, [fetchBulkStatus]);
 
   function toggleCategory(id: string) {
     setOpenCategories((prev) => {
@@ -78,17 +122,16 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
 
       {/* 툴바 */}
       <div className="flex items-center justify-between mb-4 gap-2">
-        {/* 모두 펼치기 / 접기 */}
         <div className="flex items-center gap-0.5">
           <button
             onClick={expandAll}
-            className="px-2.5 py-1.5 rounded-l-full text-xs text-white/50 border border-white/12 bg-white/6 hover:bg-white/12 hover:text-white/70 transition-colors"
+            className="px-2.5 py-1.5 rounded-l-[5px] text-xs text-[#a8a6b7]/70 border border-white/10 bg-white/4 hover:bg-white/8 hover:text-[#f4f0ff] transition-colors"
           >
             모두펼치기
           </button>
           <button
             onClick={collapseAll}
-            className="px-2.5 py-1.5 rounded-r-full text-xs text-white/50 border border-white/12 border-l-0 bg-white/6 hover:bg-white/12 hover:text-white/70 transition-colors"
+            className="px-2.5 py-1.5 rounded-r-[5px] text-xs text-[#a8a6b7]/70 border border-white/10 border-l-0 bg-white/4 hover:bg-white/8 hover:text-[#f4f0ff] transition-colors"
           >
             모두접기
           </button>
@@ -97,10 +140,10 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
         {/* 준비중 토글 */}
         <button
           onClick={() => setShowComingSoon((v) => !v)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[32px] text-xs font-medium border transition-colors whitespace-nowrap ${
             showComingSoon
-              ? "bg-white/10 border-white/15 text-white/50 hover:bg-white/15 hover:text-white/70"
-              : "bg-white/6 border-white/12 text-white/35 hover:bg-white/10 hover:text-white/55"
+              ? "bg-[#9382ff]/10 border-[#9382ff]/25 text-[#9382ff] hover:bg-[#9382ff]/20"
+              : "bg-white/4 border-white/10 text-[#a8a6b7]/60 hover:bg-white/8 hover:text-[#a8a6b7]"
           }`}
         >
           {showComingSoon ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
@@ -120,23 +163,23 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
           const readyCount = categoryFortunes.filter((f) => f.ready).length;
 
           return (
-            <section key={category.id} className="rounded-2xl border border-white/8 overflow-hidden">
-              {/* 카테고리 헤더 — 클릭으로 토글 */}
+            <section key={category.id} className="rounded-2xl overflow-hidden card-glow transition-shadow duration-300">
+              {/* 카테고리 헤더 */}
               <button
                 onClick={() => toggleCategory(category.id)}
-                className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/5 transition-colors text-left"
+                className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-[#9382ff]/4 transition-colors text-left"
               >
                 <span className="text-xl">{category.icon}</span>
-                <span className="flex-1 text-white/80 text-sm font-semibold">
+                <span className="flex-1 text-[#f4f0ff]/85 text-sm font-medium">
                   {category.name}
                 </span>
-                <span className="text-white/25 text-xs mr-2">
+                <span className="text-[#a8a6b7]/50 text-xs mr-2">
                   {readyCount}종
                 </span>
                 <motion.span
                   animate={{ rotate: isOpen ? 180 : 0 }}
                   transition={{ duration: 0.25, ease: "easeInOut" }}
-                  className="text-white/30 text-xs leading-none"
+                  className="text-[#a8a6b7]/40 text-xs leading-none"
                 >
                   <ChevronDown className="w-4 h-4" />
                 </motion.span>
@@ -159,18 +202,35 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
                           const isReady = fortune.ready === true;
                           const needsAuth = fortune.accessLevel !== "public";
 
+                          const status = statusMap[fortune.id];
+                          const isExhausted = !!status?.exhausted; // 별 부족
+                          const cost = status?.cost ?? null;
+
+                          const isFav = favorites.includes(fortune.id);
+
                           const card = (
                             <div
-                              className={`group relative flex flex-col h-full rounded-xl border p-4 transition-all duration-200
+                              className={`group relative flex flex-col h-full rounded-2xl p-4 transition-all duration-200 overflow-hidden
                                 ${
                                   isReady
-                                    ? "bg-white/8 border-white/8 cursor-pointer hover:-translate-y-0.5 hover:bg-white/14 hover:border-white/18 hover:shadow-lg hover:shadow-purple-900/30"
-                                    : "bg-white/4 border-white/4 cursor-not-allowed opacity-40 grayscale"
+                                    ? isExhausted
+                                      ? "card-mini cursor-pointer opacity-50"
+                                      : "card-mini cursor-pointer hover:-translate-y-0.5 hover:bg-[#9382ff]/6 hover:shadow-[rgba(147,130,255,0.10)_0px_0px_24px_0px_inset]"
+                                    : "bg-white/2 border border-white/4 cursor-not-allowed opacity-40 grayscale"
                                 }`}
                             >
+                              {isReady && (
+                                <div className={`absolute inset-0 bg-gradient-to-br ${cardColor(fortune.id)} opacity-[0.13] pointer-events-none`} />
+                              )}
+                              {/* 별 부족 뱃지 */}
+                              {isExhausted && (
+                                <span className="absolute top-2 right-2 text-[10px] font-medium text-[#a8a6b7]/70 bg-white/8 px-1.5 py-0.5 rounded-[32px]">
+                                  ⭐ 부족
+                                </span>
+                              )}
                               {/* Premium 뱃지 */}
-                              {fortune.accessLevel === "premium" && isReady && (
-                                <span className="absolute top-2 right-2 text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                              {fortune.accessLevel === "premium" && isReady && !isExhausted && (
+                                <span className="absolute top-2 right-2 text-[10px] font-bold px-1.5 py-0.5 rounded-[32px]"
                                   style={{
                                     background: "linear-gradient(to right, #92400e, #d97706)",
                                     color: "#fef3c7",
@@ -180,27 +240,52 @@ export default function FortuneGrid({ categories, fortunes }: Props) {
                                 </span>
                               )}
                               {!isReady && (
-                                <span className="absolute top-2 right-2 text-[10px] font-medium text-white/40 bg-white/8 px-1.5 py-0.5 rounded-full">
+                                <span className="absolute top-2 right-2 text-[10px] font-medium text-[#a8a6b7]/60 bg-white/6 px-1.5 py-0.5 rounded-[32px]">
                                   준비중
                                 </span>
                               )}
+
+                              {/* 즐겨찾기 버튼 */}
+                              {isReady && onFavoriteToggle && (
+                                <button
+                                  onClick={(e) => { e.preventDefault(); onFavoriteToggle(fortune.id); }}
+                                  className={`absolute top-2 left-2 w-5 h-5 flex items-center justify-center rounded-full transition-all
+                                    ${isFav
+                                      ? "text-yellow-400 opacity-100"
+                                      : "text-white/70 opacity-80 sm:text-white/20 sm:opacity-0 sm:group-hover:opacity-100 hover:text-yellow-400"
+                                    }`}
+                                  title={isFav ? "즐겨찾기 해제" : "즐겨찾기 추가"}
+                                >
+                                  <Star className={`w-3.5 h-3.5 ${isFav ? "fill-current" : ""}`} />
+                                </button>
+                              )}
+
                               <div className="text-3xl mb-2">{fortune.icon}</div>
-                              <h3 className="text-white font-semibold text-sm mb-1 leading-tight">
+                              <h3 className="text-[#f4f0ff] font-medium text-sm mb-1 leading-tight">
                                 {fortune.nameKo}
                               </h3>
-                              <p className="text-white/50 text-xs leading-snug line-clamp-2 flex-1">
+                              <p className="text-[#a8a6b7] text-xs leading-snug line-clamp-2 flex-1">
                                 {fortune.description}
                               </p>
-                              {/* 하단 행: AI 뱃지 + 시작하기 */}
+                              {/* 하단 행: AI 뱃지 + 사용하기 */}
                               <div className="flex items-center justify-between mt-2.5">
                                 {fortune.isAI && isReady ? (
-                                  <span className="text-[10px] font-medium text-purple-300 bg-purple-900/50 px-1.5 py-0.5 rounded-full">
-                                    AI
+                                  <span className="text-[10px] font-medium text-[#9382ff] bg-[#9382ff]/10 px-1.5 py-0.5 rounded-[32px]">
+                                    ✦
                                   </span>
                                 ) : <span />}
                                 {isReady && (
-                                  <span className="text-white/30 text-[10px] group-hover:text-white/60 transition-colors">
-                                    시작하기 <ArrowRight className="w-3 h-3" />
+                                  <span className={`flex items-center gap-0.5 text-[10px] transition-colors ${
+                                    isExhausted
+                                      ? "text-[#a8a6b7]/40"
+                                      : "text-[#a8a6b7]/50 group-hover:text-[#9382ff]"
+                                  }`}>
+                                    {cost !== null
+                                      ? cost > 0
+                                        ? `⭐${cost}`
+                                        : "무료"
+                                      : "사용하기"}
+                                    {!isExhausted && <ArrowRight className="w-3 h-3" />}
                                   </span>
                                 )}
                               </div>

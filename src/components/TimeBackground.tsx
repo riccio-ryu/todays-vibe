@@ -6,18 +6,18 @@ import SkyLayer from './SkyLayer'
 // 시간대별 HSL 키프레임 (hour, hue, saturation%, lightness%)
 // 정오(12시)가 가장 밝은 채도 낮은 어두운 보라색, 22시~02시는 블랙에 가까움
 const KEYFRAMES = [
-  { hour: 0,  h: 270, s: 3,  l: 2  },  // 자정 — 거의 블랙
-  { hour: 2,  h: 270, s: 5,  l: 4  },  // 02시
-  { hour: 4,  h: 270, s: 8,  l: 9  },  // 04시
-  { hour: 6,  h: 270, s: 13, l: 16 },  // 06시 — 새벽
-  { hour: 8,  h: 270, s: 17, l: 25 },  // 08시 — 아침
-  { hour: 10, h: 270, s: 20, l: 33 },  // 10시
-  { hour: 12, h: 270, s: 22, l: 38 },  // 12시 — 가장 밝은 채도 낮은 보라
-  { hour: 14, h: 270, s: 17, l: 29 },  // 14시
-  { hour: 16, h: 270, s: 12, l: 19 },  // 16시 — 오후
-  { hour: 18, h: 270, s: 8,  l: 11 },  // 18시 — 저녁
-  { hour: 20, h: 270, s: 4,  l: 5  },  // 20시 — 밤
-  { hour: 22, h: 0,   s: 0,  l: 0  },  // 22시 — 블랙
+  { hour: 0,  h: 258, s: 80, l: 3  },  // 자정 — #0a0013 따뜻한 딥바이올렛
+  { hour: 2,  h: 258, s: 82, l: 4  },  // 02시 — #0d0019
+  { hour: 4,  h: 258, s: 82, l: 6  },  // 04시 — #130026
+  { hour: 6,  h: 258, s: 78, l: 8  },  // 06시 — #18002f 새벽
+  { hour: 8,  h: 258, s: 74, l: 11 },  // 08시 — #1e0040 아침
+  { hour: 10, h: 258, s: 68, l: 14 },  // 10시 — #240050
+  { hour: 12, h: 258, s: 62, l: 17 },  // 12시 — #291059 낮 최대 (따뜻한 딥퍼플)
+  { hour: 14, h: 258, s: 68, l: 13 },  // 14시 — #1e004c
+  { hour: 16, h: 258, s: 74, l: 9  },  // 16시 — #160035
+  { hour: 18, h: 258, s: 78, l: 6  },  // 18시 — #0f0023 저녁
+  { hour: 20, h: 258, s: 82, l: 4  },  // 20시 — #0c0018 밤
+  { hour: 22, h: 258, s: 90, l: 2  },  // 22시 — #06000d 최대 어둠
 ]
 
 function lerp(a: number, b: number, t: number) {
@@ -55,7 +55,7 @@ function getColorForTime(totalMinutes: number): string {
 }
 
 export default function TimeBackground({ children }: { children: React.ReactNode }) {
-  const [bgColor, setBgColor] = useState('#000000')
+  const [bgColor, setBgColor] = useState('#06000d')
 
   useEffect(() => {
     function update() {
@@ -65,15 +65,18 @@ export default function TimeBackground({ children }: { children: React.ReactNode
     }
 
     update()
-    const interval = setInterval(update, 60_000) // 1분마다 갱신
+    const interval = setInterval(update, 60_000)
     return () => clearInterval(interval)
   }, [])
 
   return (
-    <div
-      className="relative min-h-screen transition-colors duration-[3000ms] ease-in-out"
-      style={{ backgroundColor: bgColor }}
-    >
+    <div className="relative min-h-screen">
+      {/* fixed inset-0: 콘텐츠 높이와 무관하게 항상 뷰포트 전체를 배경색으로 채움 */}
+      <div
+        className="fixed inset-0 transition-colors duration-[3000ms] ease-in-out"
+        style={{ backgroundColor: bgColor, zIndex: 0 }}
+        aria-hidden="true"
+      />
       <SkyLayer />
       <div className="relative z-10">
         {children}

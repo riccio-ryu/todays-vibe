@@ -51,20 +51,22 @@ export default function TarotHorseshoePage() {
   }
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-10">
-      <PageHeader title="말발굽 타로" />
+    <div className="max-w-lg mx-auto px-4 py-6">
+      <PageHeader title="말발굽 타로" menuId="tarot-horseshoe" />
 
       <AnimatePresence mode="wait">
 
         {phase === "input" && (
-          <TarotInputPhase
-            subtitle="현재에서 결과까지, 5장으로 흐름을 읽어드립니다"
-            placeholder="예: 이 일을 계속해야 할까요?"
-            question={question}
-            setQuestion={setQuestion}
-            fortuneStatus={fortuneStatus}
-            handleStartShuffle={handleStartShuffle}
-          />
+          fortuneStatus?.todayReading
+            ? <TarotTodayResult todayReading={fortuneStatus.todayReading} onReshuffle={handleStartShuffle} />
+            : <TarotInputPhase
+                subtitle="현재에서 결과까지, 5장으로 흐름을 읽어드립니다"
+                placeholder="예: 이 일을 계속해야 할까요?"
+                question={question}
+                setQuestion={setQuestion}
+                fortuneStatus={fortuneStatus}
+                handleStartShuffle={handleStartShuffle}
+              />
         )}
 
         {phase === "shuffling" && <TarotShufflingAnimation />}
@@ -174,7 +176,7 @@ export default function TarotHorseshoePage() {
             </div>
 
             {phase === "drawn" && revealed.every(Boolean) && (
-              <TarotActionButtons onInterpret={handleInterpret} onReset={handleReset} />
+              <TarotActionButtons onInterpret={handleInterpret} onReset={handleReset} exhausted={fortuneStatus?.exhausted === true} />
             )}
 
             {phase === "reading" && (
@@ -190,9 +192,6 @@ export default function TarotHorseshoePage() {
 
       </AnimatePresence>
 
-      {fortuneStatus?.exhausted && phase === "input" && (
-        <TarotTodayResult todayReading={fortuneStatus.todayReading} />
-      )}
     </div>
   );
 }

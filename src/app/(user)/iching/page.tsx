@@ -7,6 +7,9 @@ import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 import { getHexagramByLines, HEXAGRAMS } from "@/data/iching";
 import { type IChingInput } from "@/types/fortune";
 import FortuneResult from "@/components/fortune/FortuneResult";
+import TodayFortuneCard from "@/components/common/TodayFortuneCard";
+import FavoriteButton from "@/components/common/FavoriteButton";
+import BackHomePill from "@/components/common/BackHomePill";
 
 // 복희 선천 64괘도 위치 계산 (SVG 800×800, 중심 400,400, r≈170, 5.625°/괘)
 function getFuxiPos(linesStr: string): number {
@@ -202,7 +205,7 @@ export default function IChingPage() {
 
   if (result || isLoading) {
     return (
-      <div className="max-w-xl mx-auto px-4 py-10">
+      <div className="max-w-xl mx-auto px-4 py-6">
         {hexagram && (
           <div className="text-center mb-6">
             <p className="text-amber-300/70 text-sm">제{hexagram.no}괘 {hexagram.nameZh} {hexagram.nameKo}</p>
@@ -215,7 +218,11 @@ export default function IChingPage() {
   }
 
   return (
-    <div className="max-w-xl mx-auto px-4 py-10">
+    <div className="max-w-xl mx-auto px-4 py-6">
+      <div className="flex items-center justify-between mb-6">
+        <BackHomePill />
+        <FavoriteButton menuId="iching" />
+      </div>
       <div className="text-center mb-8">
         <h1 className="text-white font-bold text-2xl">주역 괘</h1>
         <p className="text-white/50 text-sm mt-2">동전을 6번 던져 64괘 중 하나를 뽑습니다</p>
@@ -367,8 +374,8 @@ export default function IChingPage() {
               }`}
             >
               {fortuneStatus?.exhausted
-                ? "오늘 AI 심층해석을 이미 이용했어요"
-                : `${hexagram.nameKo}괘 AI 심층해석 보기`}
+                ? "오늘 심층 풀이를 이미 이용했어요"
+                : `${hexagram.nameKo}괘 심층 풀이 보기`}
             </button>
 
             <button
@@ -382,27 +389,13 @@ export default function IChingPage() {
         )}
       </form>
 
-      {fortuneStatus?.exhausted && fortuneStatus.todayReading && (
-        <div className="mt-6 space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="flex-1 h-px bg-white/10" />
-            <span className="text-white/30 text-xs">오늘의 주역 해석</span>
-            <div className="flex-1 h-px bg-white/10" />
-          </div>
-          <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
-            {fortuneStatus.todayReading.createdAt && (
-              <p className="text-white/30 text-xs mb-3 text-right">
-                {new Date(fortuneStatus.todayReading.createdAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })} 열람
-              </p>
-            )}
-            <div
-              className="text-white/80 text-sm leading-relaxed whitespace-pre-wrap"
-              dangerouslySetInnerHTML={{
-                __html: fortuneStatus.todayReading.result.replace(/\*\*(.*?)\*\*/g, '<strong class="text-amber-300">$1</strong>'),
-              }}
-            />
-          </div>
-        </div>
+      {fortuneStatus?.todayReading && (
+        <TodayFortuneCard
+          label="오늘의 주역 해석"
+          todayReading={fortuneStatus.todayReading}
+          highlightColor="text-amber-300"
+          exhausted={fortuneStatus.exhausted}
+        />
       )}
 
       {/* 풀스크린 팝업 모달 */}
@@ -506,7 +499,7 @@ export default function IChingPage() {
                   type="button" onClick={() => setShowModal(false)}
                   className="w-full py-3 rounded-xl text-sm font-semibold bg-amber-700/40 border border-amber-600/30 text-amber-200 hover:bg-amber-700/60 transition-all"
                 >
-                  돌아가서 AI 해석 보기
+                  돌아가서 풀이 보기
                 </button>
               )}
 

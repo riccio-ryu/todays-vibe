@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import type { FortuneStatus } from "@/types/fortune";
+import { useCredits } from "@/components/credits/CreditsProvider";
 
 interface Props {
   subtitle: string;
@@ -20,6 +21,7 @@ export default function TarotInputPhase({
   fortuneStatus,
   handleStartShuffle,
 }: Props) {
+  const { openInsufficient } = useCredits();
   return (
     <motion.div
       key="input"
@@ -38,19 +40,18 @@ export default function TarotInputPhase({
             !fortuneStatus?.exhausted && e.key === "Enter" && handleStartShuffle()
           }
           placeholder={placeholder}
-          className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/20 text-sm focus:outline-none focus:border-purple-400/50 focus:bg-white/10 transition-colors"
+          className="w-full px-4 py-2.5 rounded-[5px] bg-white/5 border border-white/10 text-[#f4f0ff] placeholder-white/20 text-sm focus:outline-none focus:border-[#9382ff]/50 focus:bg-white/10 transition-colors"
         />
       </div>
       <button
-        onClick={!fortuneStatus?.exhausted ? handleStartShuffle : undefined}
-        disabled={fortuneStatus?.exhausted === true}
-        className={`px-8 py-3 rounded-full font-semibold text-sm transition-colors shadow-lg ${
+        onClick={fortuneStatus?.exhausted ? openInsufficient : handleStartShuffle}
+        className={`px-8 py-3 rounded-[5px] font-medium text-sm transition-colors ${
           fortuneStatus?.exhausted
-            ? "bg-white/10 text-white/30 cursor-not-allowed shadow-none"
-            : "bg-purple-600 hover:bg-purple-500 text-white shadow-purple-900/40"
+            ? "bg-amber-500/15 border border-amber-400/30 text-amber-200 hover:bg-amber-500/25"
+            : "bg-[#5046e4] hover:bg-[#3d36c4] text-[#f4f0ff]"
         }`}
       >
-        {fortuneStatus?.exhausted ? "오늘 타로를 이미 이용했어요" : "🃏 카드 섞기"}
+        {fortuneStatus?.exhausted ? "⭐ 별이 부족해요 · 자세히" : "🃏 카드 섞기"}
       </button>
     </motion.div>
   );

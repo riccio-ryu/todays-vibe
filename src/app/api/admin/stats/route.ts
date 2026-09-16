@@ -3,7 +3,7 @@ import { getAdminFirestore } from "@/lib/firebase/admin";
 import { todayKST, kstDateOffset } from "@/lib/utils/date";
 import { requireAdmin } from "@/lib/api/require-admin";
 
-type Period = "today" | "7d" | "30d" | "all";
+import type { StatsPeriod as Period } from "@/types/admin";
 
 function dateRangeArray(startDate: string, endDate: string): string[] {
   const dates: string[] = [];

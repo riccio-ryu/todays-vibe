@@ -50,20 +50,22 @@ export default function TarotCelticPage() {
   }
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-10">
-      <PageHeader title="켈틱 크로스 타로" />
+    <div className="max-w-lg mx-auto px-4 py-6">
+      <PageHeader title="켈틱 크로스 타로" menuId="tarot-celtic" />
 
       <AnimatePresence mode="wait">
 
         {phase === "input" && (
-          <TarotInputPhase
-            subtitle="마음속으로 질문을 생각하며 카드 10장을 뽑아보세요"
-            placeholder="예: 올해 나의 방향은 어떤가요?"
-            question={question}
-            setQuestion={setQuestion}
-            fortuneStatus={fortuneStatus}
-            handleStartShuffle={handleStartShuffle}
-          />
+          fortuneStatus?.todayReading
+            ? <TarotTodayResult todayReading={fortuneStatus.todayReading} onReshuffle={handleStartShuffle} />
+            : <TarotInputPhase
+                subtitle="마음속으로 질문을 생각하며 카드 10장을 뽑아보세요"
+                placeholder="예: 올해 나의 방향은 어떤가요?"
+                question={question}
+                setQuestion={setQuestion}
+                fortuneStatus={fortuneStatus}
+                handleStartShuffle={handleStartShuffle}
+              />
         )}
 
         {phase === "shuffling" && <TarotShufflingAnimation />}
@@ -173,7 +175,7 @@ export default function TarotCelticPage() {
             </div>
 
             {phase === "drawn" && revealed.every(Boolean) && (
-              <TarotActionButtons onInterpret={handleInterpret} onReset={handleReset} />
+              <TarotActionButtons onInterpret={handleInterpret} onReset={handleReset} exhausted={fortuneStatus?.exhausted === true} />
             )}
 
             {phase === "reading" && (
@@ -189,9 +191,6 @@ export default function TarotCelticPage() {
 
       </AnimatePresence>
 
-      {fortuneStatus?.exhausted && phase === "input" && (
-        <TarotTodayResult todayReading={fortuneStatus.todayReading} />
-      )}
     </div>
   );
 }

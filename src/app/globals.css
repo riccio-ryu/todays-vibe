@@ -3,6 +3,38 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Reflect Notes — Starlit Violet Cosmos */
+  --color-void:         #030014;
+  --color-surface:      #060317;
+  --color-elevated:     #10093a;
+  --color-text-primary: #f4f0ff;
+  --color-text-ash:     #a8a6b7;
+  --color-accent:       #9382ff;
+
+  /* Extended palette */
+  --color-fog:          #918ea0;
+  --color-steel:        #54525f;
+  --color-iris:         #5046e4;
+  --color-mercury:      #cdccd0;
+  --color-dusk:         #72707b;
+
+  /* Gradients */
+  --gradient-cosmic:    linear-gradient(90.01deg, #e59cff 0.01%, #ba9cff 50.01%, #9cb2ff 100%);
+  --gradient-aurora:    linear-gradient(180deg, rgba(183,164,251,0) 0%, #b7a4fb 50%, #8562ff 100%, rgba(133,98,255,0) 100%);
+
+  /* Shadows — inset rim-light only, no drop shadows */
+  --shadow-lg:          rgba(255,255,255,0.04) 0px 0px 24px 0px inset;
+  --shadow-lg-2:        rgba(255,255,255,0.06) 0px 0px 24px 0px inset;
+  --shadow-md:          rgba(164,143,255,0.12) 0px -7px 11px 0px inset;
+  --shadow-subtle-4:    rgba(255,255,255,0.03) 0px 0px 0px 8px inset;
+
+  /* Border Radii */
+  --radius-btn:         5px;
+  --radius-card:        16px;
+  --radius-badge:       32px;
+  --radius-feature:     24px;
+  --radius-pill:        999px;
 }
 
 @theme inline {
@@ -22,6 +54,41 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-noto-sans-kr), var(--font-roboto), serif;
+}
+
+/* 코스믹 그라데이션 텍스트 — Reflect Notes 시그니처 */
+.cosmic-text {
+  background: linear-gradient(90.01deg, #e59cff 0.01%, #ba9cff 50.01%, #9cb2ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Floating pill 헤더 */
+.header-pill {
+  background: rgba(6, 3, 23, 0.82);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: rgba(255,255,255,0.04) 0px 0px 20px 0px inset;
+}
+
+/* 카드 — 인셋 림라이트 글로우 + 배경 반투명 */
+.card-glow {
+  background: rgba(6, 3, 23, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: rgba(255,255,255,0.05) 0px 0px 24px 0px inset;
+}
+
+.card-glow:hover {
+  box-shadow: rgba(255,255,255,0.08) 0px 0px 24px 0px inset;
+}
+
+/* 카드 내부 미니 위젯 */
+.card-mini {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: rgba(255,255,255,0.03) 0px 0px 12px 0px inset;
 }
 
 @keyframes cloudDrift {

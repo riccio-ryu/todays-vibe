@@ -14,7 +14,7 @@ function getTimeBasedPhase(date: Date): number {
 const STARS = Array.from({ length: 80 }, (_, i) => {
   let s = rng((i + 1) * 6_271)
   const x    = (s / MAX) * 100
-  s = rng(s); const y       = (s / MAX) * 72
+  s = rng(s); const y       = (s / MAX) * 95
   s = rng(s); const size    = 0.7 + (s / MAX) * 1.0
   s = rng(s); const opacity = 0.35 + (s / MAX) * 0.45
   s = rng(s); const glow    = (s / MAX) > 0.6
@@ -24,7 +24,7 @@ const STARS = Array.from({ length: 80 }, (_, i) => {
 const CLOUDS = Array.from({ length: 10 }, (_, i) => {
   let s = rng((i + 1) * 3_571)
   const widthVw = 14 + (s / MAX) * 32
-  s = rng(s); const topPct  = 2 + (s / MAX) * 52
+  s = rng(s); const topPct  = 2 + (s / MAX) * 82
   s = rng(s); const dur     = 80 + (s / MAX) * 120
   s = rng(s); const delay   = -Math.round((s / MAX) * dur)
   s = rng(s); const opacity = 0.12 + (s / MAX) * 0.14

@@ -1,12 +1,16 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Link from "next/link";
+import { ArrowLeft, Home } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
 import { drawSangaji, GRADE_INFO, type SangajiEntry } from "@/data/sangaji";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import FortuneResult from "@/components/fortune/FortuneResult";
+import TodayFortuneCard from "@/components/common/TodayFortuneCard";
+import FavoriteButton from "@/components/common/FavoriteButton";
 import type { Phase } from "@/components/sangaji/SangajiScene3D";
 
 const SangajiScene3D = dynamic(
@@ -140,11 +144,19 @@ export default function SangajiPage() {
         <div className="relative z-10 flex flex-col min-h-screen px-4 py-8 pointer-events-none">
 
           {/* 헤더 */}
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-amber-200 drop-shadow-lg">산가지 점</h1>
-            <p className="text-amber-400/70 text-sm mt-1 drop-shadow">
-              마음속 질문을 품고 막대를 흔드세요
-            </p>
+          <div>
+            <div className="flex items-center justify-between mb-4 pointer-events-auto">
+              <Link href="/" className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-amber-900/20 border border-amber-700/30 text-amber-700/60 hover:text-amber-400/80 hover:border-amber-500/40 text-xs transition-all">
+                <ArrowLeft className="w-3.5 h-3.5" /><Home className="w-3.5 h-3.5" />
+              </Link>
+              <FavoriteButton menuId="sangaji-new" />
+            </div>
+            <div className="text-center">
+              <h1 className="text-2xl font-bold text-amber-200 drop-shadow-lg">산가지 점</h1>
+              <p className="text-amber-400/70 text-sm mt-1 drop-shadow">
+                마음속 질문을 품고 막대를 흔드세요
+              </p>
+            </div>
           </div>
 
           {/* 질문 입력 */}
@@ -240,6 +252,12 @@ export default function SangajiPage() {
             className="relative z-20 min-h-screen bg-gradient-to-b from-amber-950 via-stone-900 to-gray-900 px-4 py-8"
           >
             <div className="max-w-sm mx-auto">
+              <div className="flex items-center justify-between mb-6">
+                <Link href="/" className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-amber-900/20 border border-amber-700/30 text-amber-700/60 hover:text-amber-400/80 hover:border-amber-500/40 text-xs transition-all">
+                  <ArrowLeft className="w-3.5 h-3.5" /><Home className="w-3.5 h-3.5" />
+                </Link>
+                <FavoriteButton menuId="sangaji-new" />
+              </div>
               <div className="text-center mb-6">
                 <h1 className="text-2xl font-bold text-amber-200">산가지 점</h1>
               </div>
@@ -266,7 +284,7 @@ export default function SangajiPage() {
 
               {fortuneStatus?.exhausted ? (
                 <div className="text-center py-3 text-amber-600/70 text-sm rounded-xl bg-amber-950/30 border border-amber-800/20">
-                  오늘의 AI 풀이를 모두 사용했습니다. 내일 다시 이용해 주세요.
+                  오늘의 풀이를 모두 사용했습니다. 내일 다시 이용해 주세요.
                 </div>
               ) : (
                 <motion.button
@@ -279,20 +297,29 @@ export default function SangajiPage() {
                   className="w-full py-3 rounded-xl text-amber-100 font-semibold text-sm shadow-lg"
                   style={{ background: "linear-gradient(to right, #7c2d0a, #c05008)" }}
                 >
-                  AI 심층 풀이 보기
-                  {fortuneStatus &&
-                    fortuneStatus.limit !== null &&
-                    fortuneStatus.limit !== -1 && (
-                      <span className="ml-2 text-amber-300/60 text-xs">
-                        ({fortuneStatus.used}/{fortuneStatus.limit})
-                      </span>
-                    )}
+                  심층 풀이 보기
+                  {fortuneStatus && fortuneStatus.cost > 0 && (
+                    <span className="ml-2 text-amber-300/60 text-xs">
+                      (⭐{fortuneStatus.cost})
+                    </span>
+                  )}
                 </motion.button>
               )}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {phase === "idle" && fortuneStatus?.todayReading && (
+        <div className="relative z-20 max-w-sm mx-auto px-4 pb-8">
+          <TodayFortuneCard
+            label="오늘의 산가지 심층 풀이"
+            todayReading={fortuneStatus.todayReading}
+            highlightColor="text-amber-300"
+            exhausted={fortuneStatus.exhausted}
+          />
+        </div>
+      )}
     </div>
   );
 }

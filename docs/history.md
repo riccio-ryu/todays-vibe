@@ -1,4 +1,188 @@
 # 📋 개발 일지
+---
+
+## 2026-07-21
+
+- 심리테스트 정의를 코드(`src/data/psych`) → **Firestore(`psych_tests`)로 이관** — admin 첫 진입 시 코드 20종 자동 시드(레거시 `settings/psych` 노출·순서·cost·프롬프트 이월), 완전 CRUD화 (`src/lib/psych/tests-store.ts`, `src/types/psych.ts`, `src/app/admin/psych/actions.ts`)
+- `/admin/psych`를 **운세 메뉴관리형 테이블로 재작성** (`src/app/admin/psych/page.tsx`) — 정렬 컬럼(아이콘·이름/설명·엔진(=카테고리)·노출·AI·회원등급·⭐크레딧·슬러그)·전체/선택 노출토글·순서변경(드래그+▲▼)·추가/삭제·컬럼 표시설정. 엔진을 카테고리로 매핑
+- **엔진별 문항·결과 빌더 신설** (`src/components/admin/PsychContentBuilder.tsx`) — mbti/category/score/ranking + AI(quiz·text)의 문항·선택지·결과·구간·항목·SEO를 add/remove/순서변경으로 편집, 신규 심테는 엔진 선택 시 빈 템플릿 자동 생성 (`getPsychTestContent`·`savePsychTestContent`)
+- **심테 기록·통계 페이지 신설** (`src/app/admin/psych/readings`·`stats` + API 2종) — 운세 기록·통계와 대칭. AI 심테(`ai_readings` type `psych-test`) 조회·기간별 집계·심테별 순위 드릴다운 (`src/lib/firebase/psych-readings.ts`), 사이드바 심리 그룹에 메뉴 추가 (`AdminSidebar`)
+- **런타임 Firestore 전환** — `/psych`·`/psych/[slug]`·홈 스와이프가 Firestore content로 렌더(`getRuntimePsychTest`·`getVisiblePsychTests` 재구성, `docToPsychTest`), 편집·신규 심테 반영. `revalidate=60` ISR로 재배포 없이 반영(홈 포함)·신규 slug on-demand (`src/lib/psych/settings.ts`, `src/app/(psych)/**`, `src/app/(user)/page.tsx`)
+- 비용·프롬프트·노출 런타임 getter를 `psych_tests` 우선으로 전환(레거시 `settings/psych`·코드 폴백), dev 실페이지에서 편집→반영 end-to-end 검증
+- 크레딧 실동작 검증 완료 처리(`TODO.md`), 색인 3순위(띠 4종) 완료 체크(`docs/indexing-checklist.md`)
+
+---
+
+## 2026-07-19
+
+- 크레딧 UX 보강 — 별 부족 시 **안내 모달**(프리미엄/로그인 유도, `InsufficientCreditsModal` + `CreditsProvider` 전역 `openInsufficient`), 헤더 ⭐잔량 0이면 강조, 폼 부족 버튼을 "⭐ 별이 부족해요 · 자세히"로 통일(GeneralFortuneForm·AiQuizLayout·TarotInputPhase·CompatibilityBirthForm·TodayFortuneCard의 구 "이미 이용" 문구 정리)
+- 로그인 풀림 버그 수정 — `/api/auth/me`·`AuthContext` fetch에 `no-store`(인증 상태 API 캐시로 로그아웃처럼 보이던 문제). `/admin/menus` 리스트에 **⭐크레딧 컬럼** 추가. 소모량 기본값 0/1/2(프리미엄 2·그 외 1·무료 0)로 조정
+- admin 심리테스트 **운세형 관리** (`/admin/psych`) — 노출·순서에 더해 **별 소모(cost)·AI 프롬프트 override·문항/결과 미리보기** 편집 모달. 심테별 cost 과금(`usage-check` subKey·`getPsychCost`)·프롬프트 override(`buildPromptFromDB`) 연동, 문항 미리보기(`PsychPreview`, 엔진별)
+- admin **3그룹 재편** — 사이드바·홈을 공통(대시보드·회원·AI사용량) / 운세(배치·메뉴관리·기록·통계·프롬프트) / 심리(메뉴관리)로 분리 (`AdminSidebar`·`admin/page.tsx`)
+- **운세·심리 완전 분리** — `fortunes.json`에서 심테 카드·카테고리 제거, 운세 메뉴관리·홈 운세 그리드에서 심테 제외. 심테 과금·권한 자립화(cost=`settings/psych`, 권한=회원 전용 고정) → `menus/psych-test` 문서 불필요. 심리 그룹 라벨을 "메뉴 관리"로 통일
+- 문서 — admin 관리 방향 조사 보고서(`docs/admin-psych-management.md`), 크레딧 실동작 검증 체크리스트(`docs/credit-verification-checklist.md`)
+
+---
+
+## 2026-07-17
+
+- 심테 `score` 엔진 신설 (`src/lib/psych/engine.ts` `scoreScale`) — 리커트 점수 합산 → 총점 밴드 + 축별 점수. 스트레스 지수(#17, PSS 10문항)·번아웃 위험도(#18, MBI 3축 15문항) 2종 추가, `QuizLayout`에 score 결과 뷰(게이지·축별 바)
+- AI 자유텍스트 심테 4종 추가 — 고민 상담(A-1)·감정 일기(A-2)·카톡 호감도(A-3)·성격 분석(A-5). `AiTest`를 `AiQuizTest`(4지선다) \| `AiTextTest`(자유텍스트) 유니온으로 확장(`AiTextField`), `AiQuizLayout`에 텍스트 입력 분기(최소 글자 검증). 기존 `answers` 형식 재사용해 프롬프트 빌더 무변경
+- 심테 `ranking` 엔진 + 사막 동물(#72) — 5동물을 소중한 순서대로 탭 → 순위, 1순위(지킴)·꼴찌(포기) 반전 해석. `RankingLayout` 신규, `[slug]` 3-way 분기(ai/ranking/quiz)
+- **🎉 카탈로그 MVP 15개 전부 완료** — 심테 총 20종(로직 14 + AI 6), 엔진 4종(mbti·category·score·ranking) + AI 2모드(quiz·text). `docs/psych-tests-catalog.md`·`TODO.md` 갱신
+
+---
+
+## 2026-07-16
+
+- 별(⭐) 크레딧 시스템 신설 — 항목별 "하루 N회"를 권한별 일일 별 지급(회원 10·프리미엄 30·admin 무제한)으로 전환, 운세·AI 심테 공용 소모·항목별 cost 차등·자정 충전. `src/lib/credits/config.ts`, `usage-check.ts` 재작성(`daily_credits` 풀 원자 차감, `daily_usage` 카운트는 순위·통계용 유지), `/api/user/credits`, `CreditsProvider`+헤더 ⭐잔량, 카드·폼 cost 게이팅
+- 로직 심테 무료(별 0)·AI만 소모, 재열람 무료·새로 뽑기만 소모(tojeong·life-fortune 캐시 히트 무과금) 정책 반영
+- admin 크레딧 설정 (`/admin/menus`) — 권한별 지급량(`settings/credits`) + 메뉴별 소모 별(`MenuItem.cost`) 편집 모달
+- admin 심리 테스트 관리 (`/admin/psych`, `settings/psych`) — 노출 on/off·순서 조정, 목록·상세·스와이프가 설정 반영. AI 심테 프롬프트 편집·본문 CRUD는 후속
+- category 심테 5종 추가 — 색깔 심리·소비 성향·여행 스타일·친구들이 보는 나·음식으로 보는 성격 (기존 `category` 엔진 재사용, 데이터 파일만 추가)
+
+---
+
+## 2026-07-15
+
+- 심리 테스트를 카탈로그 정본 `(psych)` 구조로 **일원화** — 지난 세션의 `(user)/psych-test` + `src/data/psych-tests/*.ts`(중복 구현) 폐기, 테스트 7종을 `src/data/psych/`로 이관·통합 (`docs/psych-tests-catalog.md` SSOT 준수)
+- 로직 엔진에 `category`(4지선다 투표형) 추가 — 기존 MBTI(`mbti`) 엔진과 함께 `QuizLayout`이 engine별 분기, `src/lib/psych/engine.ts` `scoreCategory` 신설. 로직 5종(연애 스타일·동물·직장 빌런·결정·관계)을 이 방식으로 이관
+- AI 해석형 2종(에너지·감정)은 `AiQuizLayout`(스트리밍·회원 전용)으로 `(psych)`에 편입, `/psych/[slug]`가 engine으로 로직/AI 분기. 홈 메뉴 카드 path·사이트맵을 `/psych`로 갱신, `buildPsychTestPrompt`를 `@/data/psych`로 연결
+- **낮/밤 스와이프 캐러셀** 신설 (`src/components/home/HomeSwipe.tsx`) — 메인에서 좌우 드래그로 운세(밤)↔심테(낮) 전환, 상단 토글·도트 지원 (`PsychHomeBody` 낮 패널 신규, `src/app/(user)/page.tsx`를 캐러셀로 래핑)
+- 스와이프 배경을 콘텐츠와 분리된 별도 `fixed` 레이어로 구현하고 콘텐츠 트랙과 같은 x로 이동 — 심테(낮)에서 세로로 스크롤하면 고정 야간 배경이 새어 나오던 문제 해결 (transform 트랙 안의 `fixed`가 뷰포트 기준으로 동작 안 하는 이슈 우회, 왼쪽=투명·오른쪽=불투명 낮 그라데이션)
+- 캐러셀 컨테이너 높이를 활성 패널 실제 콘텐츠 높이에 맞춰 동적 지정(`ResizeObserver`) — 짧은 심테 패널이 긴 운세 패널만큼 늘어나던 문제 해결
+- 패널별 낮/밤 푸터 — `Footer`에 `variant`(day/night) 추가, 홈에서만 레이아웃 공유 푸터를 숨기는 `FooterGate` 신설(운세=밤·심테=낮 푸터를 각 패널이 자체 노출)
+- 심리 테스트 노출 토글 신설 (`src/lib/psych/config.ts` `PSYCH_ENABLED`) — 로컬 dev만 노출·운영 미노출(환경변수 `NEXT_PUBLIC_PSYCH_ENABLED=true`로 운영 노출 가능). 홈 스와이프·심테 메뉴 카드(`src/app/(user)/page.tsx`)·`/psych`·`/psych/[slug]`(`notFound` + `generateStaticParams` 빈 배열)·`FooterGate`·`sitemap.ts`를 이 스위치 하나로 일괄 게이팅 (운영 빌드에서 `/psych/[slug]` 미생성·`/psych` 404 확인)
+- 문서 갱신 — `README.md`(심리 테스트 7종·낮/밤 스와이프), `docs/psych-tests-catalog.md`(구현 현황·MVP 상태표·기술 메모를 실구현 기준으로 반영), `TODO.md`(일원화 완료·MVP 체크리스트·운영 노출(런칭) 방법)
+
+---
+
+## 2026-07-14
+
+> ⚠️ 이날 만든 `(user)/psych-test` 경로·`src/data/psych-tests/` 구조는 카탈로그 SSOT와 어긋나, **7/15에 `(psych)` 정본으로 일원화되며 폐기됨**. 아래는 당시 기록.
+
+- 심리 테스트(심테) 카테고리 신설 (TODO 2번) — 기존 운세 인프라(`/api/fortune` 스트리밍·사용량 체크·결과 저장) 재사용, `/psych-test` 목록 + `/psych-test/[slug]` 상세 SSG, 정적 카탈로그(`src/data/psych-tests/`) 구조 설계
+- 심테 MVP 4종 신설 — 오늘의 에너지 진단·숨겨진 감정 찾기·결정 스타일·관계 유형 (4지선다 3~5문항 → Claude 스트리밍 해석), 각 테스트 SEO 소개 콘텐츠 3블록 집필 (애드센스 대응)
+- `psych-test` 타입·프롬프트 연동 (`src/types/fortune.ts`, `src/lib/claude/prompts.ts` `buildPsychTestPrompt`), 퀴즈 컴포넌트(`src/components/psych/PsychTestQuiz.tsx`, 진행바 + Framer Motion 전환), 홈 메뉴 카드·`psych` 카테고리 추가(`src/data/fortunes.json`), 사이트맵 연동(`src/app/sitemap.ts`)
+- Search Console 색인 요청 2순위 진행 — 주요 서비스 페이지 11개(취업·건강·재물운, 연애·사업 궁합, 성명학·수비학·룬·주역·오라클·이사 방위) 완료 처리 (`docs/indexing-checklist.md`)
+
+---
+
+## 2026-07-13
+
+- 꿈해몽 사전 2차 확장 50개 → 100개 (`src/data/dream-dictionary/`) — 동물 15·자연 8·사람관계 9·신체 6·상황행동 7·재물사물 5 추가, 전 페이지 크롤링 텍스트 900자 이상, 사이트맵 228 URL
+- Search Console 사이트맵 제출·대표 페이지 색인 요청, "가져올 수 없음" 상태 진단 — 사이트 측 정상(200/application/xml/Googlebot 접근 OK), GSC 제출 직후 표시 문제로 판단, 7/16까지 관찰
+- 애드센스 대응 전체 기록 문서 작성 (`docs/google-adsense.md`) — 거절 원인 진단, 조치 내역, 재심사 체크리스트, 검증 방법
+- `TODO.md` 정리 — 애드센스 9번(배포+색인)·10번(꿈해몽 확장) 완료 처리, 11번(재심사, 7/27 이후) 현황 갱신
+- 전체 코드 리팩토링 7건 (41개 파일, +119/−369줄, 동작 변경 없음)
+  - 공유하기 로직 8곳 → `src/lib/utils/share.ts` `shareOrCopyUrl()` 통합
+  - BASE_URL 상수 9곳 → `src/lib/utils/site.ts` 통합
+  - `HeroCardSettings` 타입 3곳 + 기본값 2곳 → `src/types/hero.ts` 통합
+  - 별자리/띠 상세 페이지 공통 로직 → `src/lib/utils/fortune-labels.ts` 상수 + `src/lib/hooks/usePeriodFortune.ts` 훅 (fetch 에러 처리·페이지 전환 잔상 제거 개선 포함)
+  - 뒤로가기 pill 링크 인라인 21곳 + `PageHeader` → `src/components/common/BackHomePill.tsx` 통합
+  - 길몽/흉몽 뱃지 스타일 2곳 → `src/components/dream/SignBadge.tsx` 통합
+  - admin `Period` 타입 4곳 → `src/types/admin.ts` 통합
+  - 부수 정리: 미사용 `Home`/`Link`/`ArrowLeft` import 20여 곳 제거
+
+---
+
+## 2026-07-12
+
+- 애드센스 "저가치 콘텐츠" 거절 대응 착수 — 원인 진단: 기술 설정은 정상이나 크롤러가 볼 정적 콘텐츠 부재 (홈 404자, 도구형 페이지 구조, 사이트맵 24 URL)
+- 타로 카드 78장 의미 사전 신설 (`/tarot-cards`, `/tarot-cards/[slug]`, SSG) — 카드별 상징 해설·정/역방향 상세·연애/직업/금전운·조언 전량 신규 집필 (`src/data/tarot-card-content/`), 메타데이터·JSON-LD·내부 링크 포함
+- 꿈해몽 사전 1차 50개 신설 (`/dream-dictionary`, `/dream-dictionary/[slug]`, SSG) — 6개 카테고리, 전통 해몽 + 심리학 해석 + 상황별 풀이 4종 + 길몽/흉몽 표기 (`src/data/dream-dictionary/`)
+- 별자리 12궁·띠 12지 상세 페이지 보강 — 성격·연애·직업(·띠 궁합) 서술형 해설 (`src/data/zodiac-content.ts`, `src/data/chinese-zodiac-content.ts`), 서버 `layout.tsx` 추가로 `generateMetadata` + SSG 전환
+- 홈 화면 콘텐츠 보강 — 운세 사전 링크 카드 + 서비스 소개 텍스트 (크롤링 텍스트 404자 → 1,052자)
+- 콘텐츠 없는 홈 화면의 `AdSlot` 제거 (애드센스 정책 대응), 사이트맵 24 → 178 URL 확장
+- PR #21 머지·배포, 라이브 검증 (대표 URL 200, 본문 텍스트 서빙 확인)
+
+---
+
+## 2026-06-26
+
+- 인증 상태 즉시 반영 버그 수정 (`src/contexts/AuthContext.tsx`, `src/app/auth/complete/page.tsx`) — 관리자 로그인 후 서비스 페이지 이동 시 헤더에 로그인/회원가입이 잠깐 보이는 문제 해결; `AuthContext`에 `refreshAuth` 콜백 추가, 로그인 완료 직후 auth 상태 즉시 재조회
+- 헤더 모바일 회원가입 버튼 숨김 (`src/components/Header.tsx`) — 모바일 sm 미만에서 회원가입 링크 `hidden sm:block` 처리 (로그인 페이지에서 가입 가능)
+- 생년월일 저장 버튼 → 슬라이드 토글로 전환 — 기존 조건부 표시 버튼 제거, 로그인+자신 정보 모드일 때 항상 표시되는 ON/OFF 토글 스위치로 교체; 저장된 정보 있으면 ON 상태, 토글 OFF 시 저장 해제 (`saju/page.tsx`, `GeneralFortuneForm.tsx`, `life-fortune`, `moving-fortune`, `tojeong`, `numerology` 6개 페이지 동일 패턴 적용)
+- 배경 하단 검은 영역 버그 수정 (`src/components/TimeBackground.tsx`) — 콘텐츠가 100vh를 초과할 때 `min-h-screen` div 밖으로 넘쳐 body 배경(검은색)이 노출되던 문제; 배경색 div를 `fixed inset-0 z-0`으로 분리해 스크롤/높이와 무관하게 항상 뷰포트를 채우도록 변경, `document.body.style.backgroundColor` JS 조작 전부 제거
+- `globals.css` body 배경 원복 — 강제로 넣었던 `background: #06000d` → `background: var(--background)` 원복
+- 별·구름 배치 범위 확장 (`src/components/SkyLayer.tsx`) — 별 y좌표 최대 72% → 95%, 구름 top 최대 54% → 84%로 확장해 화면 하단까지 sky 요소가 분포하도록 수정
+
+---
+
+## 2026-06-24
+
+- 운세 결과 공유하기 버튼 추가 — `navigator.share({ title, text, url })` 적용, 미지원 브라우저는 URL 클립보드 복사 fallback; `FortuneResult.tsx`, `TarotReadingResult.tsx`, `saju`, `zodiac/[sign]`, `chinese-zodiac/[animal]`, `tarot-daily` 페이지에 공유 버튼 추가
+- 재방문 시 오늘 운세 결과 자동 노출 — 33개 전 운세 메뉴 대상으로, 오늘 이미 해석을 받은 경우 해당 페이지 재방문 시 이전 결과 표시
+  - `src/app/api/user/fortune-status/route.ts` 수정 — `exhausted` 여부와 무관하게 `used > 0`이면 `ai_readings` Firestore 조회, 별도 try-catch로 쿼리 실패 시 전체 응답 유지
+  - `TodayFortuneCard.tsx` 개선 — 공유 버튼·"새로 해석받기" 버튼 포함, `exhausted` prop으로 소진 메시지 표시
+  - `TarotTodayResult.tsx` / `TarotActionButtons.tsx` 재작성 — 소진 시 "오늘 해석을 이미 이용했어요" amber 안내, `onReshuffle` prop 추가
+  - 타로 스프레드 6개 페이지(`tarot-3cards`, `tarot-celtic`, `tarot-horseshoe`, `tarot-full-moon`, `tarot-tree-of-life`) — `useTarotSpread` menuId 불일치 버그 수정 (`"tarot"` → `"tarot-3cards"` 등), `fortuneStatus?.todayReading` 조건으로 변경
+  - `GeneralFortuneForm.tsx` / `CompatibilityBirthForm.tsx` — `showForm` 상태 추가, todayReading 표시 후 "새로 해석받기" 버튼으로 폼 전환 가능
+  - `saju/page.tsx` — `exhausted && todayReading` → `todayReading` 조건 수정, `TodayFortuneCard`에 `exhausted` / `onNewReading` prop 연결
+  - 8개 커스텀 페이지(`numerology`, `name-fortune`, `moving-fortune`, `rune`, `name-compatibility`, `zodiac-compatibility`, `iching`, `yuk-hyo`) — 동일 조건 수정; 인라인 HTML 표시 5개(`rune`, `name-compatibility`, `zodiac-compatibility`, `iching`, `yuk-hyo`)는 `TodayFortuneCard`로 교체
+  - `sangaji/page.tsx` / `sangaji-new/page.tsx` — idle 단계에서 `fortuneStatus.todayReading` 있으면 `TodayFortuneCard` 노출
+  - `DreamForm.tsx` — `useFortuneStatus("dream")` + `TodayFortuneCard` + `showForm` 상태 추가
+- Naver 로그인 콜백 버그 수정 (`src/app/api/auth/naver/callback/route.ts`)
+
+---
+
+## 2026-06-23
+
+- 디자인 시스템 정립 (`docs/reflect-notes-style.md` 신규 생성) — "Reflect Notes" 스타일 가이드 문서화, 어두운 천문대 테마 컬러 토큰·타이포그래피·그림자·border-radius 토큰 정의
+- `src/app/globals.css` CSS 변수 확장 — Extended palette 변수(fog, steel, iris, mercury, dusk), 그라데이션(cosmic/aurora), inset rim-light 그림자 변수, border-radius 변수(btn 5px, card 16px, badge 32px) 추가; drop shadow 전부 제거 → inset 방식으로 통일
+- `FortuneGrid.tsx` 카드 UI 개선 — 16가지 그라데이션 팔레트 + djb2 해시(`cardColor()`)로 카드별 고유 배경 오버레이 적용, 카드 `rounded-xl` → `rounded-2xl`, hover 효과 drop shadow → inset shadow
+- `HeroCard.tsx` 럭키 정보 개선 — 럭키 번호·색상·방향·키워드를 날짜 단독 seed → 날짜+uid 조합(`hashUserDate()`) 기반으로 변경해 사용자별 다른 값 생성, 비로그인 사용자 localStorage `anon-id` 자동 발급
+- 전체 border-radius 통일 — 다수 컴포넌트(`Header`, `Footer`, `LoginRequiredModal`, `TarotActionButtons` 등 30+파일)에서 `rounded-full` → `rounded-[5px]`(버튼) / `rounded-[32px]`(뱃지) 디자인 토큰에 맞게 일괄 적용
+
+---
+
+## 2026-06-20
+
+- 500 에러 처리 개선 — AI 호출 실패 시 `daily_usage` 카운트 롤백 (`src/lib/usage-check.ts`에 `rollback` 함수 반환, `src/lib/gemini/stream-response.ts`에서 `onRollback` 호출), `FortuneResult.tsx`에 `error` prop 추가해 ⚠️ 전용 에러 화면 표시, `GeneralFortuneForm` / `DreamForm` / `CompatibilityBirthForm`에 에러 상태 연결
+- 오늘 인기 운세 순위 섹션 추가 — `src/lib/firebase/daily-rank.ts` 신규 생성 (`daily_usage` 컬렉션 날짜 기준 집계, 1시간 캐시), `PopularSection.tsx` UI 전면 개편 (1~5위 순위 뱃지·배경 바·이용 수 표시), 실시간 데이터 없을 시 `fortunes.json` popular 항목으로 폴백
+- 즐겨찾기 메뉴 설정 구현 — `src/app/api/user/favorites/route.ts` 신규 생성 (GET/POST/DELETE, 최대 8개, Firestore `arrayUnion`/`arrayRemove`), `FortuneGrid.tsx` 카드 좌상단 ☆ 버튼 추가 (로그인 유저만, 낙관적 업데이트), `FavoritesSection.tsx` 신규 생성 (홈 상단 즐겨찾기 슬롯), `HomeInteractive.tsx` 신규 생성 (즐겨찾기 상태 공유 Client wrapper)
+---
+
+## 2026-06-19
+
+- Google AdSense 정책 위반 수정 — `src/app/layout.tsx`에서 AdSense `<Script>` 제거, `src/app/(user)/layout.tsx`로 이동하여 운세 콘텐츠 페이지에서만 광고 실행 (로그인·관리자·인증 페이지 광고 제거)
+- `src/components/home/AboutSection.tsx` 신규 생성 — 오늘운 서비스 소개(별자리·타로·사주·꿈해몽·주역·기타 6종 상세 설명), 자주 묻는 질문 4개 포함
+- 홈 페이지(`src/app/(user)/page.tsx`) 하단에 `AboutSection` 추가 — 구글 "가치가 별로 없는 콘텐츠" 위반 대응
+- 별자리 목록 페이지(`src/app/(user)/zodiac/page.tsx`) 하단에 점성술 역사·4원소(불/흙/바람/물) 설명 섹션 추가
+- 별자리 상세 페이지(`src/app/(user)/zodiac/[sign]/page.tsx`) 하단에 강점·약점·주요 특성·행운의 색·궁합 별자리 정적 데이터 섹션 추가
+- 타로 원카드 페이지(`src/app/(user)/tarot-daily/page.tsx`) 하단에 타로 역사·메이저/마이너 아르카나 설명 섹션 추가
+- `PWAInstallButton.tsx` iOS 가이드 팝오버 위치 버그 수정 — `absolute right-0` → `fixed` + `getBoundingClientRect()` 계산으로 변경, 뷰포트 좌우 12px 여백 클램핑으로 화면 잘림 해결, 꼬리 위치 버튼 중심 기준 동적 계산
+- 육효점 추가 (`src/app/(user)/yuk-hyo/page.tsx`) — 본괘·지괘(변효 시스템) 6효 동전 던지기 UI, 효별 색상 표시, 변효 위치 강조, 심층 풀이 연동
+- UI 전면 개편 Phase A/B/C — `TimeBackground.tsx`(시간대별 배경 그라데이션), `OracleHeader.tsx`(오라클 메시지 로테이션), `QuickMenu.tsx`(빠른 메뉴), `HeroCard.tsx` 모바일 개선 등 홈 UI 다수 파일 정비
+- 관리자 AI 프롬프트 편집기 구현 (`src/app/admin/prompts/`) — 20가지 운세 프롬프트 템플릿을 Firestore `ai_prompts/{type}`에 저장·수정·초기화, `{{변수}}` 플레이스홀더 지원, 5분 인메모리 캐시, 변수 칩 클릭으로 편집기에 삽입
+  - `src/lib/claude/promptTemplates.ts` 신규 생성 — 20종 운세의 `defaultTemplate`, `labelKo`, `vars` 메타데이터 정의
+  - `src/lib/claude/promptStore.ts` 신규 생성 — Firestore 읽기/쓰기/초기화/일괄 시드 + `buildPromptFromDB()` (DB 템플릿 우선, fallback 하드코딩)
+  - `src/app/api/fortune/route.ts` 수정 — `buildPrompt()` → `buildPromptFromDB()` 교체
+  - `src/app/admin/prompts/PromptsEditor.tsx` 신규 생성 — 아코디언 편집기 UI, 저장/초기화/전체 시드 버튼
+- AI 브랜딩 문구 사용자 노출 제거 — 18개 파일에서 "AI" 뱃지·버튼·레이블을 `✦` 심볼 및 "풀이"/"심층 풀이"/"풍수 분석" 등 중립 용어로 교체 (`AILoadingIndicator`, `PageHeader`, `TarotActionButtons`, `FortuneGrid`, `HeroCard`, `PopularSection` 등)
+- 메인 운세 카드 사용 횟수 표시 (`src/app/(user)/FortuneGrid.tsx`) — 로그인 사용자에게 카드마다 `N/N회 사용하기` 표시, 한도 소진 시 카드 dim + `오늘완료` 뱃지
+  - `src/app/api/user/fortune-status-bulk/route.ts` 신규 생성 — 활성 운세 전체 menuId를 한 번에 Firestore 조회해 `{used, limit, exhausted}` 맵 반환 (개별 N회 API 호출 대신 1회 bulk)
+- `card-glow` / `card-mini` 테두리 추가 (`src/app/globals.css`) — `border: 1px solid rgba(255,255,255,0.08)` 추가로 다크 배경과 카드 경계 구분 개선
+- 파비콘 수정 (`src/app/layout.tsx`) — `metadata.icons`에 `icon` (SVG + PNG) 및 `shortcut` 명시적 등록, 브라우저 탭 파비콘 미표시 문제 해결
+- 푸터 GitHub 링크 추가 (`src/components/Footer.tsx`) — 이용약관·개인정보·문의하기 링크 행에 GitHub 저장소 링크 추가
+- README 버전별 적용 내역 테이블 추가 (`README.md`) — v0.1(2026-05-02) ~ v0.9(2026-06-19) 9버전 이력, 라이브 링크 강조
+- TODO.md 생성 및 `/todo` 스킬 추가 — 프로젝트 작업 백로그 파일(`TODO.md`) 신규 생성, Claude가 항목 추가·완료처리·수정을 수행하는 `/todo` 슬래시 커맨드 스킬 등록 (`.claude/commands/todo.md`)
+
+---
+
+## 2026-06-18
+
+- PWA 도입 — `public/manifest.json`, `public/sw.js`, `public/icons/` (192×512px) 추가, 오프라인 캐시 전략 적용 (API/Firebase 제외, 정적 파일·페이지 캐시)
+- `src/app/layout.tsx` PWA 설정 추가 — `manifest`, `appleWebApp`(iOS 홈 화면 지원), `icons.apple`, `viewport.themeColor` 메타 반영
+- `src/components/common/IOSInstallBanner.tsx` 신규 생성 — iOS Safari 전용 하단 설치 안내 배너, 조건부 표시 (iOS + non-standalone + 세션 미해제), 닫기 시 `sessionStorage` 기록
+- `src/components/common/PWAInstallButton.tsx` 신규 생성 — 헤더용 다운로드 버튼, Android(`beforeinstallprompt`)·iOS(팝오버 가이드) 분기, standalone 모드 자동 숨김
+- `src/components/Header.tsx` 수정 — 로그인·비로그인 상태 모두에 `PWAInstallButton` 배치
+- `docs/pwa-guide.md` 작성 — PWA 도입 배경, 구현 파일 8개 상세 설명, 동작 흐름도, 장단점, 테스트 방법 포함
+- `src/app/layout.tsx` PWA 설정 추가 — `manifest`, `appleWebApp`(iOS Safari 홈 화면 추가 지원), `icons.apple`, `viewport.themeColor`, `mobile-web-app-capable` 메타 반영
+- `src/components/common/IOSInstallBanner.tsx` 신규 생성 — iOS Safari 전용 하단 설치 안내 배너, 조건부 표시(iOS 기기 + non-standalone + 세션 미해제), 닫기 시 `sessionStorage` 기록
+- `src/components/common/PWAInstallButton.tsx` 신규 생성 — 헤더용 다운로드 버튼, Android(`beforeinstallprompt` 이벤트 캡처)·iOS(팝오버 가이드) 분기 처리, standalone 모드 시 자동 숨김
+- `src/components/Header.tsx` 수정 — 로그인·비로그인 상태 모두에 `PWAInstallButton` 배치
+- `docs/pwa-guide.md` 작성 — PWA 도입 배경, 구현 파일 8개 상세 설명(manifest·sw.js·icons·PWARegister·layout·IOSInstallBanner·PWAInstallButton·Header), 동작 흐름도, 장단점, 테스트 방법 포함
 
 ---
 

@@ -6,6 +6,9 @@ import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 import { type ZodiacCompatibilityInput } from "@/types/fortune";
 import FortuneResult from "@/components/fortune/FortuneResult";
+import TodayFortuneCard from "@/components/common/TodayFortuneCard";
+import FavoriteButton from "@/components/common/FavoriteButton";
+import BackHomePill from "@/components/common/BackHomePill";
 
 const ZODIAC = [
   { ko: "쥐", emoji: "🐭" },
@@ -48,7 +51,7 @@ export default function ZodiacCompatibilityPage() {
 
   if (result || isLoading) {
     return (
-      <div className="max-w-xl mx-auto px-4 py-10">
+      <div className="max-w-xl mx-auto px-4 py-6">
         {/* 띠 비교 카드 */}
         {zodiac1 && zodiac2 && (
           <div className="flex items-center justify-center gap-6 mb-8">
@@ -77,7 +80,11 @@ export default function ZodiacCompatibilityPage() {
   }
 
   return (
-    <div className="max-w-xl mx-auto px-4 py-10">
+    <div className="max-w-xl mx-auto px-4 py-6">
+      <div className="flex items-center justify-between mb-6">
+        <BackHomePill />
+        <FavoriteButton menuId="zodiac-compatibility" />
+      </div>
       <div className="text-center mb-8">
         <h1 className="text-white font-bold text-2xl">띠 궁합</h1>
         <p className="text-white/50 text-sm mt-2">12간지로 풀어보는 두 사람의 궁합</p>
@@ -156,27 +163,13 @@ export default function ZodiacCompatibilityPage() {
         </button>
       </form>
 
-      {fortuneStatus?.exhausted && fortuneStatus.todayReading && (
-        <div className="mt-6 space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="flex-1 h-px bg-white/10" />
-            <span className="text-white/30 text-xs">오늘의 띠 궁합 결과</span>
-            <div className="flex-1 h-px bg-white/10" />
-          </div>
-          <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
-            {fortuneStatus.todayReading.createdAt && (
-              <p className="text-white/30 text-xs mb-3 text-right">
-                {new Date(fortuneStatus.todayReading.createdAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })} 열람
-              </p>
-            )}
-            <div
-              className="text-white/80 text-sm leading-relaxed whitespace-pre-wrap"
-              dangerouslySetInnerHTML={{
-                __html: fortuneStatus.todayReading.result.replace(/\*\*(.*?)\*\*/g, '<strong class="text-yellow-300">$1</strong>'),
-              }}
-            />
-          </div>
-        </div>
+      {fortuneStatus?.todayReading && (
+        <TodayFortuneCard
+          label="오늘의 띠 궁합 결과"
+          todayReading={fortuneStatus.todayReading}
+          highlightColor="text-yellow-300"
+          exhausted={fortuneStatus.exhausted}
+        />
       )}
     </div>
   );

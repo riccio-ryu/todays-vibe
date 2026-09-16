@@ -21,7 +21,7 @@ export default function Tarot3CardsPage() {
     question, setQuestion, phase, spreadCards, selectedIndices, spreadReady,
     drawn, revealed, interpretation, isLoading, fortuneStatus, interpretRef,
     handleStartShuffle, handleSelectCard, handleConfirmSelection, handleReset, interpret,
-  } = useTarotSpread("tarot", 3);
+  } = useTarotSpread("tarot-3cards", 3);
 
   function handleInterpret() {
     interpret("/api/fortune/tarot", {
@@ -31,20 +31,22 @@ export default function Tarot3CardsPage() {
   }
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-10">
-      <PageHeader title="타로 3장 스프레드" />
+    <div className="max-w-lg mx-auto px-4 py-6">
+      <PageHeader title="타로 3장 스프레드" menuId="tarot-3cards" />
 
       <AnimatePresence mode="wait">
 
         {phase === "input" && (
-          <TarotInputPhase
-            subtitle="마음속으로 질문을 생각하며 카드를 뽑아보세요"
-            placeholder="예: 올해 연애운은 어떤가요?"
-            question={question}
-            setQuestion={setQuestion}
-            fortuneStatus={fortuneStatus}
-            handleStartShuffle={handleStartShuffle}
-          />
+          fortuneStatus?.todayReading
+            ? <TarotTodayResult todayReading={fortuneStatus.todayReading} onReshuffle={handleStartShuffle} />
+            : <TarotInputPhase
+                subtitle="마음속으로 질문을 생각하며 카드를 뽑아보세요"
+                placeholder="예: 올해 연애운은 어떤가요?"
+                question={question}
+                setQuestion={setQuestion}
+                fortuneStatus={fortuneStatus}
+                handleStartShuffle={handleStartShuffle}
+              />
         )}
 
         {phase === "shuffling" && <TarotShufflingAnimation />}
@@ -123,7 +125,7 @@ export default function Tarot3CardsPage() {
             </div>
 
             {phase === "drawn" && revealed.every(Boolean) && (
-              <TarotActionButtons onInterpret={handleInterpret} onReset={handleReset} />
+              <TarotActionButtons onInterpret={handleInterpret} onReset={handleReset} exhausted={fortuneStatus?.exhausted === true} />
             )}
 
             {phase === "reading" && (
@@ -139,9 +141,6 @@ export default function Tarot3CardsPage() {
 
       </AnimatePresence>
 
-      {fortuneStatus?.exhausted && phase === "input" && (
-        <TarotTodayResult todayReading={fortuneStatus.todayReading} />
-      )}
     </div>
   );
 }

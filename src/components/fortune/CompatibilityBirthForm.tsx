@@ -1,10 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
+import { useCredits } from "@/components/credits/CreditsProvider";
 import { type FortuneType, type LoveCompatibilityInput } from "@/types/fortune";
 import FortuneResult from "./FortuneResult";
+import TodayFortuneCard from "@/components/common/TodayFortuneCard";
+import FavoriteButton from "@/components/common/FavoriteButton";
 
 interface Config {
   type: FortuneType;
@@ -86,8 +91,8 @@ function BirthInputGroup({
             key={val}
             type="button"
             onClick={() => onGender(val)}
-            className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-              gender === val ? "bg-purple-600 text-white" : "bg-white/10 text-white/50 hover:bg-white/15"
+            className={`flex-1 py-1.5 rounded-[5px] text-xs font-medium transition-colors ${
+              gender === val ? "bg-[#5046e4] text-[#f4f0ff]" : "bg-white/5 text-[#a8a6b7] hover:bg-white/10"
             }`}
           >
             {lbl}
@@ -101,6 +106,7 @@ function BirthInputGroup({
 export default function CompatibilityBirthForm({ config }: Props) {
   const { result, isLoading, error, submit, reset } = useFortuneStream();
   const { fortuneStatus } = useFortuneStatus(config.type);
+  const { openInsufficient } = useCredits();
 
   const [p1Year, setP1Year] = useState("");
   const [p1Month, setP1Month] = useState("");
@@ -111,6 +117,7 @@ export default function CompatibilityBirthForm({ config }: Props) {
   const [p2Month, setP2Month] = useState("");
   const [p2Day, setP2Day] = useState("");
   const [p2Gender, setP2Gender] = useState<"male" | "female">("female");
+  const [showForm, setShowForm] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -133,6 +140,7 @@ export default function CompatibilityBirthForm({ config }: Props) {
       <FortuneResult
         result={result}
         isLoading={isLoading}
+        error={error}
         onReset={reset}
         title={`${config.title} 결과`}
         icon={config.icon}
@@ -140,13 +148,44 @@ export default function CompatibilityBirthForm({ config }: Props) {
     );
   }
 
+  // 오늘 이용 기록 있으면 결과 노출 (새로 받기 버튼으로 폼 전환 가능)
+  if (fortuneStatus?.todayReading && !result && !showForm) {
+    return (
+      <div className="max-w-xl mx-auto px-4 py-10">
+        <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+          <ArrowLeft className="w-4 h-4" /> 홈
+        </Link>
+        <div className="text-center mb-8">
+          <span className="text-5xl block mb-3">{config.icon}</span>
+          <div className="flex items-center justify-center gap-2">
+            <h1 className="text-white font-bold text-2xl">{config.title}</h1>
+            <FavoriteButton menuId={config.type} />
+          </div>
+          <p className="text-white/50 text-sm mt-2">두 사람의 생년월일로 풀어보는 사주 궁합</p>
+        </div>
+        <TodayFortuneCard
+          label={`오늘의 ${config.title} 결과`}
+          todayReading={fortuneStatus.todayReading}
+          exhausted={fortuneStatus.exhausted}
+          onNewReading={() => setShowForm(true)}
+        />
+      </div>
+    );
+  }
+
   const accentClass = "focus:border-purple-400";
 
   return (
     <div className="max-w-xl mx-auto px-4 py-10">
+      <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+        <ArrowLeft className="w-4 h-4" /> 홈
+      </Link>
       <div className="text-center mb-8">
         <span className="text-5xl block mb-3">{config.icon}</span>
-        <h1 className="text-white font-bold text-2xl">{config.title}</h1>
+        <div className="flex items-center justify-center gap-2">
+          <h1 className="text-white font-bold text-2xl">{config.title}</h1>
+          <FavoriteButton menuId={config.type} />
+        </div>
         <p className="text-white/50 text-sm mt-2">두 사람의 생년월일로 풀어보는 사주 궁합</p>
       </div>
 
@@ -173,43 +212,24 @@ export default function CompatibilityBirthForm({ config }: Props) {
 
         {error && <p className="text-red-400 text-sm text-center">{error}</p>}
 
-        <button
-          type="submit"
-          disabled={fortuneStatus?.exhausted === true}
-          className={`w-full py-3 rounded-xl font-bold text-sm transition-opacity ${
-            fortuneStatus?.exhausted
-              ? "bg-white/10 text-white/30 cursor-not-allowed"
-              : `bg-gradient-to-r ${config.gradient} text-white hover:opacity-90`
-          }`}
-        >
-          {fortuneStatus?.exhausted
-            ? `오늘 ${config.title}을 이미 이용했어요`
-            : `${config.icon} ${config.title} 보기`}
-        </button>
+        {fortuneStatus?.exhausted ? (
+          <button
+            type="button"
+            onClick={openInsufficient}
+            className="w-full py-3 rounded-xl font-bold text-sm bg-amber-500/15 border border-amber-400/30 text-amber-200 hover:bg-amber-500/25 transition-colors"
+          >
+            ⭐ 오늘의 별이 부족해요 · 자세히
+          </button>
+        ) : (
+          <button
+            type="submit"
+            className={`w-full py-3 rounded-xl font-bold text-sm transition-opacity bg-gradient-to-r ${config.gradient} text-white hover:opacity-90`}
+          >
+            {config.icon} {config.title} 보기
+          </button>
+        )}
       </form>
 
-      {fortuneStatus?.exhausted && fortuneStatus.todayReading && (
-        <div className="mt-6 space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="flex-1 h-px bg-white/10" />
-            <span className="text-white/30 text-xs">오늘의 {config.title} 결과</span>
-            <div className="flex-1 h-px bg-white/10" />
-          </div>
-          <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
-            {fortuneStatus.todayReading.createdAt && (
-              <p className="text-white/30 text-xs mb-3 text-right">
-                {new Date(fortuneStatus.todayReading.createdAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })} 열람
-              </p>
-            )}
-            <div
-              className="text-white/80 text-sm leading-relaxed whitespace-pre-wrap"
-              dangerouslySetInnerHTML={{
-                __html: fortuneStatus.todayReading.result.replace(/\*\*(.*?)\*\*/g, '<strong class="text-purple-300">$1</strong>'),
-              }}
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }

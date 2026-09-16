@@ -8,6 +8,9 @@ import { type NameFortuneInput } from "@/types/fortune";
 import FortuneResult from "@/components/fortune/FortuneResult";
 import TodayFortuneCard from "@/components/common/TodayFortuneCard";
 import { ChevronRight } from "lucide-react";
+import FavoriteButton from "@/components/common/FavoriteButton";
+import { useBirthInfo } from "@/lib/hooks/useBirthInfo";
+import BackHomePill from "@/components/common/BackHomePill";
 
 export default function NameFortunePage() {
   const { user } = useAuth();
@@ -20,20 +23,16 @@ export default function NameFortunePage() {
   const [month, setMonth] = useState("");
   const [day, setDay] = useState("");
 
-  // 저장된 생년월일 자동 불러오기
+  const { savedInfo } = useBirthInfo();
+
   useEffect(() => {
-    if (!user) return;
-    fetch("/api/user/birth-info")
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.birthInfo) {
-          setYear(String(d.birthInfo.year));
-          setMonth(String(d.birthInfo.month));
-          setDay(String(d.birthInfo.day));
-        }
-      })
-      .catch(() => {});
-  }, [user]);
+    if (savedInfo) {
+      setYear(String(savedInfo.year));
+      setMonth(String(savedInfo.month));
+      setDay(String(savedInfo.day));
+      setShowBirth(true);
+    }
+  }, [savedInfo]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -64,7 +63,11 @@ export default function NameFortunePage() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <div className="max-w-xl mx-auto px-4 py-10">
+    <div className="max-w-xl mx-auto px-4 py-6">
+      <div className="flex items-center justify-between mb-6">
+        <BackHomePill />
+        <FavoriteButton menuId="name-fortune" />
+      </div>
       <div className="text-center mb-8">
         <h1 className="text-white font-bold text-2xl">성명학</h1>
         <p className="text-white/50 text-sm mt-2">이름 획수와 음양오행으로 풀어보는 나의 운세</p>
@@ -163,11 +166,12 @@ export default function NameFortunePage() {
         </button>
       </form>
 
-      {fortuneStatus?.exhausted && fortuneStatus.todayReading && (
+      {fortuneStatus?.todayReading && (
         <TodayFortuneCard
           label="오늘의 성명학 결과"
           todayReading={fortuneStatus.todayReading}
           highlightColor="text-amber-300"
+          exhausted={fortuneStatus.exhausted}
         />
       )}
     </div>

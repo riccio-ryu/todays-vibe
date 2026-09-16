@@ -1,9 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
+import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 import { DreamInput } from "@/types/fortune";
 import FortuneResult from "./FortuneResult";
+import TodayFortuneCard from "@/components/common/TodayFortuneCard";
+import FavoriteButton from "@/components/common/FavoriteButton";
 
 const MOOD_OPTIONS = [
   { value: "행복함", label: "😊 행복함" },
@@ -18,7 +23,9 @@ const MOOD_OPTIONS = [
 export default function DreamForm() {
   const [dreamDescription, setDreamDescription] = useState("");
   const [mood, setMood] = useState<string>("");
+  const [showForm, setShowForm] = useState(false);
   const { result, isLoading, error, submit, reset } = useFortuneStream();
+  const { fortuneStatus } = useFortuneStatus("dream");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,12 +45,12 @@ export default function DreamForm() {
     setMood("");
   };
 
-  // 결과가 있거나 로딩 중이면 결과 화면 표시
   if (result || isLoading) {
     return (
       <FortuneResult
         result={result}
         isLoading={isLoading}
+        error={error}
         onReset={handleReset}
         title="꿈해몽 결과"
         icon="💭"
@@ -52,14 +59,44 @@ export default function DreamForm() {
     );
   }
 
+  if (fortuneStatus?.todayReading && !showForm) {
+    return (
+      <div className="max-w-xl mx-auto px-4 py-8">
+        <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+          <ArrowLeft className="w-4 h-4" /> 홈
+        </Link>
+        <div className="text-center mb-8">
+          <div className="text-6xl mb-3">💭</div>
+          <div className="flex items-center justify-center gap-2">
+            <h1 className="text-3xl font-bold text-white mb-2">꿈해몽</h1>
+            <FavoriteButton menuId="dream" />
+          </div>
+        </div>
+        <TodayFortuneCard
+          label="오늘의 꿈해몽 결과"
+          todayReading={fortuneStatus.todayReading}
+          highlightColor="text-purple-300"
+          exhausted={fortuneStatus.exhausted}
+          onNewReading={() => setShowForm(true)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-xl mx-auto px-4 py-8">
+      <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+        <ArrowLeft className="w-4 h-4" /> 홈
+      </Link>
       {/* 헤더 */}
       <div className="text-center mb-8">
         <div className="text-6xl mb-3">💭</div>
-        <h1 className="text-3xl font-bold text-white mb-2">꿈해몽</h1>
+        <div className="flex items-center justify-center gap-2">
+          <h1 className="text-3xl font-bold text-white mb-2">꿈해몽</h1>
+          <FavoriteButton menuId="dream" />
+        </div>
         <p className="text-purple-300 text-sm">
-          꾼 꿈을 자세히 적어주세요. AI가 전통 해몽과 심리학적 관점으로 풀이해
+          꾼 꿈을 자세히 적어주세요. 전통 해몽과 심리학적 관점으로 풀이해
           드립니다.
         </p>
       </div>
@@ -76,7 +113,7 @@ export default function DreamForm() {
             placeholder="어떤 꿈을 꾸셨나요? 기억나는 내용을 최대한 자세히 적어주세요. (사람, 장소, 사건, 색깔 등)"
             rows={6}
             maxLength={1000}
-            className="w-full rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/30 px-4 py-3 text-sm focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400 resize-none transition-colors"
+            className="w-full rounded-[5px] bg-white/5 border border-white/10 text-[#f4f0ff] placeholder-white/25 px-4 py-3 text-sm focus:outline-none focus:border-[#9382ff]/50 focus:ring-1 focus:ring-[#9382ff]/30 resize-none transition-colors"
             required
           />
           <div className="text-right text-white/30 text-xs mt-1">
@@ -98,10 +135,10 @@ export default function DreamForm() {
                 onClick={() =>
                   setMood(mood === option.value ? "" : option.value)
                 }
-                className={`px-3 py-1.5 rounded-full text-sm transition-all duration-150 ${
+                className={`px-3 py-1.5 rounded-[32px] text-sm transition-all duration-150 ${
                   mood === option.value
-                    ? "bg-purple-600 text-white border border-purple-400"
-                    : "bg-white/10 text-white/60 border border-white/20 hover:bg-white/15 hover:text-white/80"
+                    ? "bg-[#5046e4] text-[#f4f0ff] border border-[#9382ff]/40"
+                    : "bg-white/5 text-[#a8a6b7] border border-white/10 hover:bg-white/10 hover:text-[#f4f0ff]"
                 }`}
               >
                 {option.label}
@@ -112,7 +149,7 @@ export default function DreamForm() {
 
         {/* 에러 메시지 */}
         {error && (
-          <div className="rounded-xl bg-red-900/30 border border-red-500/30 px-4 py-3 text-red-300 text-sm">
+          <div className="rounded-2xl bg-red-900/30 border border-red-500/30 px-4 py-3 text-red-300 text-sm">
             {error}
           </div>
         )}
@@ -121,7 +158,7 @@ export default function DreamForm() {
         <button
           type="submit"
           disabled={!dreamDescription.trim() || isLoading}
-          className="w-full py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-purple-900/50"
+          className="w-full py-3.5 rounded-[5px] font-medium text-[#f4f0ff] bg-[#5046e4] hover:bg-[#3d36c4] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
           ✨ 꿈 해석하기
         </button>

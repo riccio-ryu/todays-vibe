@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ORACLE_CARDS, type OracleCard } from "@/data/oracle-cards";
+import FavoriteButton from "@/components/common/FavoriteButton";
+import BackHomePill from "@/components/common/BackHomePill";
 
 function drawCard(): OracleCard {
   return ORACLE_CARDS[Math.floor(Math.random() * ORACLE_CARDS.length)];
@@ -24,7 +26,11 @@ export default function OraclePage() {
   }
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-10">
+    <div className="max-w-lg mx-auto px-4 py-6">
+      <div className="flex items-center justify-between mb-6">
+        <BackHomePill />
+        <FavoriteButton menuId="oracle" />
+      </div>
       <div className="text-center mb-10">
         <h1 className="text-white font-bold text-2xl">오라클 카드</h1>
         <p className="text-white/50 text-sm mt-2">오늘 나에게 필요한 메시지를 받아보세요</p>

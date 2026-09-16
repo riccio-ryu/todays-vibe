@@ -3,11 +3,14 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import chineseData from "@/data/chinese-zodiac.json";
+import { chineseZodiacContent } from "@/data/chinese-zodiac-content";
+import { shareOrCopyUrl } from "@/lib/utils/share";
 import SpriteCard from "@/components/common/SpriteCard";
 import FortuneCard from "@/components/common/FortuneCard";
 import LuckyBadge from "@/components/common/LuckyBadge";
+import FavoriteButton from "@/components/common/FavoriteButton";
 import {
   getWeeklyChineseFortune,
   getMonthlyChineseFortune,
@@ -17,19 +20,15 @@ import {
   getCurrentMonthKey,
   getCurrentYear,
 } from "@/lib/firebase/fortune-reader";
-import type { WeeklyFortune, MonthlyFortune, YearlyFortune } from "@/types/scheduled-fortune";
+import { usePeriodFortune } from "@/lib/hooks/usePeriodFortune";
+import { PERIOD_TABS, DAY_KO, QUARTER_KO, type FortunePeriodTab } from "@/lib/utils/fortune-labels";
+import BackHomePill from "@/components/common/BackHomePill";
 
-// ─── 타입 ──────────────────────────────────────────────────────────
-type Tab = "today" | "weekly" | "monthly" | "yearly";
-
-const DAY_KO: Record<string, string> = {
-  mon: "월요일", tue: "화요일", wed: "수요일",
-  thu: "목요일", fri: "금요일", sat: "토요일", sun: "일요일",
-};
-
-const QUARTER_KO: Record<string, string> = {
-  q1: "1분기 (1~3월)", q2: "2분기 (4~6월)",
-  q3: "3분기 (7~9월)", q4: "4분기 (10~12월)",
+// ─── 상수 ──────────────────────────────────────────────────────────
+const FETCHERS = {
+  weekly: getWeeklyChineseFortune,
+  monthly: getMonthlyChineseFortune,
+  yearly: getYearlyChineseFortune,
 };
 
 // 띠별 테마 색상
@@ -70,36 +69,13 @@ export default function ChineseZodiacAnimalPage() {
 
   const animalInfo = chineseData.animals.find((a) => a.id === animal);
 
-  const [tab, setTab] = useState<Tab>("today");
-  const [weekly, setWeekly] = useState<WeeklyFortune | null>(null);
-  const [monthly, setMonthly] = useState<MonthlyFortune | null>(null);
-  const [yearly, setYearly] = useState<YearlyFortune | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState<FortunePeriodTab>("today");
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
-  const [prevAnimal, setPrevAnimal] = useState(animal);
-
-  if (prevAnimal !== animal) {
-    setPrevAnimal(animal);
-    setLoading(true);
-    setWeekly(null);
-    setMonthly(null);
-    setYearly(null);
-  }
+  const { weekly, monthly, yearly, loading } = usePeriodFortune(animal, !!animalInfo, FETCHERS);
 
   useEffect(() => {
-    if (!animalInfo) { router.push("/chinese-zodiac"); return; }
-    Promise.all([
-      getWeeklyChineseFortune(animal),
-      getMonthlyChineseFortune(animal),
-      getYearlyChineseFortune(animal),
-    ]).then(([w, m, y]) => {
-      setWeekly(w);
-      setMonthly(m);
-      setYearly(y);
-    }).catch(console.error).finally(() => {
-      setLoading(false);
-    });
-  }, [animal, animalInfo, router]);
+    if (!animalInfo) router.push("/chinese-zodiac");
+  }, [animalInfo, router]);
 
   if (!animalInfo) return null;
 
@@ -113,13 +89,6 @@ export default function ChineseZodiacAnimalPage() {
     tab === "monthly" ? (monthly?.lucky ?? null) :
     weekly?.lucky ?? null;
 
-  const TABS: { id: Tab; label: string }[] = [
-    { id: "today",   label: "오늘" },
-    { id: "weekly",  label: "이번 주" },
-    { id: "monthly", label: "이번 달" },
-    { id: "yearly",  label: "올해" },
-  ];
-
   // 해당 띠 출생연도 (현재 연도 이하만, 내림차순)
   const years = [...animalInfo.years]
     .filter((y) => y <= getCurrentYear())
@@ -132,16 +101,14 @@ export default function ChineseZodiacAnimalPage() {
     : null;
 
   return (
-    <div className="min-h-screen px-4 py-10">
+    <div className="min-h-screen px-4 py-6">
       <div className="max-w-xl mx-auto">
 
-        {/* 뒤로가기 */}
-        <Link
-          href="/chinese-zodiac"
-          className="inline-flex items-center gap-1 text-white/40 text-sm hover:text-white/70 mb-6 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" /> 띠 목록
-        </Link>
+        {/* 뒤로가기 + 즐겨찾기 */}
+        <div className="flex items-center justify-between mb-6">
+          <BackHomePill href="/chinese-zodiac" label="띠 목록" />
+          <FavoriteButton menuId="chinese-zodiac" />
+        </div>
 
         {/* 띠 헤더 카드 */}
         <div className={`rounded-2xl bg-white/5 border ${animalBorder} p-6 mb-6`}>
@@ -152,7 +119,9 @@ export default function ChineseZodiacAnimalPage() {
               className="w-24 shrink-0 aspect-[2/3] rounded-xl shadow-lg"
             />
             <div>
-              <h1 className="text-white text-2xl font-bold">{animalInfo.name}띠</h1>
+              <div className="flex items-center gap-2">
+                <h1 className="text-white text-2xl font-bold">{animalInfo.name}띠</h1>
+              </div>
               <p className="text-white/40 text-sm mt-1">{animalInfo.nameEn}</p>
               {/* 출생연도 선택 버튼 */}
               <div className="mt-3">
@@ -162,7 +131,7 @@ export default function ChineseZodiacAnimalPage() {
                     <button
                       key={y}
                       onClick={() => setSelectedYear(selectedYear === y ? null : y)}
-                      className={`text-xs px-2.5 py-1 rounded-full border transition-all duration-150 ${
+                      className={`text-xs px-2.5 py-1 rounded-[32px] border transition-all duration-150 ${
                         selectedYear === y
                           ? `${animalColor} border-current bg-white/10 font-semibold`
                           : `text-white/40 ${animalBorder} hover:text-white/70`
@@ -179,7 +148,7 @@ export default function ChineseZodiacAnimalPage() {
 
         {/* 탭 */}
         <div className="flex gap-1 bg-white/5 rounded-xl p-1 mb-6">
-          {TABS.map((t) => (
+          {PERIOD_TABS.map((t) => (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
@@ -329,7 +298,39 @@ export default function ChineseZodiacAnimalPage() {
                 </div>
               </div>
             )}
+
+            {/* 공유하기 */}
+            <div className="mt-4 flex justify-center">
+              <button
+                onClick={() => shareOrCopyUrl(`${animalInfo.name}띠 운세 | 오늘운`)}
+                className="px-6 py-2.5 rounded-[5px] bg-[#5046e4]/30 border border-[#9382ff]/25 text-[#9382ff] text-sm font-medium hover:bg-[#5046e4]/50 transition-colors"
+              >
+                📤 공유하기
+              </button>
+            </div>
           </>
+        )}
+
+        {/* 띠 심층 해설 */}
+        {chineseZodiacContent[animal] && (
+          <div className="mt-8 rounded-2xl bg-white/5 border border-white/10 p-5 space-y-5">
+            <div>
+              <h2 className="text-white/80 font-semibold text-sm mb-2">{animalInfo.name}띠의 성격</h2>
+              <p className="text-white/55 text-sm leading-relaxed">{chineseZodiacContent[animal].personality}</p>
+            </div>
+            <div className="border-t border-white/10 pt-4">
+              <h3 className="text-white/70 font-semibold text-xs mb-2">💕 연애 스타일</h3>
+              <p className="text-white/55 text-sm leading-relaxed">{chineseZodiacContent[animal].love}</p>
+            </div>
+            <div className="border-t border-white/10 pt-4">
+              <h3 className="text-white/70 font-semibold text-xs mb-2">💼 직업과 재능</h3>
+              <p className="text-white/55 text-sm leading-relaxed">{chineseZodiacContent[animal].career}</p>
+            </div>
+            <div className="border-t border-white/10 pt-4">
+              <h3 className="text-white/70 font-semibold text-xs mb-2">🤝 띠 궁합</h3>
+              <p className="text-white/55 text-sm leading-relaxed">{chineseZodiacContent[animal].compatibility}</p>
+            </div>
+          </div>
         )}
 
         {/* 다른 띠 보기 */}

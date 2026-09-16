@@ -1,7 +1,9 @@
 "use server";
 
 import { getAdminFirestore } from "@/lib/firebase/admin";
-import type { MenuItem, Category } from "@/types/menu";
+import type { MenuItem, Category, AccessLevel } from "@/types/menu";
+import { DEFAULT_HERO_SETTINGS, type HeroCardSettings } from "@/types/hero";
+import { DEFAULT_GRANTS } from "@/lib/credits/config";
 
 const COL = "menus";
 const CAT_COL = "categories";
@@ -13,11 +15,14 @@ function db() {
 export async function getMenus(): Promise<MenuItem[]> {
   try {
     const snap = await db().collection(COL).orderBy("order").get();
-    return snap.docs.map((d) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { createdAt, updatedAt, ...data } = d.data();
-      return { id: d.id, ...data } as MenuItem;
-    });
+    return snap.docs
+      // 심리 테스트는 운세 메뉴가 아니므로 제외 (관리는 /admin/psych) — Firestore 잔재 방어
+      .filter((d) => d.id !== "psych-test")
+      .map((d) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { createdAt, updatedAt, ...data } = d.data();
+        return { id: d.id, ...data } as MenuItem;
+      });
   } catch {
     return [];
   }
@@ -71,16 +76,6 @@ export async function saveQuickMenu(menuIds: string[]): Promise<void> {
 
 // ─── Hero Card settings ───────────────────────────────────────────────────────
 
-export interface HeroCardSettings {
-  notLoggedInText: string;
-  noBirthInfoText: string;
-}
-
-const DEFAULT_HERO_SETTINGS: HeroCardSettings = {
-  notLoggedInText: "로그인하면 오늘의 운세 점수를 확인할 수 있어요",
-  noBirthInfoText: "생년월일을 저장하면 AI가 맞춤 운세를 드려요",
-};
-
 export async function getHeroCardSettings(): Promise<HeroCardSettings> {
   try {
     const snap = await db().collection("settings").doc("heroCard").get();
@@ -92,6 +87,25 @@ export async function getHeroCardSettings(): Promise<HeroCardSettings> {
 
 export async function saveHeroCardSettings(settings: HeroCardSettings): Promise<void> {
   await db().collection("settings").doc("heroCard").set({ ...settings, updatedAt: new Date() });
+}
+
+// ─── Credit grants (별 지급량) ─────────────────────────────────────────────────
+
+export async function getCreditGrants(): Promise<Record<AccessLevel, number>> {
+  try {
+    const snap = await db().collection("settings").doc("credits").get();
+    const grants = snap.data()?.grants as Partial<Record<AccessLevel, number>> | undefined;
+    return { ...DEFAULT_GRANTS, ...(grants ?? {}) };
+  } catch {
+    return DEFAULT_GRANTS;
+  }
+}
+
+export async function saveCreditGrants(grants: Record<AccessLevel, number>): Promise<void> {
+  await db()
+    .collection("settings")
+    .doc("credits")
+    .set({ grants, updatedAt: new Date() }, { merge: true });
 }
 
 // ─── Batch order update ───────────────────────────────────────────────────────

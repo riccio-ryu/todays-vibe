@@ -4,6 +4,10 @@ import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { type LifeFortuneInput } from "@/types/fortune";
 import FortuneResult from "@/components/fortune/FortuneResult";
+import FavoriteButton from "@/components/common/FavoriteButton";
+import { useBirthInfo } from "@/lib/hooks/useBirthInfo";
+import SavedBirthBanner from "@/components/common/SavedBirthBanner";
+import BackHomePill from "@/components/common/BackHomePill";
 
 type CachedReading = { result: string; createdAt: string | null };
 
@@ -23,21 +27,46 @@ export default function LifeFortunePage() {
   const [day, setDay] = useState("");
   const [gender, setGender] = useState<"male" | "female">("male");
 
-  // 저장된 생년월일 불러오기
+  const { savedInfo, saving, saveStatus, saveBirthInfo } = useBirthInfo();
+  const [isOtherMode, setIsOtherMode] = useState(false);
+  const [wantSave, setWantSave] = useState(false);
+
   useEffect(() => {
-    if (!user) return;
-    fetch("/api/user/birth-info")
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.birthInfo) {
-          setYear(String(d.birthInfo.year));
-          setMonth(String(d.birthInfo.month));
-          setDay(String(d.birthInfo.day));
-          setGender(d.birthInfo.gender ?? "male");
-        }
-      })
-      .catch(() => {});
-  }, [user]);
+    if (savedInfo && !isOtherMode) {
+      setYear(String(savedInfo.year));
+      setMonth(String(savedInfo.month));
+      setDay(String(savedInfo.day));
+      setGender(savedInfo.gender ?? "male");
+    }
+  }, [savedInfo, isOtherMode]);
+
+  useEffect(() => {
+    setWantSave(!!savedInfo && !isOtherMode);
+  }, [savedInfo, isOtherMode]);
+
+  function handleOtherMode() {
+    setIsOtherMode(true);
+    setYear(""); setMonth(""); setDay(""); setGender("male");
+  }
+
+  function handleRestoreMyInfo() {
+    setIsOtherMode(false);
+    if (savedInfo) {
+      setYear(String(savedInfo.year));
+      setMonth(String(savedInfo.month));
+      setDay(String(savedInfo.day));
+      setGender(savedInfo.gender ?? "male");
+    }
+  }
+
+  async function handleToggleSave() {
+    const newVal = !wantSave;
+    setWantSave(newVal);
+    if (newVal) {
+      const yv = parseInt(year), mv = parseInt(month), dv = parseInt(day);
+      if (yv && mv && dv) await saveBirthInfo({ year: yv, month: mv, day: dv, gender });
+    }
+  }
 
   // 생년월일+성별이 채워지면 캐시 확인
   const y = parseInt(year);
@@ -108,7 +137,7 @@ export default function LifeFortunePage() {
   // 스트리밍 중 또는 완료
   if (streamResult || isLoading) {
     return (
-      <div className="max-w-xl mx-auto px-4 py-10">
+      <div className="max-w-xl mx-auto px-4 py-6">
         <FortuneResult
           result={streamResult}
           isLoading={isLoading}
@@ -123,7 +152,11 @@ export default function LifeFortunePage() {
   // 캐시된 결과 표시
   if (cachedReading) {
     return (
-      <div className="max-w-xl mx-auto px-4 py-10">
+      <div className="max-w-xl mx-auto px-4 py-6">
+        <div className="flex items-center justify-between mb-6">
+          <BackHomePill />
+          <FavoriteButton menuId="life-fortune" />
+        </div>
         <div className="text-center mb-8">
           <h1 className="text-white font-bold text-2xl">평생운세</h1>
           <p className="text-white/50 text-sm mt-2">
@@ -164,11 +197,24 @@ export default function LifeFortunePage() {
 
   // 입력 폼
   return (
-    <div className="max-w-xl mx-auto px-4 py-10">
+    <div className="max-w-xl mx-auto px-4 py-6">
+      <div className="flex items-center justify-between mb-6">
+        <BackHomePill />
+        <FavoriteButton menuId="life-fortune" />
+      </div>
       <div className="text-center mb-8">
         <h1 className="text-white font-bold text-2xl">평생운세</h1>
-        <p className="text-white/50 text-sm mt-2">타고난 운명과 인생의 흐름을 AI로 풀어드립니다</p>
+        <p className="text-white/50 text-sm mt-2">타고난 운명과 인생의 흐름을 풀어드립니다</p>
       </div>
+
+      {user && savedInfo && (
+        <SavedBirthBanner
+          savedInfo={savedInfo}
+          isOtherMode={isOtherMode}
+          onOtherMode={handleOtherMode}
+          onRestoreMyInfo={handleRestoreMyInfo}
+        />
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="rounded-2xl bg-white/5 border border-white/10 p-6 space-y-5">
@@ -235,6 +281,29 @@ export default function LifeFortunePage() {
         </div>
 
         {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+
+        {user && !isOtherMode && (
+          <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/5 border border-white/10">
+            <span className="text-sm text-white/60">
+              {saving ? "저장 중..." : wantSave ? "생년월일 저장중" : "생년월일 저장"}
+              {saveStatus === "saved" && <span className="text-[#9382ff] text-xs ml-2">✓</span>}
+            </span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={wantSave}
+              onClick={handleToggleSave}
+              disabled={saving}
+              className={`relative inline-flex w-11 h-6 rounded-full transition-colors duration-200 disabled:opacity-50 shrink-0 focus:outline-none ${
+                wantSave ? "bg-[#5046e4]" : "bg-white/20"
+              }`}
+            >
+              <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200 ${
+                wantSave ? "translate-x-[22px]" : "translate-x-0.5"
+              }`} />
+            </button>
+          </div>
+        )}
 
         <button type="submit" disabled={!valid || cacheLoading}
           className={`w-full py-3 rounded-xl font-bold text-sm transition-opacity ${

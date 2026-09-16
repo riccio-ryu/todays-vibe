@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createCustomToken, upsertOAuthUser } from "@/lib/firebase/admin";
+import { upsertOAuthUser } from "@/lib/firebase/admin";
+import { createOAuthSession, applySessionCookie } from "@/lib/firebase/server-session";
 
 interface GitHubTokenResponse {
   access_token: string;
@@ -80,17 +81,17 @@ export async function GET(req: NextRequest) {
       displayName: userData.name ?? userData.login,
       photoURL: userData.avatar_url,
     });
-    const customToken = await createCustomToken(uid, {
-      provider: "github",
+
+    const { sessionToken, isAdmin } = await createOAuthSession({
+      uid,
       email,
       displayName: userData.name ?? userData.login ?? "",
       photoURL: userData.avatar_url ?? "",
+      provider: "github",
     });
-
-    const completeUrl = new URL("/auth/complete", req.url);
-    completeUrl.searchParams.set("ct", customToken);
-    const res = NextResponse.redirect(completeUrl.toString());
+    const res = NextResponse.redirect(new URL(isAdmin ? "/admin" : "/", req.url));
     res.cookies.delete("github_oauth_state");
+    applySessionCookie(res, sessionToken);
     return res;
   } catch (err) {
     console.error("[GitHub OAuth callback]", err);

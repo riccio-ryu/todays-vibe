@@ -1,11 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { ArrowLeft, Home } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { drawSangaji, GRADE_INFO, type SangajiEntry } from "@/data/sangaji";
 import { useFortuneStatus } from "@/lib/hooks/useFortuneStatus";
 import { useFortuneStream } from "@/lib/hooks/useFortuneStream";
 import FortuneResult from "@/components/fortune/FortuneResult";
+import TodayFortuneCard from "@/components/common/TodayFortuneCard";
+import FavoriteButton from "@/components/common/FavoriteButton";
 
 // 50개 산가지 — 컨테이너 168px, 벽에서 10px 안쪽 → 최대 ±74px
 const STICK_COUNT = 50;
@@ -62,7 +66,7 @@ function GradeTag({ grade }: { grade: SangajiEntry["grade"] }) {
     대흉: "bg-red-500/20 border-red-400/60 text-red-300",
   };
   return (
-    <span className={`inline-block px-3 py-1 rounded-full border text-sm font-medium ${cls[grade]}`}>
+    <span className={`inline-block px-3 py-1 rounded-[32px] border text-sm font-medium ${cls[grade]}`}>
       {GRADE_INFO[grade].label}
     </span>
   );
@@ -228,6 +232,12 @@ export default function SangajiPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-950 via-stone-900 to-gray-900 text-white px-4 py-8">
       <div className="max-w-sm mx-auto">
+        <div className="flex items-center justify-between mb-6">
+          <Link href="/" className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-amber-900/20 border border-amber-700/30 text-amber-700/60 hover:text-amber-400/80 hover:border-amber-500/40 text-xs transition-all">
+            <ArrowLeft className="w-3.5 h-3.5" /><Home className="w-3.5 h-3.5" />
+          </Link>
+          <FavoriteButton menuId="sangaji" />
+        </div>
         {/* 헤더 */}
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-amber-200">산가지 점</h1>
@@ -382,7 +392,7 @@ export default function SangajiPage() {
                 whileTap={!isAnimating ? { scale: 0.96 } : {}}
                 onClick={handleShake}
                 disabled={isAnimating || phase === "drawing"}
-                className="w-full py-3 rounded-full font-bold text-base text-amber-100 disabled:opacity-40"
+                className="w-full py-3 rounded-[5px] font-bold text-base text-amber-100 disabled:opacity-40"
                 style={{ background: "linear-gradient(to right, #92400e, #c2500a)" }}
               >
                 {phase === "shaking"
@@ -404,7 +414,7 @@ export default function SangajiPage() {
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.96 }}
                   onClick={() => pickStick(Math.floor(Math.random() * STICK_COUNT))}
-                  className="w-full py-3 rounded-full font-bold text-base text-yellow-100 border border-yellow-600/40"
+                  className="w-full py-3 rounded-[5px] font-bold text-base text-yellow-100 border border-yellow-600/40"
                   style={{ background: "linear-gradient(to right, #b45309, #d97706)" }}
                 >
                   산가지 뽑기
@@ -454,7 +464,7 @@ export default function SangajiPage() {
 
               {fortuneStatus?.exhausted ? (
                 <div className="text-center py-3 text-amber-600/70 text-sm rounded-xl bg-amber-950/30 border border-amber-800/20">
-                  오늘의 AI 풀이를 모두 사용했습니다. 내일 다시 이용해 주세요.
+                  오늘의 풀이를 모두 사용했습니다. 내일 다시 이용해 주세요.
                 </div>
               ) : (
                 <motion.button
@@ -467,10 +477,10 @@ export default function SangajiPage() {
                   className="w-full py-3 rounded-xl text-amber-100 font-semibold text-sm shadow-lg"
                   style={{ background: "linear-gradient(to right, #7c2d0a, #c05008)" }}
                 >
-                  AI 심층 풀이 보기
-                  {fortuneStatus && fortuneStatus.limit !== null && fortuneStatus.limit !== -1 && (
+                  심층 풀이 보기
+                  {fortuneStatus && fortuneStatus.cost > 0 && (
                     <span className="ml-2 text-amber-300/60 text-xs">
-                      ({fortuneStatus.used}/{fortuneStatus.limit})
+                      (⭐{fortuneStatus.cost})
                     </span>
                   )}
                 </motion.button>
@@ -478,6 +488,15 @@ export default function SangajiPage() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {phase === "idle" && fortuneStatus?.todayReading && (
+          <TodayFortuneCard
+            label="오늘의 산가지 심층 풀이"
+            todayReading={fortuneStatus.todayReading}
+            highlightColor="text-amber-300"
+            exhausted={fortuneStatus.exhausted}
+          />
+        )}
 
         {/* 전통 설명 — 항상 공간 예약 */}
         <div

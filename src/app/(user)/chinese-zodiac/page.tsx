@@ -1,6 +1,8 @@
 import Link from "next/link";
 import chineseData from "@/data/chinese-zodiac.json";
 import SpriteCard from "@/components/common/SpriteCard";
+import FavoriteButton from "@/components/common/FavoriteButton";
+import BackHomePill from "@/components/common/BackHomePill";
 
 const CURRENT_YEAR = new Date().getFullYear();
 
@@ -9,8 +11,12 @@ export default function ChineseZodiacPage() {
   const thisYearAnimal = animals.find((a) => a.years.includes(CURRENT_YEAR));
 
   return (
-    <div className="min-h-screen px-4 py-12">
+    <div className="min-h-screen px-4 py-6">
       <div className="max-w-3xl mx-auto">
+        <div className="flex items-center justify-between mb-6">
+          <BackHomePill />
+          <FavoriteButton menuId="chinese-zodiac" />
+        </div>
 
         {/* 헤더 */}
         <div className="text-center mb-10">

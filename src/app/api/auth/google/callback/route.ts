@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createCustomToken, upsertOAuthUser } from "@/lib/firebase/admin";
+import { upsertOAuthUser } from "@/lib/firebase/admin";
+import { createOAuthSession, applySessionCookie } from "@/lib/firebase/server-session";
 
 interface GoogleTokenResponse {
   access_token: string;
@@ -53,17 +54,17 @@ export async function GET(req: NextRequest) {
       displayName: userData.name,
       photoURL: userData.picture,
     });
-    const customToken = await createCustomToken(uid, {
-      provider: "google",
+
+    const { sessionToken, isAdmin } = await createOAuthSession({
+      uid,
       email: userData.email ?? "",
       displayName: userData.name ?? "",
       photoURL: userData.picture ?? "",
+      provider: "google",
     });
-
-    const completeUrl = new URL("/auth/complete", req.url);
-    completeUrl.searchParams.set("ct", customToken);
-    const res = NextResponse.redirect(completeUrl.toString());
+    const res = NextResponse.redirect(new URL(isAdmin ? "/admin" : "/", req.url));
     res.cookies.delete("google_oauth_state");
+    applySessionCookie(res, sessionToken);
     return res;
   } catch (err) {
     console.error("[Google OAuth callback]", err);

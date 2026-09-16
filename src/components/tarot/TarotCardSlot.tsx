@@ -31,7 +31,7 @@ export default function TarotCardSlot({ slotIdx, fanIdx, card, label, onSelect }
         ) : (
           <div
             key="empty"
-            className="w-[54px] h-[92px] rounded-xl border-2 border-dashed border-white/15 flex items-center justify-center"
+            className="w-[54px] h-[92px] rounded-2xl border-2 border-dashed border-white/15 flex items-center justify-center"
           >
             <span className="text-white/20 text-xs font-medium">{slotIdx + 1}</span>
           </div>

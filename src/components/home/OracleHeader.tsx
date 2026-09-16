@@ -26,7 +26,7 @@ export default function OracleHeader() {
 
   if (!set) return (
     <div className="text-center mb-8 sm:mb-12">
-      <p className="text-purple-400/70 text-xs font-semibold tracking-widest uppercase mb-3">✦ Today&apos;s Vibe ✦</p>
+      <p className="cosmic-text text-xs font-medium tracking-widest uppercase mb-3">✦ Today&apos;s Vibe ✦</p>
       <div className="h-8 sm:h-10 mb-2 sm:mb-3" />
       <div className="h-4 sm:h-5" />
     </div>
@@ -34,11 +34,11 @@ export default function OracleHeader() {
 
   return (
     <div className="text-center mb-8 sm:mb-12">
-      <p className="text-purple-400/70 text-xs font-semibold tracking-widest uppercase mb-3">✦ Today&apos;s Vibe ✦</p>
-      <h1 className="oracle-breathe text-lg sm:text-4xl font-bold text-white mb-2 sm:mb-3 leading-snug">
+      <p className="cosmic-text text-xs font-medium tracking-widest uppercase mb-3">✦ Today&apos;s Vibe ✦</p>
+      <h1 className="oracle-breathe text-lg sm:text-4xl font-medium text-[#f4f0ff] mb-2 sm:mb-3 leading-snug">
         {set.title}
       </h1>
-      <p className="oracle-breathe text-purple-300/80 text-sm sm:text-base" style={{ animationDelay: "0.8s" }}>
+      <p className="oracle-breathe text-[#a8a6b7] text-sm sm:text-base" style={{ animationDelay: "0.8s" }}>
         {set.sub}
       </p>
     </div>

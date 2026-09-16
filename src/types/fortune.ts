@@ -1,9 +1,12 @@
 // ─── Fortune Status (오늘 사용 현황 API 응답) ────────────────────────────────
 
 export interface FortuneStatus {
-  used: number;
-  limit: number | null;
+  /** 이 항목 1회 소모 별 */
+  cost: number;
+  /** 별 부족(전역 잔여 < cost) — 기존 exhausted 의미 재정의 */
   exhausted: boolean;
+  /** 전역 잔여 별 (null = 무제한) */
+  remaining: number | null;
   todayReading: { id: string; result: string; createdAt: string | null } | null;
 }
 
@@ -30,7 +33,9 @@ export type FortuneType =
   | "life-fortune"
   | "moving-fortune"
   | "iching"
-  | "sangaji";
+  | "sangaji"
+  | "yuk-hyo"
+  | "psych-test";
 
 // ─── Input Types (fortune별 입력 스키마) ──────────────────────────────────────
 
@@ -147,6 +152,30 @@ export interface SangajiInput {
   question?: string;
 }
 
+export interface YukHyoInput {
+  hexagramNo: number;
+  hexagramName: string;
+  hexagramNameZh: string;
+  upperTrigram: string;
+  lowerTrigram: string;
+  keyword: string;
+  changingLines: number[];        // 변효 위치 (1=하단, 6=상단)
+  lineValues: number[];           // 각 효의 값 (6/7/8/9)
+  changedHexagramNo?: number;     // 지괘 번호 (변효 있을 때)
+  changedHexagramName?: string;
+  changedHexagramNameZh?: string;
+  changedUpperTrigram?: string;
+  changedLowerTrigram?: string;
+  changedKeyword?: string;
+  question?: string;
+}
+
+export interface PsychTestInput {
+  testSlug: string;
+  testTitle: string;
+  answers: { question: string; answer: string }[];
+}
+
 export type FortuneInput =
   | DreamInput
   | SajuInput
@@ -163,7 +192,9 @@ export type FortuneInput =
   | LifeFortuneInput
   | MovingFortuneInput
   | IChingInput
-  | SangajiInput;
+  | SangajiInput
+  | YukHyoInput
+  | PsychTestInput;
 
 // ─── API Request / Response ───────────────────────────────────────────────────
 

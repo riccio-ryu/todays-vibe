@@ -12,6 +12,8 @@ export interface SessionPayload {
   isAdmin: boolean;
   plan: string;
   exp: number;
+  displayName?: string;
+  photoURL?: string;
 }
 
 function getSecret(): string {
@@ -50,7 +52,9 @@ export async function createSessionToken(
   uid: string,
   email: string,
   isAdmin: boolean,
-  plan: string = "free"
+  plan: string = "free",
+  displayName?: string,
+  photoURL?: string,
 ): Promise<string> {
   const payload: SessionPayload = {
     uid,
@@ -58,6 +62,8 @@ export async function createSessionToken(
     isAdmin,
     plan,
     exp: Date.now() + EXPIRES_IN_MS,
+    ...(displayName ? { displayName } : {}),
+    ...(photoURL ? { photoURL } : {}),
   };
   const data = toB64(new TextEncoder().encode(JSON.stringify(payload)));
   const key = await getKey("sign");

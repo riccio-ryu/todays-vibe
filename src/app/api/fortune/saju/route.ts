@@ -42,14 +42,11 @@ export async function POST(req: NextRequest) {
 
   const prompt = buildPrompt(summary, question);
 
-  try {
-    return createFortuneStreamResponse({
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
-      userId: check.userId,
-      readingType: "saju",
-      input: { summary, question },
-    });
-  } catch (err) {
-    return Response.json({ error: String(err) }, { status: 500 });
-  }
+  return createFortuneStreamResponse({
+    contents: [{ role: "user", parts: [{ text: prompt }] }],
+    userId: check.userId,
+    readingType: "saju",
+    input: { summary, question },
+    onRollback: check.rollback,
+  });
 }

@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── 별자리 / 띠별 운세 ─────────────────────────────────────────
+    // 공개 콘텐츠. 클라이언트 SDK(fortune-reader.ts)가 직접 읽는 컬렉션.
+    // 쓰기는 Admin SDK(generator.ts)만 사용하므로 여기선 읽기만 허용.
+    match /zodiac_weekly/{doc}        { allow read: if true; }
+    match /zodiac_monthly/{doc}       { allow read: if true; }
+    match /zodiac_yearly/{doc}        { allow read: if true; }
+    match /chinese_zodiac_weekly/{doc}  { allow read: if true; }
+    match /chinese_zodiac_monthly/{doc} { allow read: if true; }
+    match /chinese_zodiac_yearly/{doc}  { allow read: if true; }
+
+    // ── 그 외 모든 컬렉션 ─────────────────────────────────────────
+    // 나머지(users, ai_readings, daily_usage, menus 등)는 모두
+    // 서버의 Admin SDK로만 접근 → 클라이언트 직접 접근 차단.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

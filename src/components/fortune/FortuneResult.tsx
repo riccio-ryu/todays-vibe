@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import AILoadingIndicator from "@/components/common/AILoadingIndicator";
+import AdSlot from "@/components/common/AdSlot";
+import { shareOrCopyUrl } from "@/lib/utils/share";
 
 interface FortuneResultProps {
   result: string;
@@ -10,6 +14,7 @@ interface FortuneResultProps {
   title: string;
   icon?: string;
   fortuneType?: "tarot" | "saju" | "dream" | "default";
+  error?: string | null;
 }
 
 // 마크다운 헤더(## 제목)를 간단하게 렌더링하는 파서
@@ -79,6 +84,7 @@ export default function FortuneResult({
   title,
   icon,
   fortuneType = "default",
+  error,
 }: FortuneResultProps) {
   const topRef = useRef<HTMLDivElement>(null);
 
@@ -89,6 +95,9 @@ export default function FortuneResult({
 
   return (
     <div ref={topRef} className="max-w-xl mx-auto px-4 py-8">
+      <Link href="/" className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-sm transition-colors mb-6">
+        <ArrowLeft className="w-4 h-4" /> 홈
+      </Link>
       {/* 헤더 */}
       <div className="text-center mb-6">
         {icon && <div className="text-5xl mb-2">{icon}</div>}
@@ -99,6 +108,11 @@ export default function FortuneResult({
       <div className="rounded-2xl bg-white/10 border border-white/15 backdrop-blur-sm px-6 py-5 min-h-[200px]">
         {isLoading && result === "" ? (
           <AILoadingIndicator type={fortuneType} />
+        ) : error && !result ? (
+          <div className="flex flex-col items-center justify-center py-8 gap-3">
+            <p className="text-3xl">⚠️</p>
+            <p className="text-white/70 text-sm text-center">{error}</p>
+          </div>
         ) : (
           <div>
             {parseMarkdown(result)}
@@ -110,30 +124,28 @@ export default function FortuneResult({
         )}
       </div>
 
+      {/* 광고 — 결과 로딩 완료 후에만 노출 */}
+      {!isLoading && result && (
+        <AdSlot slot="5693296487" className="mt-5 rounded-xl" />
+      )}
+
       {/* 하단 버튼 */}
       {!isLoading && (
-        <div className="mt-5 flex gap-3">
+        <div className="mt-4 flex gap-3">
           <button
             onClick={onReset}
             className="flex-1 py-3 rounded-xl border border-white/20 text-white/70 text-sm font-medium hover:bg-white/10 hover:text-white transition-colors"
           >
             다시 해석하기
           </button>
-          <button
-            onClick={() => {
-              if (navigator.share) {
-                navigator.share({ title, text: result }).catch((e) => {
-                  if (e?.name !== "AbortError") throw e;
-                });
-              } else {
-                navigator.clipboard.writeText(result);
-                alert("결과가 클립보드에 복사됐어요!");
-              }
-            }}
-            className="flex-1 py-3 rounded-xl bg-purple-700/50 border border-purple-500/30 text-purple-200 text-sm font-medium hover:bg-purple-600/50 transition-colors"
-          >
-            📤 공유하기
-          </button>
+          {result && (
+            <button
+              onClick={() => shareOrCopyUrl(title, result)}
+              className="flex-1 py-3 rounded-[5px] bg-[#5046e4]/30 border border-[#9382ff]/25 text-[#9382ff] text-sm font-medium hover:bg-[#5046e4]/50 transition-colors"
+            >
+              📤 공유하기
+            </button>
+          )}
         </div>
       )}
     </div>
