@@ -61,7 +61,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko" className={`${roboto.variable} ${notoSansKR.variable} h-full antialiased`}>
+    // 브라우저 확장 프로그램이 <html>에 속성을 주입해 hydration 경고가 나는 것을 무시 (한 단계만 적용)
+    <html
+      lang="ko"
+      className={`${roboto.variable} ${notoSansKR.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
       <body className="min-h-full flex flex-col">
         <PWARegister />
         <IOSInstallBanner />

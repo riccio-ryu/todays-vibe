@@ -240,3 +240,14 @@ export type AiTest = AiQuizTest | AiTextTest;
 
 /** 전체 심리 테스트 유니온 (로직 + AI) */
 export type PsychTest = LogicPsychTest | AiTest;
+
+/** 카탈로그 섹션 — 준비중 목록 그룹핑용 (docs/psych-tests-catalog.md 섹션 1~8) */
+export type PsychSection =
+  | "성격·유형"
+  | "감정·심리"
+  | "연애·관계"
+  | "직장·학교"
+  | "라이프·취향"
+  | "재미·바이럴"
+  | "MBTI 확장"
+  | "AI 특화";

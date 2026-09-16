@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState, useCallback, Fragment } from "react";
+import { useEffect, useMemo, useState, useCallback, Fragment } from "react";
 import { formatDateTime } from "@/lib/utils/format";
-import { allPsychTests, allAiPsychTests } from "@/data/psych";
 import AdminStatCards from "@/components/admin/AdminStatCards";
 import AdminTableSkeleton from "@/components/admin/AdminTableSkeleton";
+
+import type { PsychTestLabel } from "@/types/psych";
 
 type PsychReading = {
   id: string;
@@ -16,19 +17,9 @@ type PsychReading = {
   createdAt: string | null;
 };
 
-// slug → {icon, title} 매핑 (코드 데이터 우선, 없으면 기록에 저장된 title)
-const TEST_META: Record<string, { icon: string; title: string }> = Object.fromEntries(
-  allPsychTests.map((t) => [t.slug, { icon: t.icon, title: t.title }])
-);
-
-// AI 심테만 필터 옵션으로 (기록이 남는 건 AI 심테뿐)
-const SLUG_OPTIONS = [
-  { value: "", label: "전체 심테" },
-  ...allAiPsychTests.map((t) => ({ value: t.slug, label: `${t.icon} ${t.title}` })),
-];
-
 export default function AdminPsychReadingsPage() {
   const [readings, setReadings] = useState<PsychReading[]>([]);
+  const [tests, setTests]       = useState<PsychTestLabel[]>([]);
   const [total, setTotal]       = useState(0);
   const [slugCounts, setSlugCounts] = useState<Record<string, number>>({});
   const [loading, setLoading]   = useState(true);
@@ -54,6 +45,7 @@ export default function AdminPsychReadingsPage() {
       setReadings(data.readings ?? []);
       setTotal(data.total ?? 0);
       setSlugCounts(data.slugCounts ?? {});
+      setTests(data.tests ?? []);
     } catch (e) {
       setError(String(e));
     } finally {
@@ -63,9 +55,25 @@ export default function AdminPsychReadingsPage() {
 
   useEffect(() => { fetchReadings(); }, [fetchReadings]);
 
+  // slug → {icon, title} 매핑 (Firestore 정의 우선, 없으면 기록에 저장된 title)
+  const testMeta = useMemo<Record<string, { icon: string; title: string }>>(
+    () => Object.fromEntries(tests.map((t) => [t.slug, { icon: t.icon, title: t.title }])),
+    [tests]
+  );
+
+  // AI 심테만 필터 옵션으로 (기록이 남는 건 AI 심테뿐)
+  const aiTests = useMemo(() => tests.filter((t) => t.engine === "ai"), [tests]);
+  const slugOptions = useMemo(
+    () => [
+      { value: "", label: "전체 심테" },
+      ...aiTests.map((t) => ({ value: t.slug, label: `${t.icon} ${t.title}` })),
+    ],
+    [aiTests]
+  );
+
   // 최다 심테 (전체 기준 slugCounts)
   const topSlug = Object.entries(slugCounts).sort((a, b) => b[1] - a[1])[0];
-  const topMeta = topSlug ? (TEST_META[topSlug[0]] ?? { icon: "🧠", title: topSlug[0] }) : null;
+  const topMeta = topSlug ? (testMeta[topSlug[0]] ?? { icon: "🧠", title: topSlug[0] }) : null;
 
   return (
     <div className="p-4 md:p-8">
@@ -82,7 +90,7 @@ export default function AdminPsychReadingsPage() {
         { label: "전체 기록",   value: loading ? "-" : total },
         { label: "심테 종류",   value: loading ? "-" : Object.keys(slugCounts).length },
         { label: "최다 심테",   value: loading ? "-" : topMeta ? `${topMeta.icon} ${topMeta.title}` : "—" },
-        { label: "AI 심테 수",  value: allAiPsychTests.length },
+        { label: "AI 심테 수",  value: loading ? "-" : aiTests.length },
       ]} />
 
       {/* 필터 바 */}
@@ -92,7 +100,7 @@ export default function AdminPsychReadingsPage() {
           onChange={(e) => setSlugFilter(e.target.value)}
           className="bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-white/70 text-sm outline-none focus:border-purple-400/60"
         >
-          {SLUG_OPTIONS.map((o) => (
+          {slugOptions.map((o) => (
             <option key={o.value} value={o.value} className="bg-gray-900">
               {o.label}
             </option>
@@ -152,7 +160,7 @@ export default function AdminPsychReadingsPage() {
               </tr>
             ) : (
               readings.map((r) => {
-                const meta = TEST_META[r.testSlug] ?? { icon: "🧠", title: r.testTitle };
+                const meta = testMeta[r.testSlug] ?? { icon: "🧠", title: r.testTitle };
                 const isExpanded = expandedId === r.id;
                 return (
                   <Fragment key={r.id}>

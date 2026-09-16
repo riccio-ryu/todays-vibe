@@ -41,3 +41,9 @@ export interface PsychTestMeta {
   /** AI 해석 가이드 (engine=ai) */
   promptGuide?: string;
 }
+
+/**
+ * 기록·통계 화면의 라벨용 최소 메타 (slug → 아이콘·이름·엔진).
+ * 심테 정의가 Firestore(`psych_tests`)에 있으므로 클라이언트는 API로 받아 쓴다.
+ */
+export type PsychTestLabel = Pick<PsychTestMeta, "slug" | "icon" | "title" | "engine">;

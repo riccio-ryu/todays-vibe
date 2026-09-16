@@ -1,5 +1,9 @@
 import type { LogicPsychTest, AiTest, PsychTest } from "./types";
+export { comingSoonPsychTests, PSYCH_SECTION_ORDER } from "./coming-soon";
+export type { ComingSoonPsychTest } from "./coming-soon";
 import { mbtiTest } from "./mbti";
+import { loveMbtiTest } from "./love-mbti";
+import { workMbtiTest } from "./work-mbti";
 import { loveStyleTest } from "./love-style";
 import { animalTest } from "./animal";
 import { workVillainTest } from "./work-villain";
@@ -10,6 +14,18 @@ import { spendingTest } from "./spending";
 import { travelTest } from "./travel";
 import { friendImageTest } from "./friend-image";
 import { foodTest } from "./food";
+import { flowerTest } from "./flower";
+import { superpowerTest } from "./superpower";
+import { crushTest } from "./crush";
+import { contactStyleTest } from "./contact-style";
+import { loveLanguageTest } from "./love-language";
+import { snackTest } from "./snack";
+import { chatToneTest } from "./chat-tone";
+import { glassMentalTest } from "./glass-mental";
+import { lazinessTest } from "./laziness";
+import { rpgJobTest } from "./rpg-job";
+import { joseonJobTest } from "./joseon-job";
+import { zombieTest } from "./zombie";
 import { stressTest } from "./stress";
 import { burnoutTest } from "./burnout";
 import { desertTest } from "./desert";
@@ -21,6 +37,7 @@ import { aiChatTest } from "./ai-chat";
 import { aiPersonalityTest } from "./ai-personality";
 
 export type {
+  PsychSection,
   LogicPsychTest,
   MbtiTest,
   MbtiResult,
@@ -44,15 +61,29 @@ export type {
 /** 로직 계산형 (mbti + category) — 노출 순서 = 배열 순서. 카탈로그 우선순위대로 채운다. */
 export const allLogicPsychTests: LogicPsychTest[] = [
   mbtiTest,
+  loveMbtiTest,
+  workMbtiTest,
   loveStyleTest,
+  loveLanguageTest,
+  crushTest,
+  contactStyleTest,
   animalTest,
   colorTest,
   spendingTest,
   travelTest,
   friendImageTest,
   foodTest,
+  flowerTest,
+  snackTest,
+  superpowerTest,
+  chatToneTest,
+  glassMentalTest,
+  rpgJobTest,
+  joseonJobTest,
   stressTest,
   burnoutTest,
+  zombieTest,
+  lazinessTest,
   desertTest,
   workVillainTest,
   decisionTest,

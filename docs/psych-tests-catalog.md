@@ -6,18 +6,23 @@
 
 ---
 
-## ✅ 구현 현황 (2026-07-17) — **MVP 15개 전부 완료** 🎉
+## ✅ 구현 현황 (2026-09-15) — **MVP 15개 완료 + 확장 14종** 🎉
 
 `(psych)` 그룹 · `/psych` · `/psych/[slug]` (SSG) · 엔진 `src/lib/psych/engine.ts`(`scoreMbti`·`scoreCategory`·`scoreScale`) · 데이터 `src/data/psych/*.ts` · `QuizLayout`(mbti·category·score) + `RankingLayout`(ranking) + `AiQuizLayout`(ai: quiz·text)
 
-**구현 완료 20종 (로직 14 + AI 6)**
+**구현 완료 34종 (로직 28 + AI 6)** · 준비중(미구현) 61종
 - 🔢 mbti(M-1) · love-style(#24) · animal(#67) · color · friend-image(#34) · spending(#50) · travel(#51) · food(#59) · work-villain(#43) · decision · relationship
 - 🔢 stress(#17, PSS score) · burnout(#18, MBI 3축 score) — `score` 엔진(총점 밴드 + 축별 점수)
 - 🔢 desert(#72) — `ranking` 엔진(순서대로 탭 → 순위, 1순위 지킴·꼴찌 포기 반전)
+- 🔢 **1차 확장 4종 (2026-09-15)** — love-mbti(M-4, 연애 20문항·16유형) · zombie(#47, score 생존율 % + 판단력·생존체력·팀워크 3축) · superpower(#70, category 8문항) · flower(#68, category 8문항). 엔진 무수정, 데이터 파일만 추가
+- 🔢 **2차 확장 5종 (2026-09-15)** — work-mbti(M-5, 직장 20문항·16유형) · crush(#25, score 성공 확률 % + 상대 신호·나의 적극성 2축) · contact-style(#33, score 확인 강박·의미 부여 2축) · love-language(#28, category 10문항·5유형) · snack(#65, category 8문항). ⚠️ #28은 카탈로그의 "주 언어 2가지" 대신 **주 언어 1가지**로 구현(category 엔진이 최다 1개만 반환)
+- 🔢 **3차 확장 5종 (2026-09-15)** — chat-tone(#10, category 8문항) · glass-mental(#23, category 폭발·잠수·쿨·반격) · laziness(#55, score 미루기·생활관리 2축) · rpg-job(#46, category 5직업) · joseon-job(#64, category 10문항·5직업)
 - 🤖 energy(#13) · emotion(#14) — 4지선다형, 회원 전용 스트리밍
 - 🤖 ai-worry(A-1) · ai-diary(A-2) · ai-chat(A-3) · ai-personality(A-5) — 자유텍스트 입력형, `/api/fortune("psych-test")` 스트리밍
 
-**엔진 4종 + AI 2모드:** 로직 `mbti`(2지선다→16코드) · `category`(4지선다 투표) · `score`(리커트 합산→밴드/축) · `ranking`(순위 매기기). AI `quiz`(4지선다) · `text`(자유텍스트, `AiTextField`). 데이터 파일만 추가하면 목록·상세·사이트맵·스와이프 자동 연동.
+**엔진 4종 + AI 2모드:** 로직 `mbti`(2지선다→16코드) · `category`(4지선다 투표) · `score`(리커트 합산→밴드/축) · `ranking`(순위 매기기). AI `quiz`(4지선다) · `text`(자유텍스트, `AiTextField`).
+
+> ⚠️ **신규 심테 추가 경로 (2026-07-21 Firestore 이관 이후)** — 런타임은 `psych_tests`(Firestore)만 본다. 코드에 데이터 파일을 추가한 뒤 **`/admin/psych`에 한 번 진입**하면 `syncPsychTestsFromCode()`가 누락 slug만 자동 등록하고(기존 문서·편집분은 보존), 60초 ISR로 목록·상세·사이트맵·스와이프에 반영된다. admin에서 코드 심테를 **삭제하면 다음 진입 때 부활**하므로, 영구히 감추려면 삭제가 아니라 **노출(ready) off**를 쓸 것.
 
 **메인 낮/밤 스와이프 캐러셀 완료** — `src/components/home/HomeSwipe.tsx`. 홈 `/`는 `FooterGate`로 공유 푸터 숨김.
 

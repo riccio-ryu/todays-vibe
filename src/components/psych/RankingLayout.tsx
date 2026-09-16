@@ -59,31 +59,31 @@ export default function RankingLayout({ test }: Props) {
           transition={{ duration: 0.4 }}
         >
           <div className="text-center mb-6">
-            <p className="text-white/40 text-xs mb-2">{test.title}</p>
+            <p className="text-slate-500 text-xs mb-2">{test.title}</p>
             <span className="text-6xl block mb-3">{kept.emoji}</span>
-            <h1 className="text-white font-bold text-2xl">끝까지 지킨 건 &lsquo;{kept.symbol}&rsquo;</h1>
-            <p className="text-[#9382ff]/90 text-sm mt-2">가장 먼저 내려놓은 건 &lsquo;{dropped.symbol}&rsquo; {dropped.emoji}</p>
+            <h1 className="text-slate-800 font-bold text-2xl">끝까지 지킨 건 &lsquo;{kept.symbol}&rsquo;</h1>
+            <p className="text-[#5046e4]/90 text-sm mt-2">가장 먼저 내려놓은 건 &lsquo;{dropped.symbol}&rsquo; {dropped.emoji}</p>
           </div>
 
           {/* 끝까지 지킨 것 */}
-          <div className="rounded-2xl bg-gradient-to-br from-[#5046e4]/25 to-[#2a2170]/20 border border-[#9382ff]/20 p-5 mb-3">
-            <p className="text-[#c9bfff] text-xs font-semibold uppercase tracking-widest mb-2">
+          <div className="rounded-2xl bg-gradient-to-br from-[#5046e4]/12 to-[#2a2170]/8 border border-[#9382ff]/20 p-5 mb-3">
+            <p className="text-[#5046e4] text-xs font-semibold uppercase tracking-widest mb-2">
               🏆 당신이 가장 소중히 여기는 것
             </p>
-            <p className="text-white/85 text-sm leading-relaxed">{kept.keptDesc}</p>
+            <p className="text-slate-700 text-sm leading-relaxed">{kept.keptDesc}</p>
           </div>
 
           {/* 먼저 포기한 것 (반전) */}
-          <div className="rounded-2xl bg-white/5 border border-white/10 p-5 mb-4">
-            <p className="text-white/50 text-xs font-semibold uppercase tracking-widest mb-2">
+          <div className="rounded-2xl bg-white/60 border border-slate-900/8 p-5 mb-4">
+            <p className="text-slate-500 text-xs font-semibold uppercase tracking-widest mb-2">
               🌵 가장 먼저 포기한 것
             </p>
-            <p className="text-white/80 text-sm leading-relaxed">{dropped.droppedDesc}</p>
+            <p className="text-slate-700 text-sm leading-relaxed">{dropped.droppedDesc}</p>
           </div>
 
           {/* 전체 순위 */}
-          <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
-            <p className="text-white/50 text-xs font-semibold uppercase tracking-widest mb-3">
+          <div className="rounded-2xl bg-white/60 border border-slate-900/8 p-5">
+            <p className="text-slate-500 text-xs font-semibold uppercase tracking-widest mb-3">
               나의 가치 순위
             </p>
             <ol className="space-y-2">
@@ -91,10 +91,10 @@ export default function RankingLayout({ test }: Props) {
                 const it = item(key);
                 return (
                   <li key={key} className="flex items-center gap-3">
-                    <span className="text-white/30 text-xs w-4 text-center tabular-nums">{i + 1}</span>
+                    <span className="text-slate-400 text-xs w-4 text-center tabular-nums">{i + 1}</span>
                     <span className="text-xl">{it.emoji}</span>
-                    <span className="text-white/80 text-sm">{it.label}</span>
-                    <span className="text-white/35 text-xs">— {it.symbol}</span>
+                    <span className="text-slate-700 text-sm">{it.label}</span>
+                    <span className="text-slate-400 text-xs">— {it.symbol}</span>
                   </li>
                 );
               })}
@@ -112,7 +112,7 @@ export default function RankingLayout({ test }: Props) {
             </button>
             <button
               onClick={reset}
-              className="flex items-center justify-center gap-2 px-4 py-3 rounded-[5px] bg-white/5 border border-white/10 text-white/70 font-medium text-sm hover:border-white/25 transition-colors"
+              className="flex items-center justify-center gap-2 px-4 py-3 rounded-[5px] bg-white/60 border border-slate-900/8 text-slate-600 font-medium text-sm hover:border-slate-900/15 transition-colors"
             >
               <RotateCcw className="w-4 h-4" /> 다시
             </button>
@@ -132,11 +132,11 @@ export default function RankingLayout({ test }: Props) {
       {!started ? (
         <div className="text-center">
           <span className="text-5xl block mb-3">{test.icon}</span>
-          <h1 className="text-white font-bold text-2xl mb-3">{test.title}</h1>
-          <p className="text-white/60 text-sm leading-relaxed max-w-md mx-auto mb-8">{test.intro}</p>
+          <h1 className="text-slate-800 font-bold text-2xl mb-3">{test.title}</h1>
+          <p className="text-slate-600 text-sm leading-relaxed max-w-md mx-auto mb-8">{test.intro}</p>
 
-          <div className="rounded-2xl bg-white/5 border border-white/10 p-5 mb-6 text-left">
-            <p className="text-white/70 text-sm leading-relaxed">{test.scenario}</p>
+          <div className="rounded-2xl bg-white/60 border border-slate-900/8 p-5 mb-6 text-left">
+            <p className="text-slate-600 text-sm leading-relaxed">{test.scenario}</p>
           </div>
 
           <button
@@ -150,14 +150,14 @@ export default function RankingLayout({ test }: Props) {
         <div>
           <div className="mb-6">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-white/40 text-xs">{order.length} / {total} 선택</span>
+              <span className="text-slate-500 text-xs">{order.length} / {total} 선택</span>
               {order.length > 0 && (
-                <button onClick={undo} className="text-[#9382ff] text-xs hover:text-[#c9bfff] transition-colors">
+                <button onClick={undo} className="text-[#5046e4] text-xs hover:text-[#3d36c4] transition-colors">
                   ← 되돌리기
                 </button>
               )}
             </div>
-            <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+            <div className="h-1.5 rounded-full bg-white/70 overflow-hidden">
               <motion.div
                 className="h-full bg-[#5046e4]"
                 animate={{ width: `${(order.length / total) * 100}%` }}
@@ -166,12 +166,12 @@ export default function RankingLayout({ test }: Props) {
             </div>
           </div>
 
-          <p className="text-white/85 font-semibold text-base leading-snug mb-1 text-center">
+          <p className="text-slate-700 font-semibold text-base leading-snug mb-1 text-center">
             {order.length === 0
               ? "가장 끝까지 함께하고 싶은 순서대로 골라주세요"
               : `${order.length + 1}번째로 소중한 것을 골라주세요`}
           </p>
-          <p className="text-white/35 text-xs text-center mb-5">먼저 고를수록 더 소중한 것으로 기록돼요</p>
+          <p className="text-slate-400 text-xs text-center mb-5">먼저 고를수록 더 소중한 것으로 기록돼요</p>
 
           <div className="grid grid-cols-1 gap-2.5">
             {test.items.map((it) => {
@@ -185,13 +185,13 @@ export default function RankingLayout({ test }: Props) {
                   className={`flex items-center gap-3 px-4 py-3.5 rounded-[5px] border text-left transition-colors ${
                     picked
                       ? "bg-[#5046e4]/15 border-[#9382ff]/40 opacity-60"
-                      : "bg-white/5 border-white/10 hover:bg-[#9382ff]/10 hover:border-[#9382ff]/40"
+                      : "bg-white/60 border-slate-900/8 hover:bg-[#9382ff]/10 hover:border-[#9382ff]/40"
                   }`}
                 >
                   <span className="text-2xl shrink-0">{it.emoji}</span>
-                  <span className="flex-1 text-[#f4f0ff]/85 text-sm">{it.label}</span>
+                  <span className="flex-1 text-slate-700 text-sm">{it.label}</span>
                   {picked && (
-                    <span className="text-[#9382ff] text-xs font-semibold shrink-0 w-6 h-6 rounded-full bg-[#9382ff]/15 flex items-center justify-center tabular-nums">
+                    <span className="text-[#5046e4] text-xs font-semibold shrink-0 w-6 h-6 rounded-full bg-[#9382ff]/15 flex items-center justify-center tabular-nums">
                       {rank}
                     </span>
                   )}

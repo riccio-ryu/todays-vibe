@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import { getVisiblePsychTests } from "@/lib/psych/settings";
+import ComingSoonSection from "@/components/psych/ComingSoonSection";
 
 // 낮/해 테마 심리 테스트 홈 패널 (스와이프 캐러셀의 오른쪽 패널).
 // 배경(밝은 낮 그라데이션)은 HomeSwipe의 fixed 배경 레이어가 담당하므로 여기선 투명.
@@ -44,6 +45,9 @@ export default async function PsychHomeBody() {
             </Link>
           ))}
         </div>
+
+        {/* 카탈로그 미구현분 — 흐릿하게, 클릭 불가 */}
+        <ComingSoonSection variant="day" />
 
         {/* 소개 */}
         <section className="mt-10 rounded-2xl bg-white/60 border border-white/80 p-6">

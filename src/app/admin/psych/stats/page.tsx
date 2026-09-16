@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { allPsychTests } from "@/data/psych";
+import { useEffect, useMemo, useState } from "react";
 
 import type { StatsPeriod as Period } from "@/types/admin";
+import type { PsychTestLabel } from "@/types/psych";
 
 interface TestRankItem {
   slug: string;
@@ -18,6 +18,8 @@ interface StatsData {
   testCount: number;
   dailyData: { date: string; count: number }[];
   testRanking: TestRankItem[];
+  /** 심테 정의(Firestore) 기준 라벨 — 아이콘·최신 이름 표시용 */
+  tests?: PsychTestLabel[];
 }
 
 interface TestDetail {
@@ -32,10 +34,6 @@ const PERIODS: { value: Period; label: string }[] = [
   { value: "30d",   label: "30일" },
   { value: "all",   label: "전체" },
 ];
-
-const ICON_BY_SLUG: Record<string, string> = Object.fromEntries(
-  allPsychTests.map((t) => [t.slug, t.icon])
-);
 
 function formatDate(yyyymmdd: string): string {
   const m = parseInt(yyyymmdd.slice(4, 6));
@@ -75,6 +73,7 @@ export default function AdminPsychStatsPage() {
   const [customStart, setCustomStart] = useState("");
   const [customEnd, setCustomEnd]     = useState("");
   const [data, setData]               = useState<StatsData | null>(null);
+  const [tests, setTests]             = useState<PsychTestLabel[]>([]);
   const [loading, setLoading]         = useState(true);
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
   const [detail, setDetail]           = useState<TestDetail | null>(null);
@@ -98,7 +97,10 @@ export default function AdminPsychStatsPage() {
     setDetail(null);
     fetch(buildQuery())
       .then((r) => r.json())
-      .then(setData)
+      .then((d: StatsData) => {
+        setData(d);
+        if (d?.tests) setTests(d.tests);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -126,6 +128,12 @@ export default function AdminPsychStatsPage() {
     setCustomStart("");
     setCustomEnd("");
   }
+
+  // slug → 라벨 (Firestore 정의 우선, 없으면 기록에 저장된 title)
+  const labelBySlug = useMemo<Record<string, PsychTestLabel>>(
+    () => Object.fromEntries(tests.map((t) => [t.slug, t])),
+    [tests]
+  );
 
   const maxDaily = data ? Math.max(...data.dailyData.map((d) => d.count), 1) : 1;
   const maxTest  = data?.testRanking[0]?.count ?? 1;
@@ -194,7 +202,7 @@ export default function AdminPsychStatsPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {[
           { label: "총 AI 심테 이용", icon: "🤖", value: loading ? null : (data?.totalUsage ?? 0).toLocaleString(), unit: "회" },
-          { label: "가장 인기 심테",  icon: "⭐", value: loading ? null : data?.topTest ? `${ICON_BY_SLUG[data.topTest.slug] ?? "🧠"} ${data.topTest.title}` : "—", unit: "" },
+          { label: "가장 인기 심테",  icon: "⭐", value: loading ? null : data?.topTest ? `${labelBySlug[data.topTest.slug]?.icon ?? "🧠"} ${labelBySlug[data.topTest.slug]?.title ?? data.topTest.title}` : "—", unit: "" },
           { label: "이용 유저 수",    icon: "👤", value: loading ? null : (data?.uniqueUsers ?? 0).toLocaleString(), unit: "명" },
           { label: "이용된 심테 종류", icon: "🧠", value: loading ? null : (data?.testCount ?? 0).toLocaleString(), unit: "종" },
         ].map((s) => (
@@ -292,8 +300,10 @@ export default function AdminPsychStatsPage() {
                   }`}>
                     {idx + 1}
                   </span>
-                  <span className="text-xl shrink-0">{ICON_BY_SLUG[item.slug] ?? "🧠"}</span>
-                  <span className="flex-1 text-white/80 text-sm truncate">{item.title}</span>
+                  <span className="text-xl shrink-0">{labelBySlug[item.slug]?.icon ?? "🧠"}</span>
+                  <span className="flex-1 text-white/80 text-sm truncate">
+                    {labelBySlug[item.slug]?.title ?? item.title}
+                  </span>
                   <div className="flex items-center gap-3 shrink-0">
                     <div className="w-24 h-1.5 rounded-full bg-white/10 overflow-hidden">
                       <div

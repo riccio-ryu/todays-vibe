@@ -58,7 +58,39 @@ export default function HomeSwipe({ fortunePanel, psychPanel }: Props) {
     return () => observers.forEach((o) => o.disconnect());
   }, []);
 
+  // 활성 패널을 URL에 남긴다(`/` = 운세, `/?tab=psych` = 심테).
+  // 심테 탭에서 테스트로 들어갔다가 뒤로가기 하면 심테 탭으로 돌아오게 하는 장치.
+  const restoreRef = useRef(false); // 첫 복원은 애니메이션 없이 즉시 이동
+  const syncedRef = useRef(false); // 복원 전에는 URL을 덮어쓰지 않는다
+
   useEffect(() => {
+    const tab = new URLSearchParams(window.location.search).get("tab");
+    if (tab === "psych") {
+      restoreRef.current = true;
+      // 서버 렌더와 같은 index 0으로 시작해야 hydration 불일치가 없다.
+      // 그래서 URL 복원은 마운트 직후 이 자리에서 1회만 수행한다.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIndex(1);
+    }
+    syncedRef.current = true;
+  }, []);
+
+  useEffect(() => {
+    if (!syncedRef.current) return;
+    const url = index === 1 ? "/?tab=psych" : "/";
+    if (window.location.pathname + window.location.search !== url) {
+      window.history.replaceState(null, "", url);
+    }
+  }, [index]);
+
+  useEffect(() => {
+    // 복원 이동은 슬라이드 없이 바로 맞춘다 (뒤로가기 직후 화면이 쓸려 보이지 않도록)
+    if (restoreRef.current) {
+      if (width === 0) return;
+      x.set(-index * width);
+      restoreRef.current = false;
+      return;
+    }
     const controls = animate(x, -index * width, SPRING);
     return controls.stop;
   }, [index, width, x]);

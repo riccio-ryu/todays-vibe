@@ -1,6 +1,6 @@
 import { getAdminFirestore } from "@/lib/firebase/admin";
 import { allPsychTests, type PsychTest } from "@/data/psych";
-import type { PsychTestMeta, PsychEngine } from "@/types/psych";
+import type { PsychTestMeta, PsychTestLabel, PsychEngine } from "@/types/psych";
 import type { AccessLevel } from "@/types/menu";
 import type { PsychTestConfig } from "./settings";
 
@@ -77,24 +77,42 @@ function buildSeedDoc(t: PsychTest, i: number, cfg?: PsychTestConfig): PsychTest
   return doc;
 }
 
-/** psych_tests가 비어있으면 코드 정의로 최초 시드 (레거시 settings/psych 이월) */
-export async function seedPsychTestsIfEmpty(): Promise<void> {
+/**
+ * 코드 정의(`src/data/psych`) 중 Firestore에 없는 slug만 추가한다.
+ * - 컬렉션이 비어 있으면 최초 시드 (레거시 settings/psych 노출·순서·cost·프롬프트 이월)
+ * - 문서가 있으면 신규 slug만 append — 기존 문서는 건드리지 않아 admin 편집분이 보존된다
+ *
+ * ⚠️ admin에서 "삭제"한 코드 심테는 다음 호출 때 다시 생긴다.
+ *    영구히 감추려면 삭제가 아니라 노출(ready) off를 쓸 것.
+ */
+export async function syncPsychTestsFromCode(): Promise<void> {
   const db = getAdminFirestore();
-  const snap = await db.collection(PSYCH_COL).limit(1).get();
-  if (!snap.empty) return;
+  const snap = await db.collection(PSYCH_COL).get();
+  const existing = new Set(snap.docs.map((d) => d.id));
 
-  // 레거시 노출/순서/cost/프롬프트 이월
+  const missing = allPsychTests.filter((t) => !existing.has(t.slug));
+  if (missing.length === 0) return;
+
+  // 레거시 이월은 최초 시드일 때만 (이미 이관된 뒤에는 psych_tests가 정본)
   let legacy: Record<string, PsychTestConfig> = {};
-  try {
-    const legacySnap = await db.collection("settings").doc("psych").get();
-    legacy = (legacySnap.data()?.tests ?? {}) as Record<string, PsychTestConfig>;
-  } catch {
-    legacy = {};
+  if (existing.size === 0) {
+    try {
+      const legacySnap = await db.collection("settings").doc("psych").get();
+      legacy = (legacySnap.data()?.tests ?? {}) as Record<string, PsychTestConfig>;
+    } catch {
+      legacy = {};
+    }
   }
 
+  // 신규 심테는 기존 최대 order 다음 자리에 (최초 시드면 0부터)
+  const maxOrder = snap.docs.reduce(
+    (max, d) => Math.max(max, (d.data().order as number) ?? 0),
+    -1
+  );
+
   const batch = db.batch();
-  allPsychTests.forEach((t, i) => {
-    const doc = buildSeedDoc(t, i, legacy[t.slug]);
+  missing.forEach((t, i) => {
+    const doc = buildSeedDoc(t, maxOrder + 1 + i, legacy[t.slug]);
     batch.set(db.collection(PSYCH_COL).doc(t.slug), { ...doc, updatedAt: new Date() });
   });
   await batch.commit();
@@ -158,11 +176,21 @@ export async function getPsychTestDocsMap(): Promise<Record<string, PsychTestDoc
   }
 }
 
-/** admin 관리 테이블용 메타 목록 (필요 시 시드 후 order 순 반환) */
+/** admin 관리 테이블용 메타 목록 (코드 신규분 동기화 후 order 순 반환) */
 export async function getPsychTestMetaList(): Promise<PsychTestMeta[]> {
-  await seedPsychTestsIfEmpty();
+  await syncPsychTestsFromCode();
   const snap = await getAdminFirestore().collection(PSYCH_COL).orderBy("order").get();
   return snap.docs.map((d) => toMeta(d.data()));
+}
+
+/** 기록·통계 화면 라벨용 최소 메타 목록. 조회 실패 시 빈 배열(화면은 저장된 title로 폴백) */
+export async function getPsychTestLabels(): Promise<PsychTestLabel[]> {
+  try {
+    const metas = await getPsychTestMetaList();
+    return metas.map(({ slug, icon, title, engine }) => ({ slug, icon, title, engine }));
+  } catch {
+    return [];
+  }
 }
 
 /** 메타 저장 (upsert, merge → content 보존) */
