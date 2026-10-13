@@ -5,10 +5,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signInWithEmail, createSession, sendPasswordReset } from "@/lib/firebase/auth";
+import { useAuth } from "@/contexts/AuthContext";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { refreshAuth } = useAuth();
   const redirectTo = searchParams.get("redirect") ?? "/";
 
   const ERROR_MESSAGES: Record<string, string> = {
@@ -42,6 +44,8 @@ function LoginForm() {
     try {
       const result = await signInWithEmail(email, password);
       const isAdmin = await createSession(result.user);
+      // 쿠키 설정 후 auth 상태 갱신 (안 하면 클라이언트 이동 시 로그아웃처럼 보임)
+      await refreshAuth();
       router.push(getDestination(isAdmin));
     } catch {
       setError("이메일 또는 비밀번호가 올바르지 않습니다.");
